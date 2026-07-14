@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+.next/
+dist/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+
+# Prisma
+packages/db/generated/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Local assets
+uploads/
+
+# OS/editor
+.DS_Store
+*.log

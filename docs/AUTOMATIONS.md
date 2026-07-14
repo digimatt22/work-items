@@ -1,0 +1,224 @@
+# Automations
+
+This file is the operational source of truth for jobs, scripts, scheduled tasks, CI workflows, manual runbooks, and other entrypoints. Keep trigger cadence as `Unknown` when it is not discoverable from code or project documentation.
+
+## Inventory
+Add one section per operational entrypoint.
+
+## Product workspace commands
+| Field | Details |
+| --- | --- |
+| Name | `pnpm` workspace commands |
+| Purpose | Install, run, validate, and generate the DigiColony Client Operations Phase 0 harness |
+| Trigger type | Manual local development |
+| Schedule or invocation | `pnpm install`; `pnpm dev`; `pnpm build`; `pnpm start`; `pnpm lint`; `pnpm test`; `pnpm prisma:generate`; `pnpm db:review:reset` |
+| Inputs | `.env` copied from `.env.example`; package manifests; Prisma schema at `packages/db/prisma/schema.prisma` |
+| Secrets | Local `.env` values; do not commit real secrets |
+| Systems touched | Local filesystem, local Node package cache, optional local PostgreSQL in later phases |
+| Outputs or state transitions | `node_modules/`, `pnpm-lock.yaml`, generated Prisma client, running Next.js dev server |
+| Failure mode | Missing pnpm/Corepack, dependency registry unavailable, sandbox blocks port binding, Prisma engine cache permissions |
+| Retry or recovery | Enable Corepack, rerun install, run Prisma generation with cache access, or use a free local port |
+| Automated verification | `pnpm prisma:generate`; `pnpm lint`; `pnpm test`; `pnpm build`; `pnpm dev` or `pnpm start` plus HTTP 200 probe; `pnpm db:review:reset` before MVP screenshot review |
+| Human verification | Browser review of `http://localhost:3000` once UI implementation begins |
+| Owner or reviewer | DigiColony engineering |
+| Unknowns / follow-up | CI provider and production deployment path remain future decisions |
+
+## Hosted bootstrap installer
+| Field | Details |
+| --- | --- |
+| Name | `https://harness.digicolony.com/install` |
+| Purpose | Bootstrap harness install or update from a tiny hosted script |
+| Trigger type | Manual curl bootstrap |
+| Schedule or invocation | `curl -fsSL https://harness.digicolony.com/install \| bash`; pass options with `bash -s -- --target /path/to/project` |
+| Inputs | Optional installer flags such as `--target`, `--dry-run`, `--force`, `--yes`, and `--ref` |
+| Secrets | Uses the machine's configured GitHub SSH identity; no token is required by the bootstrap script |
+| Systems touched | `harness.digicolony.com`; private GitHub repo `MATT-Agent/DigiColony-Harness`; local filesystem |
+| Outputs or state transitions | Clones the private harness repo to a temporary directory and runs `scripts/install-harness.sh` |
+| Failure mode | Stops when the bootstrap URL is unavailable, Git is missing, SSH access to GitHub fails, or the installer rejects local overwrite risk |
+| Retry or recovery | Verify `git ls-remote git@github.com:MATT-Agent/DigiColony-Harness.git`, rerun with `--dry-run`, then rerun after resolving reported state |
+| Automated verification | Test the hosted script against temporary empty and existing repos before advertising it |
+| Human verification | Confirm `https://harness.digicolony.com/install` serves the reviewed `scripts/bootstrap-install.sh` content |
+| Owner or reviewer | Repo maintainer |
+| Unknowns / follow-up | Hosting deployment mechanism for `harness.digicolony.com` is TBD |
+
+## `scripts/install-harness.sh`
+| Field | Details |
+| --- | --- |
+| Name | `scripts/install-harness.sh` |
+| Purpose | Canonical install/update entrypoint for the harness |
+| Trigger type | Manual local install or hosted bootstrap |
+| Schedule or invocation | `scripts/install-harness.sh [--target DIR] [--source DIR] [--dry-run] [--force] [--yes] [--init-git] [--name "Project Name"]` |
+| Inputs | Target directory; source harness checkout; `.harness/core-files.txt`; optional project name and safety flags |
+| Secrets | None directly; the bootstrap path uses GitHub SSH before this script runs |
+| Systems touched | Local filesystem; local Git metadata in the target when checking modified protected files; local Git repository when `--init-git` is used |
+| Outputs or state transitions | Installs or updates protected harness files, creates missing project-owned starter docs, creates execution-plan directories, updates `.harness/version.json`, and prints lifeOS-aware intake/registration next steps |
+| Failure mode | Stops when source metadata is missing, target is inside the source checkout, older metadata requires confirmation, or protected files have local edits without `--force` |
+| Retry or recovery | Run `--dry-run`, move local protected-file changes into `docs/PROJECT_OVERRIDES.md`, rerun with `--yes` for older installs or `--force` after review |
+| Automated verification | Run `bash -n scripts/install-harness.sh`; install/update temporary empty, existing, and older-version repos |
+| Human verification | Review the install/update diff before committing |
+| Owner or reviewer | Repo maintainer |
+| Unknowns / follow-up | Consider signed release archives only if SSH bootstrap becomes too slow or brittle |
+
+## `scripts/bootstrap-install.sh`
+| Field | Details |
+| --- | --- |
+| Name | `scripts/bootstrap-install.sh` |
+| Purpose | Tiny script intended to be hosted at `https://harness.digicolony.com/install` |
+| Trigger type | Manual curl bootstrap |
+| Schedule or invocation | `curl -fsSL https://harness.digicolony.com/install \| bash` |
+| Inputs | Optional `--ref` plus installer arguments passed through to `scripts/install-harness.sh` |
+| Secrets | Uses existing GitHub SSH identity |
+| Systems touched | Private GitHub repo and local temporary directory |
+| Outputs or state transitions | Clones upstream harness and delegates to `scripts/install-harness.sh` |
+| Failure mode | Stops when Git is missing, SSH auth fails, the requested ref is invalid, or the installer fails |
+| Retry or recovery | Verify SSH access and rerun; use `--ref` only for intentional testing |
+| Automated verification | Run `bash -n scripts/bootstrap-install.sh`; run against temp targets before hosting |
+| Human verification | Confirm hosted script matches the reviewed repo version |
+| Owner or reviewer | Repo maintainer |
+| Unknowns / follow-up | Add deployment notes once hosting is configured |
+
+## `scripts/new-project.sh`
+| Field | Details |
+| --- | --- |
+| Name | `scripts/new-project.sh` |
+| Purpose | Convenience wrapper for creating a new project folder from the harness checkout |
+| Trigger type | Manual local bootstrap |
+| Schedule or invocation | `scripts/new-project.sh [--dry-run] [--init-git] [--force] [--name "Project Name"] <target-dir>` |
+| Inputs | Target directory; optional project name; optional Git initialization flag |
+| Secrets | None |
+| Systems touched | Local filesystem; local Git repository in the target only when `--init-git` is used |
+| Outputs or state transitions | Delegates to `scripts/install-harness.sh`, creates or updates harness files in the target, optionally initializes Git on `main`, and prints lifeOS-aware intake and registration-review next steps |
+| Failure mode | Stops when the source is not a Git checkout, the target is inside the source checkout, the target is a non-directory file, or the target directory is non-empty without `--force` |
+| Retry or recovery | Choose an empty target directory, inspect existing target contents before using `--force`, then rerun |
+| Automated verification | Run `bash -n scripts/new-project.sh`; run `scripts/new-project.sh --dry-run <tmp-dir>`; run a real copy to a temporary directory and inspect expected files |
+| Human verification | Confirm the copied project should proceed through project intake and lifeOS project registration before routine development |
+| Owner or reviewer | Repo maintainer |
+| Unknowns / follow-up | Add a Codex plugin or slash-command wrapper after the script interface is proven on the first real project |
+
+## `scripts/check-current-state.sh`
+| Field | Details |
+| --- | --- |
+| Name | `scripts/check-current-state.sh` |
+| Purpose | Quickly verify local branch/upstream/worktree state, with opt-in remote and PR checks |
+| Trigger type | Manual local validation |
+| Schedule or invocation | `scripts/check-current-state.sh` from the repo root; use `--full` before push/PR work |
+| Inputs | Optional flags: `--remote`, `--pr`, `--full`, `--untracked` |
+| Secrets | GitHub CLI authentication when PR state is checked |
+| Systems touched | Local Git repository by default; `origin` and GitHub API only when requested |
+| Outputs or state transitions | Prints branch, upstream, ahead/behind from local refs, tracked working-tree state, and optional PR/untracked state |
+| Failure mode | Exits non-zero when the repo has no remote, branch is behind its locally known upstream, detached HEAD is active, or current branch PR is merged/closed during PR checks |
+| Retry or recovery | Fetch/pull or create a fresh branch from latest target branch, then rerun |
+| Automated verification | Run the fast default before local work; run `--full` before pushing or updating a PR |
+| Human verification | Confirm intentional uncommitted changes belong to the current task |
+| Owner or reviewer | Repo maintainer |
+| Unknowns / follow-up | Add CI or hook integration only after the project chooses enforcement style; consider project-specific timeout policy for very large repos |
+
+## `scripts/check-doc-links.sh`
+| Field | Details |
+| --- | --- |
+| Name | `scripts/check-doc-links.sh` |
+| Purpose | Check local Markdown links and reject absolute local filesystem links |
+| Trigger type | Manual local validation |
+| Schedule or invocation | `scripts/check-doc-links.sh` from the repo root |
+| Inputs | Optional root path argument; defaults to current directory |
+| Secrets | None |
+| Systems touched | Local filesystem only |
+| Outputs or state transitions | Prints pass/fail messages; exits non-zero on broken links |
+| Failure mode | Reports broken or absolute local links |
+| Retry or recovery | Fix the reported links and rerun |
+| Automated verification | Run directly before PRs that edit docs |
+| Human verification | Review whether intentionally external links should remain external |
+| Owner or reviewer | Repo maintainer |
+| Unknowns / follow-up | Add CI integration when a provider is selected |
+
+## `scripts/check-inbox.sh`
+| Field | Details |
+| --- | --- |
+| Name | `scripts/check-inbox.sh` |
+| Purpose | Verify that repo-tracked inbox files are indexed and indexed paths exist |
+| Trigger type | Manual local validation |
+| Schedule or invocation | `scripts/check-inbox.sh` from the repo root |
+| Inputs | Optional inbox directory argument; defaults to `Inbox` |
+| Secrets | None |
+| Systems touched | Local filesystem |
+| Outputs or state transitions | Prints pass/fail messages; exits non-zero on unindexed files or missing paths |
+| Failure mode | Reports files under `Inbox/` missing from `Inbox/README.md`, or index rows pointing at missing paths |
+| Retry or recovery | Update `Inbox/README.md`, move/remove stale files, and rerun |
+| Automated verification | Run when `Inbox/`, `docs/INBOX.md`, or inbox templates change |
+| Human verification | Confirm editing rules and sensitivity of newly added material |
+| Owner or reviewer | Repo maintainer |
+| Unknowns / follow-up | Add CI integration when a provider is selected |
+
+## `scripts/update-harness.sh`
+| Field | Details |
+| --- | --- |
+| Name | `scripts/update-harness.sh` |
+| Purpose | Local convenience wrapper for updating an installed harness |
+| Trigger type | Manual local maintenance |
+| Schedule or invocation | `scripts/update-harness.sh [--dry-run] [--force] [--yes] [--ref REF] [source-checkout]` |
+| Inputs | Optional source checkout; otherwise clones `git@github.com:MATT-Agent/DigiColony-Harness.git`; installer flags |
+| Secrets | Uses the machine's configured GitHub SSH identity when cloning upstream |
+| Systems touched | Private GitHub repo when no source checkout is passed; local filesystem; local Git metadata |
+| Outputs or state transitions | Delegates to `scripts/install-harness.sh` for protected-core sync and version marker update |
+| Failure mode | Stops when Git or SSH access is unavailable, source metadata is missing, or installer safety checks fail |
+| Retry or recovery | Use hosted curl command if the local wrapper is stale; otherwise resolve reported installer issue and rerun |
+| Automated verification | Run current-state, doc-link, and inbox checks after sync |
+| Human verification | Review sync diff before PR |
+| Owner or reviewer | Repo maintainer |
+| Unknowns / follow-up | Hosting deployment for the bootstrap script is still TBD |
+
+## `scripts/start-issue-session.sh`
+| Field | Details |
+| --- | --- |
+| Name | `scripts/start-issue-session.sh` |
+| Purpose | Create a session branch and import GitHub issues into repo-tracked issue-session files |
+| Trigger type | Manual GitHub issue workflow |
+| Schedule or invocation | `scripts/start-issue-session.sh [--base main] [--no-comments] <session-slug> <issue-number-or-url>...` |
+| Inputs | Session slug and GitHub issue numbers or URLs |
+| Secrets | GitHub CLI authentication for reading and commenting on issues |
+| Systems touched | Local Git repository and GitHub issues via `gh` |
+| Outputs or state transitions | Creates `session/<slug>` branch, `docs/issue-sessions/active/<slug>/`, issue files, and GitHub import comments unless disabled |
+| Failure mode | Stops on missing `gh`, stale branch state, failed issue lookup, or branch creation failure |
+| Retry or recovery | Resolve auth/state issue and rerun with a new session slug or clean branch |
+| Automated verification | Review generated session files and run current-state/doc-link checks |
+| Human verification | Confirm triage disposition and questions posted back to issues |
+| Owner or reviewer | Repo maintainer |
+| Unknowns / follow-up | Add helpers for per-issue branch creation and session closeout if repeated use shows value |
+
+## Entry Template
+| Field | Details |
+| --- | --- |
+| Name | `TBD` |
+| Purpose | `TBD` |
+| Trigger type | `Unknown` |
+| Schedule or invocation | `Unknown` |
+| Inputs | `TBD` |
+| Secrets | `TBD` |
+| Systems touched | `TBD` |
+| Outputs or state transitions | `TBD` |
+| Failure mode | `TBD` |
+| Retry or recovery | `TBD` |
+| Automated verification | `TBD` |
+| Human verification | `TBD` |
+| Owner or reviewer | `TBD` |
+| Unknowns / follow-up | `TBD` |
+
+## Required Coverage
+Document these entrypoint types when they exist:
+- Local development commands
+- Build, lint, format, and test commands
+- Database migrations and seed scripts
+- Background workers and queues
+- Scheduled jobs
+- Webhooks and event consumers
+- Deployment and rollback commands
+- CI workflows and required checks
+- Manual operational procedures
+
+## Human Validation
+When an operation cannot be fully tested by an agent, record:
+- Who must perform the check
+- Exact steps to run
+- Expected evidence of success
+- Where that evidence should be recorded
+- Whether the work can merge before the check is complete

@@ -1,0 +1,33 @@
+{
+  "name": "digicolony-client-ops",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "dev": "set -a; [ -f .env ] && . ./.env; set +a; pnpm --filter @digicolony/web dev",
+    "start": "set -a; [ -f .env ] && . ./.env; set +a; pnpm --filter @digicolony/web exec next start -H 0.0.0.0",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "format": "prettier --check .",
+    "format:write": "prettier --write .",
+    "test": "pnpm -r test",
+    "test:e2e": "set -a; [ -f .env ] && . ./.env; set +a; playwright test",
+    "screenshots:workflow": "node scripts/capture-workflow-screenshots.mjs",
+    "typecheck": "pnpm -r typecheck",
+    "prisma:generate": "pnpm --filter @digicolony/db prisma:generate",
+    "prisma:migrate": "set -a; [ -f .env ] && . ./.env; set +a; pnpm --filter @digicolony/db prisma:migrate",
+    "db:review:reset": "set -a; [ -f .env ] && . ./.env; set +a; pnpm --filter @digicolony/db prisma:review:reset",
+    "db:seed": "set -a; [ -f .env ] && . ./.env; set +a; pnpm --filter @digicolony/db prisma:seed",
+    "db:start": "scripts/start-local-db.sh"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^22.10.5",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

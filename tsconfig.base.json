@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "allowJs": false,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@digicolony/shared": ["packages/shared/src/index.ts"],
+      "@digicolony/db": ["packages/db/src/index.ts"],
+      "@digicolony/ui": ["packages/ui/src/index.ts"],
+      "@digicolony/mcp": ["packages/mcp/src/index.ts"]
+    }
+  }
+}
