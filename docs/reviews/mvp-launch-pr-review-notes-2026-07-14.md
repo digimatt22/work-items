@@ -27,6 +27,8 @@ The project is being prepared for a limited MVP launch group. The review found t
 - `2030cbc` Add client-visible upload validation feedback
 - `3a91f68` Clarify upload constraints before selection
 - `84c9c85` Add MVP launch human validation checklist
+- `914b10d` Prepare MVP launch PR review notes
+- `5767d11` Refresh launch screenshots for upload guidance
 
 ## Evidence
 
@@ -34,6 +36,7 @@ The project is being prepared for a limited MVP launch group. The review found t
 - Fix-pass review: `docs/reviews/mvp-launch-readiness-fix-pass-2026-07-14.md`
 - Current screen/action inventory: `docs/reviews/mvp-launch-current-screen-action-inventory-2026-07-14.md`
 - Human validation checklist: `docs/reviews/mvp-launch-human-validation-checklist-2026-07-14.md`
+- Completion audit: `docs/reviews/mvp-launch-completion-audit-2026-07-14.md`
 - Production-like screenshots: `docs/reviews/screenshots/mvp-launch-readiness-production-2026-07-14/`
 
 ## Validation
