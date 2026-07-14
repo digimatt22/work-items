@@ -60,6 +60,14 @@ pnpm --filter @digicolony/db prisma:generate
 
 The web dev server must bind to `0.0.0.0` so it is reachable from browser review surfaces and other devices on the local network. Use the root `pnpm dev` script, which delegates to `apps/web` and starts Next.js with `-H 0.0.0.0`.
 
+Review locally at `http://localhost:3000`. For same-network device review, find
+the active LAN address, then open `http://<LAN-IP>:3000`; on macOS Wi-Fi this is
+usually:
+
+```sh
+ifconfig en1
+```
+
 For production-like local review, run `pnpm build` and then `pnpm start`.
 The root `pnpm start` script loads `.env` before invoking Next.js production
 serve, matching the local auth/database configuration used by `pnpm dev`.

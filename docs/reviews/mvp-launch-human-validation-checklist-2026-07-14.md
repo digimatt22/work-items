@@ -24,6 +24,14 @@ pnpm db:review:reset
 pnpm dev
 ```
 
+The root `pnpm dev` command binds Next.js to `0.0.0.0:3000`. Review locally at
+`http://localhost:3000`, or from another device on the same network at
+`http://<LAN-IP>:3000`. On macOS, the active Wi-Fi address is usually shown by:
+
+```sh
+ifconfig en1
+```
+
 Sign in as:
 
 - Admin: `admin@digicolony.local`
