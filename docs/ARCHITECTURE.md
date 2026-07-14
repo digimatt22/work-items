@@ -26,7 +26,7 @@ The important local development flow is:
 3. Shared contracts are typechecked across workspace packages.
 4. The Next.js app uses Auth.js credentials to identify admins and client users.
 5. Admins land on the work-item board and manage clients, projects, users, and work items through the admin shell.
-6. Admins can open `/status-report` to generate a deterministic weekly email-ready summary from current work item status.
+6. Admins can open `/status-report` directly or generate it from the work-item board; board query, client/project, and type filters scope the deterministic weekly email-ready summary.
 7. Client users land on `/report`, choose a visible project, submit a bug or feature request, and optionally attach files.
 8. Client reports create standard work items through shared work-item services, then upload attachments through the shared asset service and storage provider.
 

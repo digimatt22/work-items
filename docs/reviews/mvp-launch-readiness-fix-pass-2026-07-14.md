@@ -35,7 +35,7 @@ Status: ready for Matthew human validation; PR setup still blocked by missing `o
 - The global Add modal now groups actions into Requests and Workspace, includes short action descriptions, exposes selected state with `aria-pressed`, and uses stable add-option test IDs.
 - The global Add modal now waits for create actions to finish before closing, then refreshes the persistent app shell so newly created clients/projects are available for the next add action.
 - Client Board/List summary and empty-state copy now consistently says "requests" instead of leaking internal "work item" language.
-- Admin weekly Status report is included in the production-like screenshot inventory and generates copy/paste email text for planned, in-progress, and recently completed work.
+- Admin weekly Status report is included in the production-like screenshot inventory and generates copy/paste email text for planned, in-progress, and recently completed work. Admins can now generate it from the board using the current search, client/project, and type filters.
 - Production-like screenshots do not show the dev overlay/issue badge.
 
 ## Remaining Launch Checks

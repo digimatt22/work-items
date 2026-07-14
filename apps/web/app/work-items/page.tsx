@@ -25,6 +25,32 @@ function toArray(value: string | readonly string[] | undefined): string[] {
   return typeof value === "string" ? [value] : [...value];
 }
 
+function buildStatusReportHref({
+  query,
+  selectedClientIds,
+  selectedProjectIds,
+  selectedTypes
+}: {
+  query: string;
+  selectedClientIds: readonly string[];
+  selectedProjectIds: readonly string[];
+  selectedTypes: readonly string[];
+}): string {
+  const params = new URLSearchParams();
+
+  if (query) {
+    params.set("q", query);
+  }
+
+  selectedClientIds.forEach((clientId) => params.append("clientIds", clientId));
+  selectedProjectIds.forEach((projectId) => params.append("projectIds", projectId));
+  selectedTypes.forEach((type) => params.append("type", type));
+
+  const search = params.toString();
+
+  return search ? `/status-report?${search}` : "/status-report";
+}
+
 export default async function WorkItemsPage({
   searchParams
 }: {
@@ -115,6 +141,14 @@ async function WorkItemsPageContent({
     selectedProjectIds.length +
     selectedTypes.length +
     (query ? 1 : 0);
+  const reportHref = admin
+    ? buildStatusReportHref({
+      query,
+      selectedClientIds,
+      selectedProjectIds,
+      selectedTypes
+    })
+    : undefined;
   const clientTree = clients.map(([clientId, clientName]) => {
     const clientProjects = projects.filter((project) => {
       if (project.clientId !== clientId) {
@@ -170,6 +204,7 @@ async function WorkItemsPageContent({
           clients={hierarchyFilterClients}
           hierarchyLabel={admin ? "Any client or project" : "Any project"}
           query={query}
+          reportHref={reportHref}
           searchPlaceholder={admin ? "Search work, client, project" : "Search requests"}
           selectedClientIds={selectedClientIds}
           selectedProjectIds={selectedProjectIds}

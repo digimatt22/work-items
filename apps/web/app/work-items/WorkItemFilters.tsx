@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { buttonClass, compactFieldClass } from "../components/ui";
@@ -17,6 +18,7 @@ type WorkItemFiltersProps = {
   clients: readonly ClientProjectFilter[];
   hierarchyLabel?: string;
   query: string;
+  reportHref?: string;
   searchPlaceholder?: string;
   selectedClientIds: readonly string[];
   selectedProjectIds: readonly string[];
@@ -39,6 +41,7 @@ export function WorkItemFilters({
   clients,
   hierarchyLabel = "Any client or project",
   query,
+  reportHref,
   searchPlaceholder = "Search work, client, project",
   selectedClientIds,
   selectedProjectIds,
@@ -52,6 +55,9 @@ export function WorkItemFilters({
   const [openFilter, setOpenFilter] = useState<"hierarchy" | "type" | null>(null);
   const [queryDraft, setQueryDraft] = useState(query);
   const hierarchyCount = selectedClientIds.length + selectedProjectIds.length;
+  const gridClass = reportHref
+    ? "mt-3 grid gap-2 xl:grid-cols-[minmax(220px,1.4fr)_minmax(300px,1fr)_170px_auto_auto]"
+    : "mt-3 grid gap-2 xl:grid-cols-[minmax(220px,1.4fr)_minmax(300px,1fr)_170px_auto]";
 
   function buildParams() {
     const params = new URLSearchParams();
@@ -128,7 +134,7 @@ export function WorkItemFilters({
 
   return (
     <div
-      className="mt-3 grid gap-2 xl:grid-cols-[minmax(220px,1.4fr)_minmax(300px,1fr)_170px_auto]"
+      className={gridClass}
       ref={filterRef}
     >
       <input
@@ -256,6 +262,11 @@ export function WorkItemFilters({
       >
         Clear
       </button>
+      {reportHref ? (
+        <Link className={buttonClass("primary")} href={reportHref}>
+          Generate report
+        </Link>
+      ) : null}
     </div>
   );
 }
