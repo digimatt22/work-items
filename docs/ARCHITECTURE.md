@@ -1,7 +1,7 @@
 # Architecture
 
 ## Overview
-This repository is a TypeScript monorepo for the DigiColony AI-First Client Operations Platform. The current milestone is Phase 0: a development harness with package boundaries, baseline contracts, Prisma schema skeleton, and local validation commands.
+This repository is a TypeScript monorepo for the DigiColony AI-First Client Operations Platform. The current milestone is an authenticated local MVP for client request intake, admin work management, and launch-review reporting.
 
 Canonical planning lives in:
 
@@ -26,15 +26,15 @@ The important local development flow is:
 3. Shared contracts are typechecked across workspace packages.
 4. The Next.js app uses Auth.js credentials to identify admins and client users.
 5. Admins land on the work-item board and manage clients, projects, users, and work items through the admin shell.
-6. Client users land on `/report`, choose a visible project, submit a bug or feature request, and optionally attach files.
-7. Client reports create standard work items through shared work-item services, then upload attachments through the shared asset service and storage provider.
-
-Phase 1A starts real database and Auth.js implementation.
+6. Admins can open `/status-report` to generate a deterministic weekly email-ready summary from current work item status.
+7. Client users land on `/report`, choose a visible project, submit a bug or feature request, and optionally attach files.
+8. Client reports create standard work items through shared work-item services, then upload attachments through the shared asset service and storage provider.
 
 ## Contracts
 - The web app and MCP server must use shared service/policy contracts rather than drifting into separate business rules.
 - Client users belong to one client at launch and can view all projects for that client.
 - Client users use `/report` as the primary entry point and `/work-items` as a read-only board/status view.
+- The admin weekly status report is copy/paste only for now; it does not send email, store report history, or manage recipients.
 - Client reports must create normal `BUG` or `FEATURE` work items, not a separate reporting-only entity.
 - Report attachments must use the existing asset constraints and storage-provider abstraction.
 - AI actions are admin-only.

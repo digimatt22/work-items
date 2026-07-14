@@ -6,8 +6,8 @@ This file helps agents target future reads and avoid scanning the whole repo for
 - Purpose: AI-first client operations platform and shared operational memory for DigiColony, clients, and authorized AI agents.
 - Primary language/framework: TypeScript, Next.js App Router, Prisma, PostgreSQL-ready schema.
 - Package manager: pnpm 9.15.4 through Corepack.
-- Runtime entrypoints: `pnpm dev` for the web app.
-- Test entrypoints: `pnpm lint`, `pnpm test`, `pnpm prisma:generate`.
+- Runtime entrypoints: `pnpm dev` for the web app, `pnpm start` after `pnpm build` for production-like review.
+- Test entrypoints: `pnpm lint`, `pnpm test`, focused Playwright specs, `pnpm prisma:generate`.
 
 ## High-Value Files
 | Path | Why it matters | When to read |
@@ -35,12 +35,12 @@ This file helps agents target future reads and avoid scanning the whole repo for
 ## Source Layout
 | Area | Purpose | Notes |
 | --- | --- | --- |
-| `apps/web/` | Next.js App Router app | Phase 0 readiness screen only |
+| `apps/web/` | Next.js App Router app | Authenticated admin and client MVP surfaces, including `/work-items`, `/report`, `/clients`, `/projects/[projectId]`, and `/status-report` |
 | `packages/db/` | Prisma schema and database package | No migrations yet |
 | `packages/shared/` | Shared contracts, permission predicates, and tests | Source of truth for web/MCP policy helpers |
 | `packages/ui/` | Shared UI package | Placeholder in Phase 0 |
 | `packages/mcp/` | MCP tool contract helpers | Placeholder in Phase 0 |
-| `tests/e2e/` | Playwright test home | Scenario tests start in Phase 1 |
+| `tests/e2e/` | Playwright test home | Authenticated admin/client scenario tests |
 | `Inbox/` | Supplemental context drops | Repo-tracked, not active source by default |
 | `.harness/` | Harness version and sync metadata | Keep generic; update through harness sync |
 
@@ -50,6 +50,7 @@ This file helps agents target future reads and avoid scanning the whole repo for
 | `corepack prepare pnpm@9.15.4 --activate` | Activate pinned package manager | Run before install if pnpm is unavailable |
 | `pnpm install` | Install workspace dependencies | Creates `pnpm-lock.yaml` |
 | `pnpm dev` | Start Next.js app | Serves `apps/web` on localhost |
+| `pnpm start` | Start built Next.js app | Run after `pnpm build` for production-like review |
 | `pnpm lint` | Typecheck/lint workspace packages | Phase 0 static validation |
 | `pnpm test` | Run Vitest across workspace packages | Shared permission tests included |
 | `pnpm prisma:generate` | Generate Prisma client | Uses `packages/db/prisma/schema.prisma` |
@@ -71,7 +72,7 @@ This file helps agents target future reads and avoid scanning the whole repo for
 | lifeOS integration | `docs/LIFEOS_INTEGRATION.md`, `docs/PROJECT_INTAKE_WORKFLOW.md`, `docs/PROJECT_CONTEXT.md` | Verify startup, context discovery, project registration, review queue, and status guidance |
 | Harness install/update | `scripts/install-harness.sh`, `scripts/bootstrap-install.sh`, `scripts/update-harness.sh`, `docs/HARNESS_SYNC.md` | `bash -n` scripts; temp empty, existing, and older-version installs |
 | New project bootstrap | `scripts/new-project.sh`, `scripts/install-harness.sh`, `docs/SETUP.md`, `docs/BOOTSTRAP_CHECKLIST.md`, `docs/LIFEOS_INTEGRATION.md` | `bash -n scripts/new-project.sh`; dry-run and temporary real copy |
-| Runtime behavior | `apps/web/`, `packages/shared/`, `packages/db/` | `pnpm lint`; `pnpm test`; `pnpm prisma:generate`; `pnpm dev` |
+| Runtime behavior | `apps/web/`, `packages/shared/`, `packages/db/` | `pnpm lint`; `pnpm test`; focused Playwright specs; `pnpm build`; `pnpm prisma:generate`; `pnpm dev` |
 | Operations | `docs/AUTOMATIONS.md`, `docs/LOCAL_DEVELOPMENT.md`, runbooks | Relevant command from docs plus smoke check |
 
 ## Risky Areas
@@ -88,7 +89,6 @@ This file helps agents target future reads and avoid scanning the whole repo for
 | lifeOS MCP | Project orientation, registration proposals, context review queue, and outcome-level status | Use `project_harness` first; do not disclose private context externally or edit lifeOS profile files from project workspaces |
 
 ## Known Gaps
-- No Git repository is initialized in this workspace yet.
+- Local Git repository exists, but no `origin` remote is configured yet.
 - CI provider is not selected.
-- Phase 1A Auth.js and database services are not implemented yet.
-- E2E tests are placeholders until login and client/project screens exist.
+- CI and remote PR review remain blocked until a remote exists.

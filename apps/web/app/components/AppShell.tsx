@@ -24,7 +24,8 @@ type AppShellProps = {
 
 const navItems = [
   { href: "/work-items", label: "Board", mark: "B", view: "board" },
-  { href: "/work-items?view=list", label: "List", mark: "L", view: "list" }
+  { href: "/work-items?view=list", label: "List", mark: "L", view: "list" },
+  { href: "/status-report", label: "Status", mark: "S", view: "status-report" }
 ];
 
 const clientNavItems = [
@@ -67,6 +68,10 @@ function isActive(pathname: string, view: string, itemView: string): boolean {
 
   if (itemView === "list") {
     return pathname === "/work-items" && view === "list";
+  }
+
+  if (itemView === "status-report") {
+    return pathname.startsWith("/status-report");
   }
 
   return pathname.startsWith("/work-items") && view !== "list";
