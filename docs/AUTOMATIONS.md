@@ -11,14 +11,14 @@ Add one section per operational entrypoint.
 | Name | `pnpm` workspace commands |
 | Purpose | Install, run, validate, and generate the DigiColony Client Operations Phase 0 harness |
 | Trigger type | Manual local development |
-| Schedule or invocation | `pnpm install`; `pnpm dev`; `pnpm build`; `pnpm start`; `pnpm lint`; `pnpm test`; `pnpm prisma:generate`; `pnpm db:review:reset` |
+| Schedule or invocation | `pnpm install`; `pnpm dev`; `pnpm build`; `pnpm start`; `pnpm lint`; `pnpm test`; `pnpm prisma:generate`; `pnpm db:review:reset`; `pnpm audit:launch-evidence` |
 | Inputs | `.env` copied from `.env.example`; package manifests; Prisma schema at `packages/db/prisma/schema.prisma` |
 | Secrets | Local `.env` values; do not commit real secrets |
 | Systems touched | Local filesystem, local Node package cache, optional local PostgreSQL in later phases |
 | Outputs or state transitions | `node_modules/`, `pnpm-lock.yaml`, generated Prisma client, running Next.js dev server |
 | Failure mode | Missing pnpm/Corepack, dependency registry unavailable, sandbox blocks port binding, Prisma engine cache permissions |
 | Retry or recovery | Enable Corepack, rerun install, run Prisma generation with cache access, or use a free local port |
-| Automated verification | `pnpm prisma:generate`; `pnpm lint`; `pnpm test`; `pnpm build`; `pnpm dev` or `pnpm start` plus HTTP 200 probe; `pnpm db:review:reset` before MVP screenshot review |
+| Automated verification | `pnpm prisma:generate`; `pnpm lint`; `pnpm test`; `pnpm build`; `pnpm dev` or `pnpm start` plus HTTP 200 probe; `pnpm db:review:reset` before MVP screenshot review; `pnpm audit:launch-evidence` before launch-readiness PR review |
 | Human verification | Browser review of `http://localhost:3000` once UI implementation begins |
 | Owner or reviewer | DigiColony engineering |
 | Unknowns / follow-up | CI provider and production deployment path remain future decisions |
@@ -130,6 +130,24 @@ Add one section per operational entrypoint.
 | Human verification | Review whether intentionally external links should remain external |
 | Owner or reviewer | Repo maintainer |
 | Unknowns / follow-up | Add CI integration when a provider is selected |
+
+## `scripts/check-launch-audit-evidence.mjs`
+| Field | Details |
+| --- | --- |
+| Name | `scripts/check-launch-audit-evidence.mjs` |
+| Purpose | Verify that the MVP launch-readiness screenshot evidence, screen/action inventory, completion audit, fresh-eyes notes, PR notes, and human validation checklist remain present and aligned |
+| Trigger type | Manual local validation |
+| Schedule or invocation | `pnpm audit:launch-evidence` from the repo root |
+| Inputs | `docs/reviews/screenshots/mvp-launch-readiness-production-2026-07-14/`; launch review docs under `docs/reviews/` |
+| Secrets | None |
+| Systems touched | Local filesystem only |
+| Outputs or state transitions | Prints pass/fail messages; exits non-zero on missing screenshots, stale inventory references, or missing launch-audit docs |
+| Failure mode | Reports missing or unexpected screenshot files, missing required docs, or missing required launch-audit evidence phrases |
+| Retry or recovery | Refresh screenshots, update the screen/action inventory, or update launch review docs, then rerun |
+| Automated verification | Run before PR review and after any screenshot, route, or launch-review documentation change |
+| Human verification | Confirm screenshot content and launch decision quality using `docs/reviews/mvp-launch-human-validation-checklist-2026-07-14.md` |
+| Owner or reviewer | DigiColony engineering |
+| Unknowns / follow-up | Update the expected screenshot list if the launch-review route inventory intentionally changes |
 
 ## `scripts/check-inbox.sh`
 | Field | Details |

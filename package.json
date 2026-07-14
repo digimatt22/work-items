@@ -16,6 +16,7 @@
     "test": "pnpm -r test",
     "test:e2e": "set -a; [ -f .env ] && . ./.env; set +a; playwright test",
     "screenshots:workflow": "node scripts/capture-workflow-screenshots.mjs",
+    "audit:launch-evidence": "node scripts/check-launch-audit-evidence.mjs",
     "typecheck": "pnpm -r typecheck",
     "prisma:generate": "pnpm --filter @digicolony/db prisma:generate",
     "prisma:migrate": "set -a; [ -f .env ] && . ./.env; set +a; pnpm --filter @digicolony/db prisma:migrate",

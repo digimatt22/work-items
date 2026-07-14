@@ -10,7 +10,7 @@ This runbook turns the current local launch-readiness stack into a shared PR rev
 
 - Branch: `main`
 - Worktree expectation before starting: clean
-- Latest local commit at time of writing: `6e49314 Add MVP launch completion audit`
+- Latest local commit at time of writing: `9c7b888 Refresh launch readiness evidence`
 - Current blocker: no `origin` remote is configured
 
 Verify:
@@ -78,6 +78,7 @@ Run or confirm these checks after the remote is configured:
 ```sh
 scripts/check-current-state.sh
 scripts/check-doc-links.sh
+pnpm audit:launch-evidence
 pnpm lint
 pnpm test
 pnpm build
@@ -89,6 +90,7 @@ Optional but recommended before opening the PR:
 pnpm db:review:reset
 pnpm exec playwright test tests/e2e/client-reporting.spec.ts --project=chromium
 pnpm exec playwright test tests/e2e/admin-workflow.spec.ts --project=chromium
+PLAYWRIGHT_BASE_URL=http://localhost:3000 pnpm exec playwright test tests/e2e/status-report.spec.ts --project=chromium --reporter=line
 ```
 
 ## Human Validation Gate

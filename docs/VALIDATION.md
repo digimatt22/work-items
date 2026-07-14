@@ -63,6 +63,7 @@ Each project should define its required checks in `docs/AUTOMATIONS.md` or a ded
 | Formatting-only code changes | Format check plus targeted smoke check when behavior risk exists |
 | Shared runtime behavior | Lint, typecheck when available, unit tests, and focused integration tests |
 | User-facing UI | Automated checks plus browser or visual verification using `docs/reviews/visual-review-rules.md` |
+| Launch-readiness review package | `pnpm audit:launch-evidence`, Markdown link check, screenshot review, and Matthew human validation checklist |
 | Data migrations | Dry run or backup verification, migration test, rollback plan |
 | Deployment changes | CI checks, release runbook, rollback runbook, human validation owner |
 
