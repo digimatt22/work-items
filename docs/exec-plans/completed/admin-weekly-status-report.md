@@ -1,7 +1,7 @@
 # Admin Weekly Status Report
 
 ## Status
-- Status: ready for review
+- Status: completed locally
 - Owner: Codex
 - Branch: main
 - PR: blocked until `origin` exists
@@ -18,8 +18,8 @@
 - In progress: None.
 - Blocked: Remote/PR workflow remains blocked by missing `origin`.
 - Needs human validation: Matthew should review report wording before using it with clients.
-- Ready for review: Admin `/status-report` route, copy control, nav entry, e2e coverage, and docs are implemented locally.
-- Completed: Implementation and local validation.
+- Ready for review: Remote/PR review once `origin` exists.
+- Completed: Admin `/status-report` route, copy control, nav entry, e2e coverage, screenshot-backed audit refresh, docs, and local validation.
 
 ## Decisions
 - "Planned" maps to current `Reported` items.
@@ -38,7 +38,7 @@
 - `pnpm test`: passed.
 - `pnpm build`: passed.
 - `PLAYWRIGHT_BASE_URL=http://localhost:3000 pnpm exec playwright test tests/e2e/status-report.spec.ts --project=chromium --reporter=line`: passed.
-- `scripts/check-doc-links.sh`: TBD.
+- `scripts/check-doc-links.sh`: passed.
 - `scripts/check-current-state.sh`: expected to remain blocked by missing `origin`.
 - Date checked: 2026-07-14.
 
@@ -52,7 +52,7 @@
 ## Documentation
 - `docs/ARCHITECTURE.md` updated for `/status-report`.
 - `docs/REPO_MAP.md` updated for current app/test reality.
-- Move this plan to completed after implementation is committed.
+- Plan moved to completed after implementation and audit refresh were committed.
 
 ## Closeout
 - Final status: ready for review locally.
