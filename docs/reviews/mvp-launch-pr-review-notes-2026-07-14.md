@@ -24,21 +24,11 @@ The project is being prepared for a limited MVP launch group. The review found t
 
 ## Local Commit Stack
 
-- `657bd6d` Initial DigiColony client operations MVP baseline
-- `2030cbc` Add client-visible upload validation feedback
-- `3a91f68` Clarify upload constraints before selection
-- `84c9c85` Add MVP launch human validation checklist
-- `914b10d` Prepare MVP launch PR review notes
-- `5767d11` Refresh launch screenshots for upload guidance
-- `6e49314` Add MVP launch completion audit
-- `35f5dfe` Add MVP launch remote PR runbook
-- `9e66b4c` Refine MVP launch UI audit findings
-- `998d3d1` Add admin weekly status report
-- `9d3ec53` Refresh MVP launch audit for status report
-- `72c7195` Complete weekly status report plan
-- `9c7b888` Refresh launch readiness evidence
-- `9818e19` Add launch audit evidence check
-- `e551e8f` Update launch completion audit evidence
+The local stack is on `main`. Verify the current commit list immediately before push or PR creation:
+
+```sh
+git log --oneline --decorate -20
+```
 
 ## Evidence
 
