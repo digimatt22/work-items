@@ -34,8 +34,12 @@ test.describe("client reporting", () => {
     await page.getByRole("button", { exact: true, name: "Add comment" }).click();
     await expect(page.getByText(comment)).toBeVisible();
 
+    await page.locator("input[name=asset]").setInputFiles("tests/e2e/fixtures/client-review-blocked.html");
+    await expect(page.getByText("Asset type or size is not allowed.")).toBeVisible();
+
     await page.locator("input[name=asset]").setInputFiles("tests/e2e/fixtures/client-review-note.txt");
-    await expect(page.getByText("client-review-note.txt")).toBeVisible();
+    await expect(page.getByRole("status")).toContainText("client-review-note.txt attached.");
+    await expect(page.getByText("client-review-note.txt", { exact: true })).toBeVisible();
     await expect(page.getByText("text/plain")).toBeVisible();
   });
 

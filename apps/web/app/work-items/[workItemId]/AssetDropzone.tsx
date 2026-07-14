@@ -1,15 +1,26 @@
 "use client";
 
-import { useRef, useState, type DragEvent } from "react";
+import { useActionState, useRef, useState, type DragEvent } from "react";
+
+type UploadAssetState = {
+  readonly message: string;
+  readonly status: "idle" | "success" | "error";
+};
 
 type AssetDropzoneProps = {
-  action: (formData: FormData) => void | Promise<void>;
+  action: (state: UploadAssetState, formData: FormData) => Promise<UploadAssetState>;
   workItemId: string;
+};
+
+const initialUploadAssetState: UploadAssetState = {
+  message: "",
+  status: "idle"
 };
 
 export function AssetDropzone({ action, workItemId }: AssetDropzoneProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [state, formAction, pending] = useActionState(action, initialUploadAssetState);
   const [dragging, setDragging] = useState(false);
 
   function submitFiles(files: FileList | null) {
@@ -32,7 +43,7 @@ export function AssetDropzone({ action, workItemId }: AssetDropzoneProps) {
   }
 
   return (
-    <form action={action} className="mt-8" ref={formRef}>
+    <form action={formAction} className="mt-8" ref={formRef}>
       <input name="workItemId" type="hidden" value={workItemId} />
       <label
         className={[
@@ -56,8 +67,19 @@ export function AssetDropzone({ action, workItemId }: AssetDropzoneProps) {
           required
           type="file"
         />
-        Drag and drop files here or click to select files
+        {pending ? "Uploading file..." : "Drag and drop files here or click to select files"}
       </label>
+      {state.status !== "idle" ? (
+        <p
+          className={[
+            "mt-2 text-xs font-semibold",
+            state.status === "error" ? "text-rose-600" : "text-emerald-700"
+          ].join(" ")}
+          role={state.status === "error" ? "alert" : "status"}
+        >
+          {state.message}
+        </p>
+      ) : null}
     </form>
   );
 }

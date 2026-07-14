@@ -25,13 +25,13 @@ Status: ready for Matthew human validation; PR setup still blocked by missing `o
 - Client board copy now reads as request tracking instead of internal work management.
 - Client detail project cards now show project names and descriptions in the closed/read state for admins.
 - Mobile board now includes a status jump bar above columns.
-- Client work item detail now has automated live validation for comments with mentions and allowed asset attachment.
+- Client work item detail now has automated live validation for comments with mentions, blocked file-type upload errors, and allowed asset attachment.
 - Production-like screenshots do not show the dev overlay/issue badge.
 
 ## Remaining Launch Checks
 
 - Matthew should review the production-like screenshots and run the app manually as both admin and client.
-- Upload error states still need manual validation for blocked file types and oversize files.
+- Oversize upload error behavior still needs manual validation.
 - Keyboard navigation and screen reader behavior were not fully audited.
 - Admin metric labels such as Active, Review, and Not done still need Matthew's domain-language signoff.
 - The global Add modal remains powerful and should be manually reviewed with a first-time admin.
@@ -43,7 +43,7 @@ Status: ready for Matthew human validation; PR setup still blocked by missing `o
 - `pnpm test`: passed.
 - `scripts/check-doc-links.sh`: passed.
 - `pnpm db:review:reset`: passed against local Docker PostgreSQL.
-- `pnpm exec playwright test tests/e2e/client-reporting.spec.ts --project=chromium`: passed, including client comment, mention text, and `.txt` asset upload validation.
+- `pnpm exec playwright test tests/e2e/client-reporting.spec.ts --project=chromium`: passed, including client comment, mention text, blocked `.html` upload error, and `.txt` asset upload validation.
 - `pnpm exec playwright test tests/e2e/admin-workflow.spec.ts --project=chromium`: passed.
 - `pnpm build`: passed.
 - Post-fix dev screenshot capture: passed.
@@ -67,4 +67,4 @@ Remaining fresh-eyes risks that still need Matthew signoff:
 
 ## Verdict
 
-The highest-risk screenshot findings from the first review are addressed enough for Matthew's limited-MVP human validation pass. The project should not be called launch-ready until Matthew approves the production-like screenshots and completes the remaining manual accessibility and negative upload checks.
+The highest-risk screenshot findings from the first review are addressed enough for Matthew's limited-MVP human validation pass. The project should not be called launch-ready until Matthew approves the production-like screenshots and completes the remaining manual accessibility and oversize-upload checks.

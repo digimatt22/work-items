@@ -43,7 +43,7 @@ Admin screens expose the full hierarchy and management controls. Client screens 
 | `08-admin-client-context-edit.png` | Client context edit | Admin | Edit client name/description/context fields, save, cancel | Important operational context is editable in place. Long forms need manual keyboard and save/cancel visibility review. |
 | `09-admin-project-workspace-desktop.png` | Project workspace | Admin | Navigate back to clients/client detail, open main board filtered by project, edit project context, open work items | Project context and scoped work are visible. This is admin-only now for client users. |
 | `10-admin-project-context-edit.png` | Project context edit | Admin | Edit project name/description/context fields, save, cancel | Editable context aligns with launch needs. Manual review should confirm validation and cancel behavior. |
-| `11-admin-work-item-detail-desktop.png` | Work item detail | Admin | Back to board, upload asset, add comment, move status, open client, open project, inspect operational summary/activity | Full operational detail is clear for admins. Comment and allowed file upload are now covered by e2e on client-visible requests; admin-specific negative upload cases still need manual review. |
+| `11-admin-work-item-detail-desktop.png` | Work item detail | Admin | Back to board, upload asset, add comment, move status, open client, open project, inspect operational summary/activity | Full operational detail is clear for admins. Comment, blocked file-type error, and allowed file upload are now covered by e2e on client-visible requests; oversize upload behavior still needs manual review. |
 | `12-admin-board-mobile.png` | Admin mobile board | Admin | Use status jump links, horizontal status navigation, open cards, sign out | Improved by status jump controls. Still the highest-density mobile surface and should be manually reviewed on real mobile before launch. |
 | `13-client-report-bug-desktop.png` | Client report bug | Client | Select project, choose Report a bug, enter summary/details/steps/expected/actual, attach files, submit, view requests, sign out | Clear primary client entry point. Long form is acceptable for MVP if validation and attachment feedback are friendly. |
 | `14-client-report-feature-desktop.png` | Client report feature | Client | Select project, choose Request a feature, enter summary/details/story/acceptance/value, attach files, submit, view requests | Copy is now client-facing. This screen supports structured intake without exposing admin workflow language. |
@@ -65,6 +65,6 @@ The current hierarchy and controls are coherent enough for a limited MVP validat
 
 - Confirm destructive archive/edit flows are acceptable for a limited group and add confirmations if needed.
 - Manually verify keyboard navigation, focus order, and screen reader labels on forms, dropdown filters, status controls, and modal interactions.
-- Manually verify blocked file type and oversize upload error behavior.
+- Manually verify oversize upload error behavior.
 - Review mobile board and mobile report form on a real device or browser device emulation.
 - Configure `origin`, create an initial commit, and prepare PR review once the remote exists.

@@ -67,6 +67,7 @@ The live local database path now supports a more complete admin review:
 - User can comment on a work item.
 - Mentions are persisted from comment text.
 - User can upload an allowed asset.
+- User sees an inline error for a blocked file type.
 - Client users do not see AI action details.
 
 ## UX Review Prompts
@@ -87,7 +88,7 @@ The live local database path now supports a more complete admin review:
 
 The e2e suite includes an authenticated admin workflow that signs in, creates a client, creates a project, opens the project workspace, creates a work item, moves status, and verifies the filtered/searchable work item board.
 
-The client e2e suite signs in as a client user, verifies admin-only route redirects, creates bug and feature requests, adds a comment containing a mention, and attaches an allowed `.txt` asset to a visible request.
+The client e2e suite signs in as a client user, verifies admin-only route redirects, creates bug and feature requests, adds a comment containing a mention, verifies a blocked `.html` upload error, and attaches an allowed `.txt` asset to a visible request.
 
 ## Known Environment Gap
 
