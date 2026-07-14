@@ -8,6 +8,7 @@ Status: ready for Matthew human validation; PR setup still blocked by missing `o
 
 - Source review: `docs/reviews/mvp-launch-readiness-2026-07-14.md`
 - Current screen/action inventory: `docs/reviews/mvp-launch-current-screen-action-inventory-2026-07-14.md`
+- Human validation checklist: `docs/reviews/mvp-launch-human-validation-checklist-2026-07-14.md`
 - Post-fix dev screenshots: `docs/reviews/screenshots/mvp-launch-readiness-fix-pass-2026-07-14/`
 - Production-like screenshots: `docs/reviews/screenshots/mvp-launch-readiness-production-2026-07-14/`
 - Production-like capture command: `SCREENSHOT_DIR=docs/reviews/screenshots/mvp-launch-readiness-production-2026-07-14 node scripts/capture-launch-readiness-screenshots.mjs`
@@ -32,6 +33,7 @@ Status: ready for Matthew human validation; PR setup still blocked by missing `o
 ## Remaining Launch Checks
 
 - Matthew should review the production-like screenshots and run the app manually as both admin and client.
+- Matthew should record final go/no-go notes in `docs/reviews/mvp-launch-human-validation-checklist-2026-07-14.md`.
 - Oversize upload error behavior still needs manual validation.
 - Keyboard navigation and screen reader behavior were not fully audited.
 - Admin metric labels such as Active, Review, and Not done still need Matthew's domain-language signoff.

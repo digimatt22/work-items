@@ -18,7 +18,7 @@
 - Blocked: PR workflow is unavailable until an `origin` remote is configured.
 - Needs human validation: Matthew reviews the cleaned production-like capture and confirms limited-launch acceptance.
 - Ready for review: code and docs are ready for Matthew's limited-MVP validation pass.
-- Completed: Git initialized locally; initial local baseline commit created; launch-readiness screenshots captured; main and fresh-eyes reviews documented; current screen/action inventory added; second fresh-eyes review completed; clean review reset command added; client route policy implemented; client-visible work filtering implemented; project-card clarity fixed; client copy polished; client-facing detail/status terminology fixed; mobile board status navigation added; client comment/upload e2e coverage added; upload constraints shown inline; blocked file-type upload errors made client-visible and automated; production-like screenshot capture completed.
+- Completed: Git initialized locally; initial local baseline commit created; launch-readiness screenshots captured; main and fresh-eyes reviews documented; current screen/action inventory added; human validation checklist added; second fresh-eyes review completed; clean review reset command added; client route policy implemented; client-visible work filtering implemented; project-card clarity fixed; client copy polished; client-facing detail/status terminology fixed; mobile board status navigation added; client comment/upload e2e coverage added; upload constraints shown inline; blocked file-type upload errors made client-visible and automated; production-like screenshot capture completed.
 
 ## Priority Fixes
 1. Add a deterministic review reset command that removes E2E-created records and reseeds the intended launch-review story.
@@ -52,6 +52,7 @@
 ## Documentation
 - Source review: `docs/reviews/mvp-launch-readiness-2026-07-14.md`
 - Current screen/action inventory: `docs/reviews/mvp-launch-current-screen-action-inventory-2026-07-14.md`
+- Human validation checklist: `docs/reviews/mvp-launch-human-validation-checklist-2026-07-14.md`
 - Screenshot evidence: `docs/reviews/screenshots/mvp-launch-readiness-2026-07-14/`
 - Keep `docs/LOCAL_DEVELOPMENT.md`, `docs/MVP_REVIEW_CHECKLIST.md`, and relevant active plans aligned if commands or route policies change.
 
