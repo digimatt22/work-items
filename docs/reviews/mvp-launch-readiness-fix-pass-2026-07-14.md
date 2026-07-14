@@ -53,6 +53,7 @@ Status: ready for Matthew human validation; PR setup still blocked by missing `o
 - Post-fix dev screenshot capture: passed.
 - Production-like screenshot capture: passed after starting the built app with `.env` loaded through the new root `pnpm start` behavior.
 - Production-like screenshot capture was refreshed after client-facing terminology changes.
+- Production-like work item detail screenshots were refreshed after upload constraint guidance was added.
 
 ## Fresh-Eyes Follow-Up
 
