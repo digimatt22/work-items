@@ -25,6 +25,7 @@ Status: ready for Matthew human validation; PR setup still blocked by missing `o
 - Client board copy now reads as request tracking instead of internal work management.
 - Client detail project cards now show project names and descriptions in the closed/read state for admins.
 - Mobile board now includes a status jump bar above columns.
+- Work item upload controls now show allowed extensions and the 100 MB max file size before selection.
 - Client work item detail now has automated live validation for comments with mentions, blocked file-type upload errors, and allowed asset attachment.
 - Production-like screenshots do not show the dev overlay/issue badge.
 
@@ -43,7 +44,7 @@ Status: ready for Matthew human validation; PR setup still blocked by missing `o
 - `pnpm test`: passed.
 - `scripts/check-doc-links.sh`: passed.
 - `pnpm db:review:reset`: passed against local Docker PostgreSQL.
-- `pnpm exec playwright test tests/e2e/client-reporting.spec.ts --project=chromium`: passed, including client comment, mention text, blocked `.html` upload error, and `.txt` asset upload validation.
+- `pnpm exec playwright test tests/e2e/client-reporting.spec.ts --project=chromium`: passed, including client comment, mention text, upload constraint copy, blocked `.html` upload error, and `.txt` asset upload validation.
 - `pnpm exec playwright test tests/e2e/admin-workflow.spec.ts --project=chromium`: passed.
 - `pnpm build`: passed.
 - Post-fix dev screenshot capture: passed.

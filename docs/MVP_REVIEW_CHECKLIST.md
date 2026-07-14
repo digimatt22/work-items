@@ -66,6 +66,7 @@ The live local database path now supports a more complete admin review:
 - Admin can filter the work item board by search text, client, project, type, or status.
 - User can comment on a work item.
 - Mentions are persisted from comment text.
+- User can see allowed file types and max upload size before selecting an asset.
 - User can upload an allowed asset.
 - User sees an inline error for a blocked file type.
 - Client users do not see AI action details.

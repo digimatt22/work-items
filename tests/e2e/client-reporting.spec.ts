@@ -28,6 +28,7 @@ test.describe("client reporting", () => {
     await expect(page.getByText("Acceptance criteria")).toHaveCount(0);
     await expect(page.getByText("Business value")).toHaveCount(0);
     await expect(page.getByText("No assets attached.")).toBeVisible();
+    await expect(page.getByText(/Allowed: .*\.txt.*Max 100 MB/)).toBeVisible();
 
     await page.getByRole("button", { name: "+ Add comment" }).click();
     await page.getByPlaceholder("Add a comment. Mentions like @matt are captured.").fill(comment);

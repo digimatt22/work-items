@@ -9,6 +9,8 @@ type UploadAssetState = {
 
 type AssetDropzoneProps = {
   action: (state: UploadAssetState, formData: FormData) => Promise<UploadAssetState>;
+  allowedExtensions: readonly string[];
+  maxFileSizeBytes: number;
   workItemId: string;
 };
 
@@ -17,11 +19,28 @@ const initialUploadAssetState: UploadAssetState = {
   status: "idle"
 };
 
-export function AssetDropzone({ action, workItemId }: AssetDropzoneProps) {
+function extensionFor(filename: string): string {
+  return filename.split(".").pop()?.toLowerCase() ?? "";
+}
+
+function formatMegabytes(bytes: number): string {
+  return `${Math.floor(bytes / (1024 * 1024))} MB`;
+}
+
+export function AssetDropzone({
+  action,
+  allowedExtensions,
+  maxFileSizeBytes,
+  workItemId
+}: AssetDropzoneProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [state, formAction, pending] = useActionState(action, initialUploadAssetState);
   const [dragging, setDragging] = useState(false);
+  const [localState, setLocalState] = useState<UploadAssetState | null>(null);
+  const displayedState = localState ?? state;
+  const allowedExtensionSet = new Set(allowedExtensions);
+  const allowedExtensionSummary = allowedExtensions.map((extension) => `.${extension}`).join(", ");
 
   function submitFiles(files: FileList | null) {
     const file = files?.item(0);
@@ -29,6 +48,26 @@ export function AssetDropzone({ action, workItemId }: AssetDropzoneProps) {
     if (!file || !inputRef.current || !formRef.current) {
       return;
     }
+
+    if (file.size > maxFileSizeBytes) {
+      setLocalState({
+        message: `Files must be ${formatMegabytes(maxFileSizeBytes)} or smaller.`,
+        status: "error"
+      });
+      inputRef.current.value = "";
+      return;
+    }
+
+    if (!allowedExtensionSet.has(extensionFor(file.name))) {
+      setLocalState({
+        message: "Asset type or size is not allowed.",
+        status: "error"
+      });
+      inputRef.current.value = "";
+      return;
+    }
+
+    setLocalState(null);
 
     const transfer = new DataTransfer();
     transfer.items.add(file);
@@ -63,21 +102,25 @@ export function AssetDropzone({ action, workItemId }: AssetDropzoneProps) {
           className="sr-only"
           name="asset"
           onChange={(event) => submitFiles(event.currentTarget.files)}
+          accept={allowedExtensions.map((extension) => `.${extension}`).join(",")}
           ref={inputRef}
           required
           type="file"
         />
         {pending ? "Uploading file..." : "Drag and drop files here or click to select files"}
       </label>
-      {state.status !== "idle" ? (
+      <p className="mt-2 text-xs leading-5 text-soft">
+        Allowed: {allowedExtensionSummary}. Max {formatMegabytes(maxFileSizeBytes)}.
+      </p>
+      {displayedState.status !== "idle" ? (
         <p
           className={[
             "mt-2 text-xs font-semibold",
-            state.status === "error" ? "text-rose-600" : "text-emerald-700"
+            displayedState.status === "error" ? "text-rose-600" : "text-emerald-700"
           ].join(" ")}
-          role={state.status === "error" ? "alert" : "status"}
+          role={displayedState.status === "error" ? "alert" : "status"}
         >
-          {state.message}
+          {displayedState.message}
         </p>
       ) : null}
     </form>

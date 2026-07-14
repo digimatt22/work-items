@@ -5,6 +5,7 @@ import {
   prisma
 } from "@digicolony/db";
 import {
+  assetConstraints,
   listVisibleAssets,
   listVisibleComments,
   listVisibleWorkItems,
@@ -202,7 +203,12 @@ export default async function WorkItemDetailPage({
               )}
             </div>
 
-            <AssetDropzone action={uploadAssetAction} workItemId={item.id} />
+            <AssetDropzone
+              action={uploadAssetAction}
+              allowedExtensions={assetConstraints.allowedExtensions}
+              maxFileSizeBytes={assetConstraints.maxFileSizeBytes}
+              workItemId={item.id}
+            />
 
             <div className="mt-4 flex flex-wrap gap-2">
               {assets.map((asset) => (
