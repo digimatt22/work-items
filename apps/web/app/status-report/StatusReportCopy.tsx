@@ -16,7 +16,7 @@ export function StatusReportCopy({ reportText }: { reportText: string }) {
     <div className="grid gap-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm leading-6 text-muted">
-          Copy this text into an email draft. Sending and recipient management are manual for now.
+          Generated preview only. Copy it into an email draft to edit before sending; sending and recipients are manual for now.
         </p>
         <button className={buttonClass("primary")} onClick={copyReport} type="button">
           {copied ? "Copied" : "Copy report"}

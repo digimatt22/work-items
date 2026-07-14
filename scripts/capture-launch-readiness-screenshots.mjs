@@ -72,10 +72,14 @@ async function captureAdmin(browser) {
   await page.getByRole("heading", { name: "Work record" }).waitFor();
   await screenshot(page, "11-admin-work-item-detail-desktop.png");
 
+  await page.goto(`${baseURL}/status-report`);
+  await page.getByRole("heading", { name: "Status report" }).waitFor();
+  await screenshot(page, "12-admin-status-report-desktop.png");
+
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${baseURL}/work-items`);
   await page.getByRole("heading", { exact: true, name: "Board" }).waitFor();
-  await screenshot(page, "12-admin-board-mobile.png");
+  await screenshot(page, "13-admin-board-mobile.png");
 
   await context.close();
 }
@@ -87,28 +91,28 @@ async function captureClient(browser) {
   await login(page, "client@digicolony.local");
   await page.waitForURL("**/report");
   await page.getByRole("heading", { name: "Tell us what needs attention" }).waitFor();
-  await screenshot(page, "13-client-report-bug-desktop.png");
+  await screenshot(page, "14-client-report-bug-desktop.png");
 
   await page.getByRole("tab", { name: "Request a feature" }).click();
-  await screenshot(page, "14-client-report-feature-desktop.png");
+  await screenshot(page, "15-client-report-feature-desktop.png");
 
   await page.goto(`${baseURL}/work-items`);
   await page.getByRole("heading", { exact: true, name: "Board" }).waitFor();
-  await screenshot(page, "15-client-board-desktop.png");
+  await screenshot(page, "16-client-board-desktop.png");
 
   await page.goto(`${baseURL}/work-items?view=list`);
   await page.getByRole("heading", { exact: true, level: 1, name: "List" }).waitFor();
-  await screenshot(page, "16-client-list-desktop.png");
+  await screenshot(page, "17-client-list-desktop.png");
 
   await page.goto(`${baseURL}/clients`);
   await page.waitForURL("**/work-items");
   await page.getByRole("heading", { exact: true, name: "Board" }).waitFor();
-  await screenshot(page, "17-client-clients-redirect-desktop.png");
+  await screenshot(page, "18-client-clients-redirect-desktop.png");
 
   await page.goto(`${baseURL}/clients/seed-client-digicolony-demo`);
   await page.waitForURL("**/work-items");
   await page.getByRole("heading", { exact: true, name: "Board" }).waitFor();
-  await screenshot(page, "18-client-client-detail-redirect-desktop.png");
+  await screenshot(page, "19-client-client-detail-redirect-desktop.png");
 
   await page.goto(`${baseURL}/projects/seed-project-client-portal`);
   await page.waitForURL((url) =>
@@ -116,16 +120,16 @@ async function captureClient(browser) {
     url.searchParams.get("projectId") === "seed-project-client-portal"
   );
   await page.getByRole("heading", { exact: true, name: "Board" }).waitFor();
-  await screenshot(page, "19-client-project-redirect-desktop.png");
+  await screenshot(page, "20-client-project-redirect-desktop.png");
 
   await page.goto(`${baseURL}/work-items/seed-client-report-feature`);
   await page.getByRole("heading", { name: "Request details" }).waitFor();
-  await screenshot(page, "20-client-work-item-detail-desktop.png");
+  await screenshot(page, "21-client-work-item-detail-desktop.png");
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${baseURL}/report`);
   await page.getByRole("heading", { name: "Tell us what needs attention" }).waitFor();
-  await screenshot(page, "21-client-report-mobile.png");
+  await screenshot(page, "22-client-report-mobile.png");
 
   await context.close();
 }

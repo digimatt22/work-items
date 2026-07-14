@@ -39,11 +39,12 @@ Sign in as:
 | Search, client/project filter, type filter, and Clear control are understandable. |  |  |
 | Admin List view makes the Client -> Project -> Work item hierarchy clear. |  |  |
 | Client portfolio makes account workload and review load understandable. |  |  |
-| Admin metric labels such as Active, Review, Not done, and Open commitments match DigiColony language. |  |  |
+| Admin metric labels such as Open work, In review, Not done, and visible scope match DigiColony language. |  |  |
 | Client detail project cards expose project name, description, work count, edit, and archive affordances clearly. |  |  |
 | Client context edit and project context edit forms feel safe enough for MVP. |  |  |
 | Global Add modal is understandable for a first-time admin creating Work item, Client, Project, or Client user. |  |  |
 | Work item detail supports status movement, comments, upload constraints, assets, activity, and operational summary clearly. |  |  |
+| Weekly Status report produces email-ready copy with the right tone, planned/in-progress/done grouping, and enough context for a client update. |  |  |
 | Mobile admin board status navigation is discoverable enough for limited MVP use. |  |  |
 
 ## Client Validation
@@ -64,7 +65,7 @@ Sign in as:
 
 | Check | Pass | Notes |
 | --- | --- | --- |
-| Keyboard focus order is usable on Sign in, Report, Board filters, Add modal, and work item detail. |  |  |
+| Keyboard focus order is usable on Sign in, Report, Board filters, Add modal, Status report, and work item detail. |  |  |
 | Visible focus states are easy to see on buttons, links, filters, tabs, and file upload. |  |  |
 | Screen reader labels are understandable for Report type tabs, filters, upload, comments, and status controls. |  |  |
 | Oversize upload error behavior is visible and understandable. |  |  |

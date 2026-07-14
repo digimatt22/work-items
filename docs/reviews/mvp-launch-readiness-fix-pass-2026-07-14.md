@@ -35,6 +35,7 @@ Status: ready for Matthew human validation; PR setup still blocked by missing `o
 - The global Add modal now groups actions into Requests and Workspace, includes short action descriptions, exposes selected state with `aria-pressed`, and uses stable add-option test IDs.
 - The global Add modal now waits for create actions to finish before closing, then refreshes the persistent app shell so newly created clients/projects are available for the next add action.
 - Client Board/List summary and empty-state copy now consistently says "requests" instead of leaking internal "work item" language.
+- Admin weekly Status report is included in the production-like screenshot inventory and generates copy/paste email text for planned, in-progress, and recently completed work.
 - Production-like screenshots do not show the dev overlay/issue badge.
 
 ## Remaining Launch Checks
@@ -45,6 +46,7 @@ Status: ready for Matthew human validation; PR setup still blocked by missing `o
 - Keyboard navigation and screen reader behavior were not fully audited.
 - Admin metric wording is improved, but Matthew should still sign off that "Open work," "In review," and "Not done" match DigiColony launch language.
 - The global Add modal is clearer and the create workflow is covered by e2e, but it remains a high-power admin control and should be manually reviewed with a first-time admin.
+- Weekly status report copy and status grouping should be reviewed by Matthew before sending externally.
 - `origin` remote is still missing, so PR review cannot be prepared yet.
 
 ## Validation Log
@@ -64,6 +66,8 @@ Status: ready for Matthew human validation; PR setup still blocked by missing `o
 - Production-like work item detail screenshots were refreshed after upload constraint guidance was added.
 - Production-like screenshots were refreshed again after admin metric wording and global Add modal hierarchy changes.
 - Production-like client Board/List screenshots were refreshed after replacing the remaining client-facing "visible work" copy with "visible requests."
+- Production-like screenshot capture was refreshed after adding `12-admin-status-report-desktop.png`; the clean evidence set now contains 22 screenshots.
+- Production-like Status report screenshot was refreshed after clarifying that the report body is a generated preview and should be edited in email after copying.
 
 ## Fresh-Eyes Follow-Up
 
@@ -89,7 +93,8 @@ Matthew requested another audit-fix loop on 2026-07-14. This pass fixed or defen
 | Admin metrics used dense labels such as Active and Review. | Renamed summary metrics to "Open work" and "In review" while keeping "Not done" as supporting detail. | Fixed; Matthew domain-language signoff still requested. |
 | Global Add modal was powerful for a first-time admin. | Grouped actions into Requests and Workspace, added short action descriptions, improved selected state, and refreshed screenshot evidence. | Fixed enough for limited-MVP validation; still worth a first-use manual pass. |
 | Global Add creation flow could race with server actions or stale shell data. | Modal now closes only after create actions resolve and refreshes the app shell so newly created clients/projects are available immediately. Admin e2e now waits for successful close after create. | Fixed and covered by admin e2e. |
-| Client Board/List still leaked "visible work" language. | Changed client summary, list count, and empty-state copy to use "visible requests" and "requests." | Fixed and refreshed in screenshots `15-client-board-desktop.png` and `16-client-list-desktop.png`. |
+| Client Board/List still leaked "visible work" language. | Changed client summary, list count, and empty-state copy to use "visible requests" and "requests." | Fixed and refreshed in screenshots `16-client-board-desktop.png` and `17-client-list-desktop.png`. |
+| Admin weekly status report was added after the prior audit. | Captured and reviewed `12-admin-status-report-desktop.png`; added it to the screen/action inventory and manual tone review checklist. | Fixed for inventory coverage; Matthew should approve copy tone before external use. |
 | Destructive archive/delete controls needed safety review. | Existing controls already use confirmation prompts and danger styling. Archive remains visible in screenshots for Matthew's manual acceptance. | Defended for limited MVP; manual acceptance still listed. |
 | Mobile admin board discoverability needed real-device review. | Status jump controls remain visible in the refreshed mobile screenshot. Agent cannot prove touch ergonomics from screenshot alone. | Defended as manual validation. |
 | Sparse project context panels can feel unfinished when seeded context is light. | This is an acceptable limited-MVP content/data risk rather than a control hierarchy blocker. Seed/context richness should be reviewed manually before inviting pilot users. | Defended as content polish follow-up. |
@@ -103,6 +108,15 @@ A repeat fresh-eyes sub-agent reviewed the refreshed production screenshot set a
 - Client Board/List copy leaked one internal phrase; this was fixed after the review.
 - Mobile admin board remains dense and should be validated on real or emulated mobile.
 - Sparse context panels can feel unfinished when content is light; this is defended as seed/content polish rather than a launch blocker.
+
+## Status Report Fresh-Eyes Addendum
+
+A fresh-eyes sub-agent reviewed the newly added admin Status report screenshot and updated review docs. It found no new screenshot-visible blocker. Its only pushback was that the large report text area could make a first-time admin wonder whether edits there persist. The UI now clarifies that the report body is a generated preview and should be copied into email for edits before sending.
+
+Remaining Status report checks:
+
+- Matthew should approve report tone and status grouping before external use.
+- Keyboard and focus behavior for `Copy report` and the report text area should be included in the manual accessibility spot check.
 
 ## Verdict
 
