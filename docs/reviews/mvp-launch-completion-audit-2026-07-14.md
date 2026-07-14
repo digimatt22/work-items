@@ -48,4 +48,5 @@ The goal can be marked complete only after all of the following are true:
 - Current screen/action inventory: `docs/reviews/mvp-launch-current-screen-action-inventory-2026-07-14.md`
 - Human validation checklist: `docs/reviews/mvp-launch-human-validation-checklist-2026-07-14.md`
 - PR-ready notes: `docs/reviews/mvp-launch-pr-review-notes-2026-07-14.md`
+- Remote/PR runbook: `docs/reviews/mvp-launch-remote-pr-runbook-2026-07-14.md`
 - Production screenshot evidence: `docs/reviews/screenshots/mvp-launch-readiness-production-2026-07-14/`

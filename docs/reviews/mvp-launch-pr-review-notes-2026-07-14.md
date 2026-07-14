@@ -37,6 +37,7 @@ The project is being prepared for a limited MVP launch group. The review found t
 - Current screen/action inventory: `docs/reviews/mvp-launch-current-screen-action-inventory-2026-07-14.md`
 - Human validation checklist: `docs/reviews/mvp-launch-human-validation-checklist-2026-07-14.md`
 - Completion audit: `docs/reviews/mvp-launch-completion-audit-2026-07-14.md`
+- Remote/PR runbook: `docs/reviews/mvp-launch-remote-pr-runbook-2026-07-14.md`
 - Production-like screenshots: `docs/reviews/screenshots/mvp-launch-readiness-production-2026-07-14/`
 
 ## Validation

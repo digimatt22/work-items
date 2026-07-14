@@ -11,6 +11,7 @@ Status: ready for Matthew human validation; PR setup still blocked by missing `o
 - Human validation checklist: `docs/reviews/mvp-launch-human-validation-checklist-2026-07-14.md`
 - Completion audit: `docs/reviews/mvp-launch-completion-audit-2026-07-14.md`
 - PR review notes: `docs/reviews/mvp-launch-pr-review-notes-2026-07-14.md`
+- Remote/PR runbook: `docs/reviews/mvp-launch-remote-pr-runbook-2026-07-14.md`
 - Post-fix dev screenshots: `docs/reviews/screenshots/mvp-launch-readiness-fix-pass-2026-07-14/`
 - Production-like screenshots: `docs/reviews/screenshots/mvp-launch-readiness-production-2026-07-14/`
 - Production-like capture command: `SCREENSHOT_DIR=docs/reviews/screenshots/mvp-launch-readiness-production-2026-07-14 node scripts/capture-launch-readiness-screenshots.mjs`
