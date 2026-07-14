@@ -17,7 +17,7 @@ The local work required to prepare the project for launch review is substantiall
 
 | Requirement | Current evidence | Status | Notes |
 | --- | --- | --- | --- |
-| Initialize folder as a Git repository. | `git log --oneline --decorate -6` shows local commits on `main`, latest `72c7195`. | Proven complete locally | Remote is still missing, so shared PR workflow is incomplete. |
+| Initialize folder as a Git repository. | `git log --oneline --decorate -6` shows local commits on `main`, latest `9818e19`. | Proven complete locally | Remote is still missing, so shared PR workflow is incomplete. |
 | Keep work synchronized with configured remote. | `scripts/check-current-state.sh` returns `No origin remote configured`. | Incomplete | Requires an external remote URL or repository creation decision. |
 | Perform full UI/UX review across admin experience. | `docs/reviews/mvp-launch-readiness-2026-07-14.md`, `docs/reviews/mvp-launch-readiness-fix-pass-2026-07-14.md`, production screenshots, current screen/action inventory. | Proven for local review package | Includes the weekly Status report screen added after the original audit. Matthew still needs human acceptance. |
 | Perform full UI/UX review across client experience. | `docs/reviews/mvp-launch-readiness-2026-07-14.md`, `docs/reviews/mvp-launch-current-screen-action-inventory-2026-07-14.md`, client screenshots. | Proven for local review package | Human validation remains. |
@@ -28,7 +28,7 @@ The local work required to prepare the project for launch review is substantiall
 | Review as both admin and client user. | Admin/client screenshot sets, e2e specs, and screen/action inventory. | Proven complete for automated/agent review | Matthew should still run both roles manually. |
 | Prepare for limited MVP launch. | Fix-pass docs, PR notes, human validation checklist, clean review reset, e2e coverage, status-report coverage, production screenshot evidence. | Partially complete | Local package is ready for human validation, but not final launch-ready until signoff and remote/PR path are complete. |
 | Keep docs and work state current. | Active launch execution plan, completed weekly Status report plan, review docs, checklist, PR notes, completion audit. | Proven current as of this audit | Launch plan remains active because launch signoff is not done. |
-| Validate changes to the extent the repo allows. | `pnpm lint`, `pnpm test`, focused e2e, admin e2e, status-report e2e, `pnpm build`, `scripts/check-doc-links.sh`, production screenshot capture documented. | Proven complete locally | Current-state gate remains blocked by missing `origin`. |
+| Validate changes to the extent the repo allows. | `pnpm lint`, `pnpm test`, focused e2e, admin e2e, status-report e2e, `pnpm build`, `scripts/check-doc-links.sh`, `pnpm audit:launch-evidence`, production screenshot capture documented. | Proven complete locally | Current-state gate remains blocked by missing `origin`. |
 
 ## Remaining Required Evidence
 
