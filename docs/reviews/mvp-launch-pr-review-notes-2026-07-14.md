@@ -15,6 +15,7 @@ Use this file as the pull request body once `origin` is configured and the branc
 - Ran fresh-eyes hierarchy/control reviews and addressed client-facing terminology risks.
 - Tightened client scope so client users see Report, request Board, and request detail instead of admin portfolio/workspace routes.
 - Improved client request detail language, status explanations, upload guidance, upload error handling, and collaboration coverage.
+- Added an admin weekly Status report for copy/paste email recaps of planned, in-progress, and recently completed work.
 - Added a human go/no-go validation checklist for Matthew.
 
 ## Why
@@ -29,6 +30,12 @@ The project is being prepared for a limited MVP launch group. The review found t
 - `84c9c85` Add MVP launch human validation checklist
 - `914b10d` Prepare MVP launch PR review notes
 - `5767d11` Refresh launch screenshots for upload guidance
+- `6e49314` Add MVP launch completion audit
+- `35f5dfe` Add MVP launch remote PR runbook
+- `9e66b4c` Refine MVP launch UI audit findings
+- `998d3d1` Add admin weekly status report
+- `9d3ec53` Refresh MVP launch audit for status report
+- `72c7195` Complete weekly status report plan
 
 ## Evidence
 
@@ -47,6 +54,7 @@ The project is being prepared for a limited MVP launch group. The review found t
 - [x] `pnpm db:review:reset`
 - [x] `pnpm exec playwright test tests/e2e/client-reporting.spec.ts --project=chromium`
 - [x] `pnpm exec playwright test tests/e2e/admin-workflow.spec.ts --project=chromium`
+- [x] `PLAYWRIGHT_BASE_URL=http://localhost:3000 pnpm exec playwright test tests/e2e/status-report.spec.ts --project=chromium --reporter=line`
 - [x] `pnpm build`
 - [x] `scripts/check-doc-links.sh`
 - [x] Production-like screenshot capture with `scripts/capture-launch-readiness-screenshots.mjs`
@@ -73,6 +81,7 @@ The project is being prepared for a limited MVP launch group. The review found t
 - Oversize upload behavior still needs manual validation.
 - Keyboard navigation and screen reader behavior need Matthew's/manual accessibility spot check.
 - Admin metric wording such as Active, Review, Not done, and Open commitments needs domain-language signoff.
+- Weekly Status report tone and planned/in-progress/done grouping need Matthew's signoff before external use.
 - The global Add modal should be manually reviewed with a first-time admin lens.
 - Mobile admin board discoverability should be checked on a real or emulated mobile viewport.
 
@@ -87,7 +96,7 @@ Prepare DigiColony client operations MVP for launch review
 - Initialized the local repo baseline and launch-readiness evidence package.
 - Reviewed admin and client UI/UX with production-like screenshots and fresh-eyes feedback.
 - Tightened client-facing route scope, terminology, status explanations, and upload feedback.
-- Added current screen/action inventory and human go/no-go checklist.
+- Added current screen/action inventory, admin weekly Status report, and human go/no-go checklist.
 
 ## Why
 - Prepare the DigiColony client operations system for a limited MVP launch group with evidence-backed review, role-safe client UX, and a clear human validation gate.
@@ -98,6 +107,7 @@ Prepare DigiColony client operations MVP for launch review
   - `pnpm test`
   - `pnpm exec playwright test tests/e2e/client-reporting.spec.ts --project=chromium`
   - `pnpm exec playwright test tests/e2e/admin-workflow.spec.ts --project=chromium`
+  - `PLAYWRIGHT_BASE_URL=http://localhost:3000 pnpm exec playwright test tests/e2e/status-report.spec.ts --project=chromium --reporter=line`
   - `pnpm build`
   - `scripts/check-doc-links.sh`
 - [x] Manual checks run:
@@ -125,4 +135,5 @@ Prepare DigiColony client operations MVP for launch review
 - Complete manual accessibility spot check.
 - Validate oversize upload behavior.
 - Review admin metric language and global Add first-use clarity.
+- Review weekly Status report tone and grouping before external email use.
 ```

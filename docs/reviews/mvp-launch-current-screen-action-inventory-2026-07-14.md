@@ -69,4 +69,4 @@ The current hierarchy and controls are coherent enough for a limited MVP validat
 - Manually verify keyboard navigation, focus order, and screen reader labels on forms, dropdown filters, status controls, and modal interactions.
 - Manually verify oversize upload error behavior.
 - Review mobile board and mobile report form on a real device or browser device emulation.
-- Configure `origin`, create an initial commit, and prepare PR review once the remote exists.
+- Configure `origin`, push the local commit stack, and prepare PR review once the remote exists.

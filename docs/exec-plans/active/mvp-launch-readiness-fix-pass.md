@@ -18,7 +18,7 @@
 - Blocked: PR workflow is unavailable until an `origin` remote is configured.
 - Needs human validation: Matthew reviews the cleaned production-like capture and confirms limited-launch acceptance.
 - Ready for review: code and docs are ready for Matthew's limited-MVP validation pass.
-- Completed: Git initialized locally; initial local baseline commit created; launch-readiness screenshots captured; main and fresh-eyes reviews documented; current screen/action inventory added; human validation checklist added; completion audit added; PR review notes prepared; remote/PR setup runbook added; second fresh-eyes review completed; clean review reset command added; client route policy implemented; client-visible work filtering implemented; project-card clarity fixed; client copy polished; client-facing detail/status terminology fixed; mobile board status navigation added; client comment/upload e2e coverage added; upload constraints shown inline; blocked file-type upload errors made client-visible and automated; production-like screenshot capture completed.
+- Completed: Git initialized locally; initial local baseline commit created; launch-readiness screenshots captured; main and fresh-eyes reviews documented; current screen/action inventory added; human validation checklist added; completion audit added; PR review notes prepared; remote/PR setup runbook added; second fresh-eyes review completed; clean review reset command added; client route policy implemented; client-visible work filtering implemented; project-card clarity fixed; client copy polished; client-facing detail/status terminology fixed; mobile board status navigation added; client comment/upload e2e coverage added; upload constraints shown inline; blocked file-type upload errors made client-visible and automated; admin weekly Status report added and reviewed; production-like screenshot capture completed with 22 screenshots.
 
 ## Priority Fixes
 1. Add a deterministic review reset command that removes E2E-created records and reseeds the intended launch-review story.
@@ -38,10 +38,11 @@
 - `pnpm exec playwright test tests/e2e/client-reporting.spec.ts --project=chromium` passed on 2026-07-14.
 - Client e2e coverage now validates client comments with mentions, upload constraint copy, blocked file-type upload error display, and allowed asset upload on a visible request.
 - `pnpm exec playwright test tests/e2e/admin-workflow.spec.ts --project=chromium` passed on 2026-07-14.
+- `PLAYWRIGHT_BASE_URL=http://localhost:3000 pnpm exec playwright test tests/e2e/status-report.spec.ts --project=chromium --reporter=line` passed on 2026-07-14.
 - `pnpm build` passed on 2026-07-14.
 - Post-fix dev screenshot capture passed: `docs/reviews/screenshots/mvp-launch-readiness-fix-pass-2026-07-14/`.
 - Production-like screenshot capture passed: `docs/reviews/screenshots/mvp-launch-readiness-production-2026-07-14/`.
-- Manual screenshot inspection confirmed clean data counts, visible client-detail project cards, client route redirects, client-only request board, client-facing request detail wording, client status explanations, mobile status navigation, and no dev overlay in production-like screenshots.
+- Manual screenshot inspection confirmed clean data counts, visible client-detail project cards, client route redirects, client-only request board, client-facing request detail wording, client status explanations, admin weekly Status report copy/paste clarity, mobile status navigation, and no dev overlay in production-like screenshots.
 
 ## Human Validation
 - Owner: Matthew
