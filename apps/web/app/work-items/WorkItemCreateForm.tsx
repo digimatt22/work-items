@@ -42,7 +42,6 @@ export function WorkItemCreateForm({
       action={action}
       className="rounded-3xl border border-line bg-surface p-5 shadow-card"
       data-testid={testId}
-      onSubmit={onCancel ? () => onCancel() : undefined}
     >
       <h2 className="text-lg font-bold tracking-tight text-ink">{title}</h2>
       <p className="mt-1 text-sm leading-6 text-muted">

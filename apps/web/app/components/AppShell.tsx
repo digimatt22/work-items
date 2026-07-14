@@ -2,7 +2,7 @@
 
 import type { PipelineStatusRecord, WorkItemProjectRef, WorkspaceClientRecord } from "@digicolony/shared";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { WorkItemCreateForm } from "../work-items/WorkItemCreateForm";
 import { buttonClass, compactFieldClass, fieldClass } from "./ui";
@@ -32,6 +32,34 @@ const clientNavItems = [
   { href: "/work-items", label: "Board", mark: "B", view: "board" }
 ];
 
+const addTypeContent = {
+  feature: {
+    label: "Feature request",
+    group: "Requests",
+    description: "Track a client-visible improvement or new capability."
+  },
+  bug: {
+    label: "Bug report",
+    group: "Requests",
+    description: "Track a defect, blocker, or broken client experience."
+  },
+  client: {
+    label: "Client",
+    group: "Workspace",
+    description: "Create the account that projects, users, and work items roll up to."
+  },
+  project: {
+    label: "Project",
+    group: "Workspace",
+    description: "Create a client project before organizing related work items."
+  },
+  user: {
+    label: "Client user",
+    group: "Workspace",
+    description: "Invite a client contact who can report and review visible work."
+  }
+} as const;
+
 function isActive(pathname: string, view: string, itemView: string): boolean {
   if (itemView === "report") {
     return pathname.startsWith("/report");
@@ -59,6 +87,7 @@ export function AppShell({
   statuses = []
 }: AppShellProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const view = searchParams.get("view") ?? "board";
   const [addOpen, setAddOpen] = useState(false);
@@ -66,6 +95,26 @@ export function AppShell({
   const defaultStatus = statuses.find((status) => status.isDefault) ?? statuses[0];
   const admin = role === "ADMIN";
   const visibleNavItems = admin ? navItems : clientNavItems;
+  const handleCreateClient = async (formData: FormData) => {
+    await createClientAction(formData);
+    setAddOpen(false);
+    router.refresh();
+  };
+  const handleCreateClientUser = async (formData: FormData) => {
+    await createClientUserAction(formData);
+    setAddOpen(false);
+    router.refresh();
+  };
+  const handleCreateProject = async (formData: FormData) => {
+    await createProjectAction(formData);
+    setAddOpen(false);
+    router.refresh();
+  };
+  const handleCreateWorkItem = async (formData: FormData) => {
+    await createWorkItemAction(formData);
+    setAddOpen(false);
+    router.refresh();
+  };
 
   return (
     <div className="min-h-screen bg-app text-ink lg:grid lg:grid-cols-[280px_1fr]">
@@ -157,35 +206,47 @@ export function AppShell({
         <div className="fixed inset-0 z-50 bg-ink/40 p-4 backdrop-blur-sm" role="presentation">
           <div className="mx-auto mt-10 grid max-h-[calc(100vh-5rem)] w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-card md:grid-cols-[220px_1fr]">
             <div className="border-b border-line bg-[#f6f7fb] p-3 md:border-b-0 md:border-r">
-              {[
-                ["feature", "Feature"],
-                ["bug", "Bug"],
-                ["client", "Client"],
-                ["project", "Project"],
-                ["user", "Client user"]
-              ].map(([value, label]) => (
-                <button
-                  key={value}
-                  className={[
-                    "flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm font-bold",
-                    addType === value ? "bg-amber-200 text-ink" : "text-muted hover:bg-white"
-                  ].join(" ")}
-                  data-testid={`global-add-${value}`}
-                  onClick={() => setAddType(value as typeof addType)}
-                  type="button"
-                >
-                  <span className="size-2 rounded-full bg-emerald-600" />
-                  {label}
-                </button>
-              ))}
+              {(["feature", "bug", "client", "project", "user"] as const).map((value, index, values) => {
+                const content = addTypeContent[value];
+                const previousValue = values[index - 1];
+                const previousContent = previousValue ? addTypeContent[previousValue] : null;
+                const showGroup = !previousContent || previousContent.group !== content.group;
+
+                return (
+                  <div key={value}>
+                    {showGroup ? (
+                      <p className={index === 0 ? "px-3 pb-2 text-xs font-bold uppercase tracking-[0.14em] text-soft" : "px-3 pb-2 pt-4 text-xs font-bold uppercase tracking-[0.14em] text-soft"}>
+                        {content.group}
+                      </p>
+                    ) : null}
+                    <button
+                      aria-pressed={addType === value}
+                      className={[
+                        "flex w-full items-start gap-3 rounded-md px-3 py-2 text-left transition",
+                        addType === value ? "bg-amber-200 text-ink" : "text-muted hover:bg-white"
+                      ].join(" ")}
+                      data-testid={`global-add-${value}`}
+                      onClick={() => setAddType(value)}
+                      type="button"
+                    >
+                      <span className="mt-1 size-2 rounded-full bg-emerald-600" />
+                      <span className="min-w-0">
+                        <span className="block text-sm font-bold">{content.label}</span>
+                        <span className="mt-0.5 block text-xs leading-5 text-muted">{content.description}</span>
+                      </span>
+                    </button>
+                  </div>
+                );
+              })}
             </div>
             <div className="max-h-[calc(100vh-5rem)] overflow-auto p-5">
               <div className="mb-4 flex items-start justify-between gap-4">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.16em] text-indigo-600">Add to operations</p>
                   <h2 className="mt-1 text-2xl font-bold text-ink">
-                    {addType === "feature" ? "Feature" : addType === "bug" ? "Bug" : addType === "client" ? "Client" : addType === "project" ? "Project" : "Client user"}
+                    {addTypeContent[addType].label}
                   </h2>
+                  <p className="mt-1 max-w-xl text-sm leading-6 text-muted">{addTypeContent[addType].description}</p>
                 </div>
                 <button className={buttonClass("secondary")} onClick={() => setAddOpen(false)} type="button">
                   Close
@@ -194,7 +255,7 @@ export function AppShell({
 
               {addType === "feature" || addType === "bug" ? (
                 <WorkItemCreateForm
-                  action={createWorkItemAction}
+                  action={handleCreateWorkItem}
                   defaultType={addType === "feature" ? "FEATURE" : "BUG"}
                   lockedPipelineStatusId={defaultStatus?.id}
                   lockedType={addType === "feature" ? "FEATURE" : "BUG"}
@@ -206,7 +267,7 @@ export function AppShell({
               ) : null}
 
               {addType === "client" ? (
-                <form action={createClientAction} className="rounded-2xl border border-line bg-surface p-5" data-testid="global-create-client-form" onSubmit={() => setAddOpen(false)}>
+                <form action={handleCreateClient} className="rounded-2xl border border-line bg-surface p-5" data-testid="global-create-client-form">
                   <input className={compactFieldClass} name="name" placeholder="Client name" required />
                   <textarea className={`mt-3 ${fieldClass}`} name="description" placeholder="Description" rows={4} />
                   <button className={`mt-4 ${buttonClass("primary")}`} type="submit">Create client</button>
@@ -214,7 +275,7 @@ export function AppShell({
               ) : null}
 
               {addType === "project" ? (
-                <form action={createProjectAction} className="rounded-2xl border border-line bg-surface p-5" data-testid="global-create-project-form" onSubmit={() => setAddOpen(false)}>
+                <form action={handleCreateProject} className="rounded-2xl border border-line bg-surface p-5" data-testid="global-create-project-form">
                   <select className={compactFieldClass} name="clientId" required>
                     <option value="">Select client</option>
                     {clients.map((client) => (
@@ -228,7 +289,7 @@ export function AppShell({
               ) : null}
 
               {addType === "user" ? (
-                <form action={createClientUserAction} className="rounded-2xl border border-line bg-surface p-5" data-testid="global-create-client-user-form" onSubmit={() => setAddOpen(false)}>
+                <form action={handleCreateClientUser} className="rounded-2xl border border-line bg-surface p-5" data-testid="global-create-client-user-form">
                   <select className={compactFieldClass} name="clientId" required>
                     <option value="">Select client</option>
                     {clients.map((client) => (

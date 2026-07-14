@@ -31,6 +31,10 @@ Status: ready for Matthew human validation; PR setup still blocked by missing `o
 - Mobile board now includes a status jump bar above columns.
 - Work item upload controls now show allowed extensions and the 100 MB max file size before selection.
 - Client work item detail now has automated live validation for comments with mentions, blocked file-type upload errors, and allowed asset attachment.
+- Admin metric labels now use clearer launch language: "Open work" and "In review" instead of the denser "Active" and "Review" summary labels.
+- The global Add modal now groups actions into Requests and Workspace, includes short action descriptions, exposes selected state with `aria-pressed`, and uses stable add-option test IDs.
+- The global Add modal now waits for create actions to finish before closing, then refreshes the persistent app shell so newly created clients/projects are available for the next add action.
+- Client Board/List summary and empty-state copy now consistently says "requests" instead of leaking internal "work item" language.
 - Production-like screenshots do not show the dev overlay/issue badge.
 
 ## Remaining Launch Checks
@@ -39,8 +43,8 @@ Status: ready for Matthew human validation; PR setup still blocked by missing `o
 - Matthew should record final go/no-go notes in `docs/reviews/mvp-launch-human-validation-checklist-2026-07-14.md`.
 - Oversize upload error behavior still needs manual validation.
 - Keyboard navigation and screen reader behavior were not fully audited.
-- Admin metric labels such as Active, Review, and Not done still need Matthew's domain-language signoff.
-- The global Add modal remains powerful and should be manually reviewed with a first-time admin.
+- Admin metric wording is improved, but Matthew should still sign off that "Open work," "In review," and "Not done" match DigiColony launch language.
+- The global Add modal is clearer and the create workflow is covered by e2e, but it remains a high-power admin control and should be manually reviewed with a first-time admin.
 - `origin` remote is still missing, so PR review cannot be prepared yet.
 
 ## Validation Log
@@ -51,11 +55,15 @@ Status: ready for Matthew human validation; PR setup still blocked by missing `o
 - `pnpm db:review:reset`: passed against local Docker PostgreSQL.
 - `pnpm exec playwright test tests/e2e/client-reporting.spec.ts --project=chromium`: passed, including client comment, mention text, upload constraint copy, blocked `.html` upload error, and `.txt` asset upload validation.
 - `pnpm exec playwright test tests/e2e/admin-workflow.spec.ts --project=chromium`: passed.
+- `PLAYWRIGHT_BASE_URL=http://localhost:3000 pnpm exec playwright test tests/e2e/admin-workflow.spec.ts --project=chromium --reporter=line`: passed against the rebuilt production server after modal submit/refresh fixes.
+- `PLAYWRIGHT_BASE_URL=http://localhost:3000 pnpm exec playwright test tests/e2e/client-reporting.spec.ts --project=chromium --reporter=line`: passed against the rebuilt production server.
 - `pnpm build`: passed.
 - Post-fix dev screenshot capture: passed.
 - Production-like screenshot capture: passed after starting the built app with `.env` loaded through the new root `pnpm start` behavior.
 - Production-like screenshot capture was refreshed after client-facing terminology changes.
 - Production-like work item detail screenshots were refreshed after upload constraint guidance was added.
+- Production-like screenshots were refreshed again after admin metric wording and global Add modal hierarchy changes.
+- Production-like client Board/List screenshots were refreshed after replacing the remaining client-facing "visible work" copy with "visible requests."
 
 ## Fresh-Eyes Follow-Up
 
@@ -68,9 +76,33 @@ Follow-up fixes completed from that review:
 
 Remaining fresh-eyes risks that still need Matthew signoff:
 
-- Admin metric wording may still be dense for a new admin.
-- The global Add modal may still need a guided first-use pass.
+- Admin metric wording is now clearer, but Matthew should confirm it matches DigiColony's launch vocabulary.
+- The global Add modal is now grouped and more explanatory, but first-time admin review remains appropriate because it can create multiple entity types.
 - Mobile admin board discoverability should be manually checked on a real or emulated mobile viewport.
+
+## Repeat Audit Loop Update
+
+Matthew requested another audit-fix loop on 2026-07-14. This pass fixed or defended the remaining agent pushback as follows:
+
+| Pushback | Resolution | Status |
+| --- | --- | --- |
+| Admin metrics used dense labels such as Active and Review. | Renamed summary metrics to "Open work" and "In review" while keeping "Not done" as supporting detail. | Fixed; Matthew domain-language signoff still requested. |
+| Global Add modal was powerful for a first-time admin. | Grouped actions into Requests and Workspace, added short action descriptions, improved selected state, and refreshed screenshot evidence. | Fixed enough for limited-MVP validation; still worth a first-use manual pass. |
+| Global Add creation flow could race with server actions or stale shell data. | Modal now closes only after create actions resolve and refreshes the app shell so newly created clients/projects are available immediately. Admin e2e now waits for successful close after create. | Fixed and covered by admin e2e. |
+| Client Board/List still leaked "visible work" language. | Changed client summary, list count, and empty-state copy to use "visible requests" and "requests." | Fixed and refreshed in screenshots `15-client-board-desktop.png` and `16-client-list-desktop.png`. |
+| Destructive archive/delete controls needed safety review. | Existing controls already use confirmation prompts and danger styling. Archive remains visible in screenshots for Matthew's manual acceptance. | Defended for limited MVP; manual acceptance still listed. |
+| Mobile admin board discoverability needed real-device review. | Status jump controls remain visible in the refreshed mobile screenshot. Agent cannot prove touch ergonomics from screenshot alone. | Defended as manual validation. |
+| Sparse project context panels can feel unfinished when seeded context is light. | This is an acceptable limited-MVP content/data risk rather than a control hierarchy blocker. Seed/context richness should be reviewed manually before inviting pilot users. | Defended as content polish follow-up. |
+
+## Repeat Fresh-Eyes Result
+
+A repeat fresh-eyes sub-agent reviewed the refreshed production screenshot set and current review docs after the second fix pass. It found no new screenshot-visible blockers. Its remaining pushback was:
+
+- First-time admin Add modal review remains the highest admin comprehension risk, but is defensible for limited MVP after grouping and e2e coverage.
+- Admin metric/status vocabulary still needs Matthew's domain-language signoff.
+- Client Board/List copy leaked one internal phrase; this was fixed after the review.
+- Mobile admin board remains dense and should be validated on real or emulated mobile.
+- Sparse context panels can feel unfinished when content is light; this is defended as seed/content polish rather than a launch blocker.
 
 ## Verdict
 

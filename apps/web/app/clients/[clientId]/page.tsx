@@ -110,7 +110,7 @@ export default async function ClientDetailPage({
       >
         <div className="grid w-full grid-cols-3 gap-2 sm:gap-3 xl:min-w-[390px]">
           <MetricCard detail="Visible projects" label="Projects" value={clientProjects.length} />
-          <MetricCard detail="Not done" label="Active" tone="dark" value={activeWorkItems.length} />
+          <MetricCard detail="Not done" label="Open work" tone="dark" value={activeWorkItems.length} />
           <MetricCard detail="Client access" label="Users" value={users.length} />
         </div>
       </PageHeader>

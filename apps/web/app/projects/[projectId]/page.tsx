@@ -88,7 +88,7 @@ export default async function ProjectWorkspacePage({
       >
         <div className="grid w-full grid-cols-3 gap-2 sm:gap-3 xl:min-w-[390px]">
           <MetricCard detail={project.clientName ?? project.clientId} label="Total" value={projectItems.length} />
-          <MetricCard detail="Not done" label="Active" tone="dark" value={activeCount} />
+          <MetricCard detail="Not done" label="Open work" tone="dark" value={activeCount} />
           <MetricCard detail="Closed" label="Done" value={doneCount} />
         </div>
       </PageHeader>

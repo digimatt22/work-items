@@ -22,17 +22,18 @@ test.describe("admin workflow", () => {
     await page.goto("/clients");
 
     await page.getByRole("button", { name: "+ Add" }).click();
-    await page.getByRole("button", { exact: true, name: "Client" }).click();
+    await page.getByTestId("global-add-client").click();
     const createClientForm = page.getByTestId("global-create-client-form");
     await createClientForm.getByPlaceholder("Client name").fill(clientName);
     await createClientForm
       .getByPlaceholder("Description")
       .fill("Created by the admin workflow e2e test.");
     await createClientForm.getByRole("button", { name: "Create client" }).click();
+    await expect(createClientForm).toBeHidden();
     await page.getByRole("link", { name: clientName }).waitFor();
 
     await page.getByRole("button", { name: "+ Add" }).click();
-    await page.getByRole("button", { exact: true, name: "Project" }).click();
+    await page.getByTestId("global-add-project").click();
     const createProjectForm = page.getByTestId("global-create-project-form");
     await createProjectForm.locator("select[name=clientId]").selectOption({
       label: clientName
@@ -42,6 +43,7 @@ test.describe("admin workflow", () => {
       .getByPlaceholder("Description")
       .fill("Project created by the admin workflow e2e test.");
     await createProjectForm.getByRole("button", { name: "Create project" }).click();
+    await expect(createProjectForm).toBeHidden();
     await page.goto("/work-items?view=list");
     await page.getByRole("link", { name: projectName }).click();
     await page.waitForURL("**/projects/**");
@@ -70,6 +72,7 @@ test.describe("admin workflow", () => {
       .getByPlaceholder("Actual behavior")
       .fill("The item can be moved by an admin.");
     await projectWorkItemForm.getByRole("button", { name: "Create" }).click();
+    await expect(projectWorkItemForm).toBeHidden();
     await page.goto(projectUrl);
 
     const createdLink = page.getByRole("link", { name: workItemTitle }).first();

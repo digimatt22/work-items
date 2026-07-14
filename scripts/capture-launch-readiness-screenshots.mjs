@@ -40,7 +40,7 @@ async function captureAdmin(browser) {
   await screenshot(page, "03-admin-board-hierarchy-filter-open.png");
 
   await page.getByRole("button", { name: "+ Add" }).click();
-  await page.getByRole("heading", { exact: true, name: "Feature" }).waitFor();
+  await page.getByRole("heading", { exact: true, name: "Feature request" }).waitFor();
   await screenshot(page, "04-admin-global-add-feature.png");
   await page.getByRole("button", { name: "Close" }).click();
 

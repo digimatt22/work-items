@@ -177,7 +177,11 @@ async function WorkItemsPageContent({
           view={view}
         />
         <p className="mt-2 text-xs text-soft">
-          {selectedFilterCount > 0 ? `${selectedFilterCount} filters active` : "Showing all visible work"}
+          {selectedFilterCount > 0
+            ? `${selectedFilterCount} filters active`
+            : admin
+              ? "Showing all visible work"
+              : "Showing all visible requests"}
         </p>
         {!admin && view === "board" ? (
           <p className="mt-1 text-xs leading-5 text-muted">
@@ -191,8 +195,8 @@ async function WorkItemsPageContent({
           <WorkItemBoard
             admin={admin}
             changeStatusAction={changeWorkItemStatusAction}
-            emptyDescription="Your current filters excluded every visible work item. Clear filters or broaden client/project selections."
-            emptyTitle="No work items match"
+            emptyDescription={admin ? "Your current filters excluded every visible work item. Clear filters or broaden client/project selections." : "Your current filters excluded every visible request. Clear filters or broaden project selections."}
+            emptyTitle={admin ? "No work items match" : "No requests match"}
             items={filteredItems}
             showClientName={admin}
             statuses={statuses}
@@ -202,7 +206,9 @@ async function WorkItemsPageContent({
             <div className="sticky top-0 z-10 border-b border-line bg-surface px-4 py-3">
               <h2 className="text-sm font-bold text-ink">List</h2>
               <p className="text-xs text-muted">
-                {filteredItems.length} visible items grouped by client and project
+                {admin
+                  ? `${filteredItems.length} visible items grouped by client and project`
+                  : `${filteredItems.length} visible requests grouped by project`}
               </p>
             </div>
             <div className="divide-y divide-line">

@@ -77,8 +77,8 @@ export default async function ClientsPage() {
         <div className="grid w-full grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3 xl:min-w-[520px]">
           <MetricCard detail="Active accounts" label="Clients" value={clients.length} />
           <MetricCard detail="Visible scope" label="Projects" value={projects.length} />
-          <MetricCard detail="Open commitments" label="Active" tone="dark" value={activeWorkItems.length} />
-          <MetricCard detail="Needs review" label="Review" value={reviewWorkItems.length} />
+          <MetricCard detail="Not done" label="Open work" tone="dark" value={activeWorkItems.length} />
+          <MetricCard detail="Ready to check" label="In review" value={reviewWorkItems.length} />
         </div>
       </PageHeader>
 
