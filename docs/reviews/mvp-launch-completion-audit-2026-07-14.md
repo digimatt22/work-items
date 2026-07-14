@@ -17,7 +17,7 @@ The local work required to prepare the project for launch review is substantiall
 
 | Requirement | Current evidence | Status | Notes |
 | --- | --- | --- | --- |
-| Initialize folder as a Git repository. | `git log --oneline --decorate -6` shows local commits on `main`, latest `9818e19`. | Proven complete locally | Remote is still missing, so shared PR workflow is incomplete. |
+| Initialize folder as a Git repository. | `git log --oneline --decorate -6` shows local commits on `main`, latest `e551e8f`. | Proven complete locally | Remote is still missing, so shared PR workflow is incomplete. |
 | Keep work synchronized with configured remote. | `scripts/check-current-state.sh` returns `No origin remote configured`. | Incomplete | Requires an external remote URL or repository creation decision. |
 | Perform full UI/UX review across admin experience. | `docs/reviews/mvp-launch-readiness-2026-07-14.md`, `docs/reviews/mvp-launch-readiness-fix-pass-2026-07-14.md`, production screenshots, current screen/action inventory. | Proven for local review package | Includes the weekly Status report screen added after the original audit. Matthew still needs human acceptance. |
 | Perform full UI/UX review across client experience. | `docs/reviews/mvp-launch-readiness-2026-07-14.md`, `docs/reviews/mvp-launch-current-screen-action-inventory-2026-07-14.md`, client screenshots. | Proven for local review package | Human validation remains. |

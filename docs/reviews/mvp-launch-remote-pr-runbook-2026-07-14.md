@@ -10,7 +10,7 @@ This runbook turns the current local launch-readiness stack into a shared PR rev
 
 - Branch: `main`
 - Worktree expectation before starting: clean
-- Latest local commit at time of writing: `9c7b888 Refresh launch readiness evidence`
+- Latest local commit at time of writing: `e551e8f Update launch completion audit evidence`
 - Current blocker: no `origin` remote is configured
 
 Verify:

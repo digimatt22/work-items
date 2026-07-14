@@ -36,6 +36,9 @@ The project is being prepared for a limited MVP launch group. The review found t
 - `998d3d1` Add admin weekly status report
 - `9d3ec53` Refresh MVP launch audit for status report
 - `72c7195` Complete weekly status report plan
+- `9c7b888` Refresh launch readiness evidence
+- `9818e19` Add launch audit evidence check
+- `e551e8f` Update launch completion audit evidence
 
 ## Evidence
 
