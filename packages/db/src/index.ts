@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 export * from "./collaboration-repository";
+export * from "./agent-delivery-repository";
 export * from "./launch-repository";
 export * from "./local-storage-provider";
 export * from "./work-item-repository";
@@ -18,7 +19,7 @@ if (process.env.NODE_ENV !== "production") {
 
 export const dbPackage = {
   name: "@digicolony/db",
-  prismaSchema: "packages/db/prisma/schema.prisma"
+  prismaSchema: "packages/db/prisma/schema.prisma",
 } as const;
 
 export type { PrismaClient };

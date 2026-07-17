@@ -34,6 +34,12 @@ Important variables:
 - `UPLOADS_DIR`: local filesystem storage root.
 - `MCP_ISSUER`: expected MCP token issuer.
 - `MCP_AUDIENCE`: expected MCP token audience.
+- `DIGI_PORTAL_PLATFORM_URL`: canonical portal origin written into non-secret project binding files; HTTPS is required outside localhost.
+- `DIGI_PORTAL_ADMIN_BINDINGS_ENABLED`: enables the admin-only pending-binding diagnostic surface when set to `true`.
+- `DIGI_PORTAL_AGENT_READS_ENABLED`: reserves the independent read rollout gate for Phase 1 and defaults to `false`.
+- `DIGI_PORTAL_AGENT_MUTATIONS_ENABLED`: guards agent claims and future write operations and defaults to `false`.
+
+The three Digi-Portal capability flags are intentionally independent. Phase 0 may enable only admin binding diagnostics; it does not activate a binding, expose agent-readable work, or issue a connector credential.
 
 Run local database and app commands from the repository root. Root scripts load
 `.env` before invoking workspace package commands so Prisma and Next.js receive
@@ -92,9 +98,9 @@ The harness is green when:
 - `.env.example` exists;
 - this local development flow is documented.
 
-## Scope Boundary
+## Digi-Portal Phase 0 Boundary
 
-Phase 0 intentionally stops at scaffolding and contracts. Phase 1A begins database and Auth.js implementation.
+The Digi-Portal expansion's Phase 0 provides schema, migration, shared policy services, transition guards, audit/outbox persistence, non-secret config validation, and an admin-only pending-binding diagnostic page at `/integrations/digi-portal`. Binding verification and activation, OAuth grant issuance, agent queue reads, and all production agent mutations remain Phase 1 or later work.
 
 ## Basic Usage MVP Review
 

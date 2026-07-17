@@ -17,6 +17,7 @@ export interface UserPrincipal {
 export interface AiAgentPrincipal {
   readonly id: string;
   readonly clientId?: string;
+  readonly bindingId?: string;
   readonly scopes: readonly McpScope[];
 }
 

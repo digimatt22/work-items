@@ -48,7 +48,7 @@ The important local development flow is:
 - Invalid credentials never reveal whether an email exists; expected Auth.js `CredentialsSignin` failures return to `/sign-in` with the same generic message while unrelated server errors continue to propagate.
 - Duplicate client-user emails, missing inputs, and stale client selections remain in the add-user form with safe, actionable messages. Unexpected details are logged server-side and are not exposed to the browser.
 - Report attachments must use the existing asset constraints and storage-provider abstraction.
-- AI actions are admin-only.
+- AI actions and delivery evidence are admin-only by default; only admins can qualify work as agent-ready.
 - MCP authorization uses OAuth 2.1-style bearer token scopes.
 - Assets go through a storage provider abstraction.
 - Work items remain unified with type-specific detail records.
@@ -71,6 +71,7 @@ Use this section for stable decisions that future work should respect. Include d
 | 2026-07-16 | Provide authenticated password changes through `/settings/password` using the existing credentials provider and bcrypt cost 12           | Users can rotate credentials without direct database or seed access; email recovery and MFA remain separate future work         |
 | 2026-07-16 | Create client-user identity and password records atomically and return expected creation failures to the form                            | Failed provisioning cannot leave a partial account, and duplicate emails no longer trigger a framework error page               |
 | 2026-07-17 | Generate a unique temporary password for each client user, display it once to the creating admin, and require replacement on first login | Accounts can be handed off without email delivery or a shared default password; plaintext temporary passwords are not persisted |
+| 2026-07-17 | Bind each pilot Work Items project to at most one active repository/workspace through Digi-Portal and let only admins qualify work for agents | Project routing has a single authoritative active binding, while customer status and agent-delivery state remain separate |
 
 ## Architectural Boundaries
 
@@ -85,9 +86,9 @@ The approved planning direction in `docs/dpaf/expansion/` introduces a control-p
 
 1. An admin qualifies a work item for agent delivery.
 2. A non-secret `.work-items/project.json` binds a repository/workspace to an immutable Work Items project ID and revocable binding ID.
-3. A reusable Work Items plugin verifies that file against a separately stored scoped credential.
+3. The reusable Digi-Portal plugin verifies that file against a separately stored scoped credential.
 4. An agent pulls only eligible work for the verified project and acquires an exclusive expiring claim lease.
 5. Progress, questions, evidence, and review readiness return through shared services with linked activity and AI audit.
 6. Merge, deploy, customer communication, and final closure remain human-controlled in the first release.
 
-Qualification, dispatch, lease, and delivery-attempt state remain separate from the customer-facing pipeline status. This section is a proposed future boundary until the expansion ADRs and implementation phases are approved and built.
+Qualification, dispatch, lease, and delivery-attempt state remain separate from the customer-facing pipeline status. Phase 0 implements the persistence contracts, shared authorization services, transition guards, audit/outbox writes, and an inert admin binding diagnostic. All binding activation and agent-facing behavior remains disabled behind independent feature flags.

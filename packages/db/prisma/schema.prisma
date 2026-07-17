@@ -33,6 +33,70 @@ enum AssetProvider {
   S3
 }
 
+enum ProjectBindingKind {
+  CODEX_WORKSPACE
+}
+
+enum ProjectBindingEnvironment {
+  DEVELOPMENT
+  PILOT
+  PRODUCTION
+}
+
+enum ProjectBindingStatus {
+  PENDING
+  VERIFIED
+  ACTIVE
+  REVOKED
+}
+
+enum WorkQualificationState {
+  READY
+  REVOKED
+}
+
+enum WorkSensitivity {
+  NORMAL
+  SENSITIVE
+  RESTRICTED
+}
+
+enum AgentDispatchState {
+  QUEUED
+  CLAIMED
+  BLOCKED
+  READY_FOR_REVIEW
+  COMPLETED
+  CANCELLED
+  QUARANTINED
+}
+
+enum DeliveryAttemptState {
+  IN_PROGRESS
+  BLOCKED
+  READY_FOR_REVIEW
+  COMPLETED
+  ABANDONED
+  EXPIRED
+}
+
+enum DeliveryEvidenceKind {
+  SUMMARY
+  COMMIT
+  BRANCH
+  PULL_REQUEST
+  TEST_RESULT
+  SCREENSHOT
+  DOCUMENT
+  NOTE
+}
+
+enum OutboxEventState {
+  PENDING
+  PUBLISHED
+  FAILED
+}
+
 model User {
   id                 String              @id @default(cuid())
   name               String?
@@ -48,13 +112,15 @@ model User {
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
 
-  createdWorkItems   WorkItem[]      @relation("WorkItemCreator")
-  reportedWorkItems  WorkItem[]      @relation("WorkItemReporter")
-  assignedWorkItems  WorkItem[]      @relation("WorkItemAssignee")
-  projectMemberships ProjectMember[]
-  comments           Comment[]
-  mentions           Mention[]
-  watchedWorkItems   Watcher[]
+  createdWorkItems       WorkItem[]          @relation("WorkItemCreator")
+  reportedWorkItems      WorkItem[]          @relation("WorkItemReporter")
+  assignedWorkItems      WorkItem[]          @relation("WorkItemAssignee")
+  projectMemberships     ProjectMember[]
+  comments               Comment[]
+  mentions               Mention[]
+  watchedWorkItems       Watcher[]
+  createdProjectBindings ProjectBinding[]    @relation("ProjectBindingCreator")
+  workQualifications     WorkQualification[] @relation("WorkQualificationAdmin")
 }
 
 model PasswordCredential {
@@ -129,11 +195,12 @@ model Project {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
-  client         Client          @relation(fields: [clientId], references: [id])
-  members        ProjectMember[]
-  workItems      WorkItem[]
-  releaseTargets ReleaseTarget[]
-  assets         AssetLink[]
+  client          Client           @relation(fields: [clientId], references: [id])
+  members         ProjectMember[]
+  workItems       WorkItem[]
+  releaseTargets  ReleaseTarget[]
+  assets          AssetLink[]
+  projectBindings ProjectBinding[]
 }
 
 model ProjectMember {
@@ -203,6 +270,8 @@ model WorkItem {
   labels         WorkItemLabel[]
   watchers       Watcher[]
   assets         AssetLink[]
+  qualifications WorkQualification[]
+  agentDispatch  AgentDispatch?
 }
 
 model WorkItemBugDetails {
@@ -342,4 +411,145 @@ model McpOAuthClient {
   revokedAt        DateTime?
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
+
+  projectBindings ProjectBinding[]
+}
+
+model ProjectBinding {
+  id                String                    @id
+  projectId         String
+  oauthClientId     String?
+  createdById       String
+  kind              ProjectBindingKind        @default(CODEX_WORKSPACE)
+  environment       ProjectBindingEnvironment
+  status            ProjectBindingStatus      @default(PENDING)
+  platformUrl       String
+  repositoryRef     String
+  workspaceRef      String?
+  configFingerprint String
+  activeKey         String?                   @unique
+  verifiedAt        DateTime?
+  activatedAt       DateTime?
+  revokedAt         DateTime?
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+
+  project     Project         @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  oauthClient McpOAuthClient? @relation(fields: [oauthClientId], references: [id], onDelete: SetNull)
+  createdBy   User            @relation("ProjectBindingCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  dispatches  AgentDispatch[]
+
+  @@index([projectId, status])
+  @@index([status, environment])
+}
+
+model WorkQualification {
+  id                  String                 @id @default(cuid())
+  workItemId          String
+  version             Int
+  state               WorkQualificationState @default(READY)
+  acceptanceCriteria  String
+  implementationNotes String?
+  sensitivity         WorkSensitivity        @default(NORMAL)
+  qualifiedById       String
+  createdAt           DateTime               @default(now())
+  revokedAt           DateTime?
+
+  workItem    WorkItem       @relation(fields: [workItemId], references: [id], onDelete: Restrict)
+  qualifiedBy User           @relation("WorkQualificationAdmin", fields: [qualifiedById], references: [id], onDelete: Restrict)
+  dispatch    AgentDispatch?
+
+  @@unique([workItemId, version])
+  @@index([workItemId, state, createdAt])
+}
+
+model AgentDispatch {
+  id              String             @id @default(cuid())
+  workItemId      String             @unique
+  bindingId       String
+  qualificationId String             @unique
+  state           AgentDispatchState @default(QUEUED)
+  priority        Int                @default(0)
+  availableAt     DateTime           @default(now())
+  version         Int                @default(1)
+  lastErrorCode   String?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  workItem      WorkItem          @relation(fields: [workItemId], references: [id], onDelete: Restrict)
+  binding       ProjectBinding    @relation(fields: [bindingId], references: [id], onDelete: Restrict)
+  qualification WorkQualification @relation(fields: [qualificationId], references: [id], onDelete: Restrict)
+  claims        AgentClaim[]
+  attempts      DeliveryAttempt[]
+
+  @@index([bindingId, state, priority, availableAt])
+}
+
+model AgentClaim {
+  id              String    @id @default(cuid())
+  dispatchId      String
+  agentId         String
+  leaseTokenHash  String
+  activeKey       String?   @unique
+  claimedAt       DateTime  @default(now())
+  expiresAt       DateTime
+  lastHeartbeatAt DateTime  @default(now())
+  releasedAt      DateTime?
+  releaseReason   String?
+
+  dispatch AgentDispatch    @relation(fields: [dispatchId], references: [id], onDelete: Restrict)
+  attempt  DeliveryAttempt?
+
+  @@index([dispatchId, releasedAt])
+  @@index([expiresAt, releasedAt])
+}
+
+model DeliveryAttempt {
+  id         String               @id @default(cuid())
+  dispatchId String
+  claimId    String               @unique
+  sequence   Int
+  state      DeliveryAttemptState @default(IN_PROGRESS)
+  summary    String?
+  startedAt  DateTime             @default(now())
+  finishedAt DateTime?
+
+  dispatch AgentDispatch      @relation(fields: [dispatchId], references: [id], onDelete: Restrict)
+  claim    AgentClaim         @relation(fields: [claimId], references: [id], onDelete: Restrict)
+  evidence DeliveryEvidence[]
+
+  @@unique([dispatchId, sequence])
+  @@index([dispatchId, state])
+}
+
+model DeliveryEvidence {
+  id        String               @id @default(cuid())
+  attemptId String
+  kind      DeliveryEvidenceKind
+  label     String
+  uri       String?
+  metadata  Json?
+  createdAt DateTime             @default(now())
+
+  attempt DeliveryAttempt @relation(fields: [attemptId], references: [id], onDelete: Restrict)
+
+  @@index([attemptId, createdAt])
+}
+
+model OutboxEvent {
+  id            String           @id @default(cuid())
+  aggregateType String
+  aggregateId   String
+  eventType     String
+  payload       Json
+  state         OutboxEventState @default(PENDING)
+  attempts      Int              @default(0)
+  availableAt   DateTime         @default(now())
+  publishedAt   DateTime?
+  lastError     String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  @@index([state, availableAt])
+  @@index([aggregateType, aggregateId, createdAt])
 }

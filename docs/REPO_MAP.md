@@ -30,6 +30,7 @@ This file helps agents target future reads and avoid scanning the whole repo for
 | `docs/dpaf/expansion/`                  | Intake-to-agent delivery PRD, architecture, roadmap, and Codex handoff         | Before Work Items plugin, MCP, binding, dispatch, or agent-delivery work         |
 | `docs/prd/launch-decisions-addendum.md` | Launch decisions folded into PRD support docs                                 | Before launch-scope behavior changes                                            |
 | `docs/adr/`                             | Accepted architecture decisions                                               | Before changing boundaries, auth, audit, storage, search, or work item modeling |
+| `docs/schemas/digi-portal-project.schema.json` | Digi-Portal non-secret binding file schema                              | Before plugin binding or repository setup work                                  |
 | `packages/db/prisma/schema.prisma`      | Prisma schema skeleton                                                        | Before database or domain model changes                                         |
 | `packages/shared/src/`                  | Shared contracts and permissions                                              | Before web, MCP, or domain behavior changes                                     |
 | `packages/mcp/src/`                     | MCP tool and scope contracts                                                  | Before MCP work                                                                 |
@@ -43,8 +44,8 @@ This file helps agents target future reads and avoid scanning the whole repo for
 
 | Area               | Purpose                                            | Notes                                                                                                                                                            |
 | ------------------ | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `apps/web/`        | Next.js App Router app                             | Authenticated admin and client MVP surfaces, including `/work-items`, `/report`, `/clients`, `/projects/[projectId]`, `/status-report`, and `/settings/password` |
-| `packages/db/`     | Prisma schema and database package                 | No migrations yet                                                                                                                                                |
+| `apps/web/`        | Next.js App Router app                             | Authenticated admin/client surfaces plus the inert `/integrations/digi-portal` binding diagnostic                                                               |
+| `packages/db/`     | Prisma schema and database package                 | Includes migrations for the operating MVP and Digi-Portal delivery foundation                                                                                   |
 | `packages/shared/` | Shared contracts, permission predicates, and tests | Source of truth for web/MCP policy helpers                                                                                                                       |
 | `packages/ui/`     | Shared UI package                                  | Placeholder in Phase 0                                                                                                                                           |
 | `packages/mcp/`    | MCP tool contract helpers                          | Placeholder in Phase 0                                                                                                                                           |
@@ -95,6 +96,7 @@ This file helps agents target future reads and avoid scanning the whole repo for
 | AI action visibility | Client users could see internal agent work            | Keep AI events admin-only by default                     |
 | Asset storage        | Local filesystem assumptions could block S3 migration | Use storage provider contract                            |
 | Search               | Client data leakage                                   | Apply client-scoped filters at query construction        |
+| Project bindings     | Work routed to the wrong repository or workspace      | Derive authorization from the active server-side binding and verify the non-secret local config when available |
 
 ## External Systems
 

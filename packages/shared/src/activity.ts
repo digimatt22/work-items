@@ -8,7 +8,11 @@ export type ActivityEntityType =
   | "WORK_ITEM"
   | "COMMENT"
   | "ASSET"
-  | "AI_ACTION";
+  | "AI_ACTION"
+  | "PROJECT_BINDING"
+  | "WORK_QUALIFICATION"
+  | "AGENT_DISPATCH"
+  | "DELIVERY_ATTEMPT";
 
 export type ActivityAction =
   | "CREATED"
@@ -18,7 +22,12 @@ export type ActivityAction =
   | "UPLOADED_ASSET"
   | "CHANGED_STATUS"
   | "GENERATED_SUMMARY"
-  | "MCP_TOOL_CALLED";
+  | "MCP_TOOL_CALLED"
+  | "QUALIFIED_FOR_AGENT"
+  | "CLAIMED"
+  | "RELEASED"
+  | "READY_FOR_REVIEW"
+  | "REVOKED";
 
 export interface ActivityEventDraft {
   readonly actor: ActorRef;

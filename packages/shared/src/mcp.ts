@@ -12,11 +12,17 @@ export type McpScope =
   | "comments:write"
   | "search:read"
   | "summaries:read"
-  | "summaries:write";
+  | "summaries:write"
+  | "bindings:read"
+  | "queue:read"
+  | "claims:write"
+  | "progress:write"
+  | "evidence:write";
 
 export interface McpAuthorizationContext {
   readonly agentId: string;
   readonly clientId?: string;
+  readonly bindingId?: string;
   readonly scopes: readonly McpScope[];
   readonly issuer: string;
   readonly audience: string;
@@ -24,7 +30,7 @@ export interface McpAuthorizationContext {
 
 export function hasMcpScope(
   context: McpAuthorizationContext,
-  requiredScope: McpScope
+  requiredScope: McpScope,
 ): boolean {
   return context.scopes.includes(requiredScope);
 }
