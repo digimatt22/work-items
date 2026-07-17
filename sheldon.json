@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "name": "digicolony-client-ops",
+  "hostname": "portal.digicolony.net",
+  "framework": "nextjs",
+  "container_port": 3000,
+  "host_port": null,
+  "health_path": "/api/health",
+  "dockerfile": "Dockerfile",
+  "requires_env": [
+    "DATABASE_URL",
+    "AUTH_SECRET",
+    "AUTH_TRUST_HOST",
+    "AUTH_URL",
+    "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY"
+  ]
+}

@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
-import { createPrismaWorkItemRepository, createPrismaWorkspaceRepository, prisma } from "@digicolony/db";
+import {
+  createPrismaWorkItemRepository,
+  createPrismaWorkspaceRepository,
+  prisma,
+} from "@digicolony/db";
 import {
   listVisibleWorkItemProjects,
-  listWorkspaceClients
+  listWorkspaceClients,
 } from "@digicolony/shared";
 import { auth } from "../auth";
 import { principalFromSession } from "../src/auth/principal";
@@ -12,22 +16,23 @@ import { createWorkItemAction } from "./work-items/actions";
 import {
   createClientAction,
   createClientUserAction,
-  createProjectAction
+  createProjectAction,
 } from "./workspaces/actions";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "DigiColony Client Operations",
-  description: "AI-first client operations platform."
+  description: "AI-first client operations platform.",
 };
 
 export default async function RootLayout({
-  children
+  children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const session = await auth();
   const signedIn = Boolean(session?.user);
+  const passwordChangeRequired = Boolean(session?.user?.mustChangePassword);
   const principal = principalFromSession(session);
   const workspaceRepository = createPrismaWorkspaceRepository(prisma);
   const workItemRepository = createPrismaWorkItemRepository(prisma);
@@ -35,14 +40,14 @@ export default async function RootLayout({
     ? await Promise.all([
         listWorkspaceClients(workspaceRepository, principal),
         listVisibleWorkItemProjects(workItemRepository, principal),
-        workItemRepository.listPipelineStatuses()
+        workItemRepository.listPipelineStatuses(),
       ])
     : [[], [], []];
 
   return (
     <html lang="en">
       <body>
-        {signedIn ? (
+        {signedIn && !passwordChangeRequired ? (
           <AppShell
             clients={clients}
             createClientAction={createClientAction}

@@ -10,18 +10,21 @@ declare module "next-auth" {
       id: string;
       role: "ADMIN" | "CLIENT_USER";
       clientId?: string | null;
+      mustChangePassword: boolean;
     } & DefaultSession["user"];
   }
 
   interface User {
     role?: "ADMIN" | "CLIENT_USER";
     clientId?: string | null;
+    mustChangePassword?: boolean;
   }
 }
 
 type LaunchJwtFields = {
   role?: "ADMIN" | "CLIENT_USER";
   clientId?: string | null;
+  mustChangePassword?: boolean;
 };
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -33,14 +36,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       ? undefined
       : "local-development-secret-change-before-production"),
   session: {
-    strategy: "jwt"
+    strategy: "jwt",
   },
   providers: [
     Credentials({
       name: "Local database credentials",
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         const email =
@@ -56,7 +59,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const user = await prisma.user.findUnique({
           where: { email },
-          include: { passwordCredential: true }
+          include: { passwordCredential: true },
         });
 
         if (!user?.passwordCredential) {
@@ -65,7 +68,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const passwordMatches = await compare(
           password,
-          user.passwordCredential.passwordHash
+          user.passwordCredential.passwordHash,
         );
 
         if (!passwordMatches) {
@@ -78,10 +81,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           name: user.name,
           image: user.image,
           role: user.role,
-          clientId: user.clientId
+          clientId: user.clientId,
+          mustChangePassword: user.passwordCredential.mustChangePassword,
         };
-      }
-    })
+      },
+    }),
   ],
   callbacks: {
     jwt({ token, user }) {
@@ -90,6 +94,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (user) {
         launchToken.role = user.role;
         launchToken.clientId = user.clientId;
+        launchToken.mustChangePassword = user.mustChangePassword;
       }
 
       return launchToken;
@@ -101,12 +106,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.id = token.sub ?? "";
         session.user.role = launchToken.role ?? "CLIENT_USER";
         session.user.clientId = launchToken.clientId;
+        session.user.mustChangePassword =
+          launchToken.mustChangePassword ?? false;
       }
 
       return session;
-    }
+    },
   },
   pages: {
-    signIn: "/sign-in"
-  }
+    signIn: "/sign-in",
+  },
 });

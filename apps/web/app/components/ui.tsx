@@ -5,7 +5,7 @@ export function PageHeader({
   eyebrow,
   title,
   description,
-  children
+  children,
 }: {
   eyebrow: string;
   title: string;
@@ -40,7 +40,7 @@ export function MetricCard({
   label,
   value,
   detail,
-  tone = "light"
+  tone = "light",
 }: {
   label: string;
   value: number | string;
@@ -53,13 +53,21 @@ export function MetricCard({
     <div
       className={[
         "min-w-0 rounded-2xl p-4 shadow-card sm:p-5",
-        dark ? "bg-ink text-white" : "border border-line bg-surface text-ink"
+        dark ? "bg-ink text-white" : "border border-line bg-surface text-ink",
       ].join(" ")}
     >
-      <p className={dark ? "text-xs text-white/60" : "text-xs text-soft"}>{label}</p>
-      <p className="mt-3 truncate text-2xl font-bold tracking-tight sm:text-3xl">{value}</p>
+      <p className={dark ? "text-xs text-white/60" : "text-xs text-soft"}>
+        {label}
+      </p>
+      <p className="mt-3 truncate text-2xl font-bold tracking-tight sm:text-3xl">
+        {value}
+      </p>
       {detail ? (
-        <p className={dark ? "mt-2 text-xs text-white/70" : "mt-2 text-xs text-muted"}>
+        <p
+          className={
+            dark ? "mt-2 text-xs text-white/70" : "mt-2 text-xs text-muted"
+          }
+        >
           {detail}
         </p>
       ) : null}
@@ -71,7 +79,7 @@ export function Panel({
   title,
   description,
   children,
-  className = ""
+  className = "",
 }: {
   title?: string;
   description?: string;
@@ -79,7 +87,9 @@ export function Panel({
   className?: string;
 }) {
   return (
-    <section className={`rounded-3xl border border-line bg-surface p-5 shadow-card ${className}`}>
+    <section
+      className={`rounded-3xl border border-line bg-surface p-5 shadow-card ${className}`}
+    >
       {title ? (
         <div className="mb-4">
           <h2 className="text-lg font-bold tracking-tight text-ink">{title}</h2>
@@ -95,7 +105,7 @@ export function Panel({
 
 export function Badge({
   children,
-  tone = "muted"
+  tone = "muted",
 }: {
   children: ReactNode;
   tone?: "muted" | "primary" | "success" | "warning" | "danger";
@@ -105,11 +115,13 @@ export function Badge({
     primary: "bg-indigo-50 text-indigo-600",
     success: "bg-emerald-50 text-emerald-700",
     warning: "bg-amber-50 text-amber-700",
-    danger: "bg-rose-50 text-rose-700"
+    danger: "bg-rose-50 text-rose-700",
   };
 
   return (
-    <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold ${classes[tone]}`}>
+    <span
+      className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold ${classes[tone]}`}
+    >
       {children}
     </span>
   );
@@ -133,11 +145,105 @@ export function PencilIcon({ className = "size-4" }: { className?: string }) {
   );
 }
 
+function MenuIcon({
+  children,
+  className = "size-4",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+    >
+      {children}
+    </svg>
+  );
+}
+
+export function FeatureRequestIcon({
+  className = "size-4",
+}: {
+  className?: string;
+}) {
+  return (
+    <MenuIcon className={className}>
+      <path d="M9 18h6" />
+      <path d="M10 22h4" />
+      <path d="M8.7 14.5A7 7 0 1 1 15.3 14.5c-.8.6-1.3 1.4-1.3 2.5h-4c0-1.1-.5-1.9-1.3-2.5Z" />
+    </MenuIcon>
+  );
+}
+
+export function BugIcon({ className = "size-4" }: { className?: string }) {
+  return (
+    <MenuIcon className={className}>
+      <path d="m8 2 2 2" />
+      <path d="m14 4 2-2" />
+      <path d="M9 7h6" />
+      <path d="M8 13h8" />
+      <path d="M8 19h8" />
+      <rect height="15" rx="4" width="8" x="8" y="5" />
+      <path d="M4 13h4" />
+      <path d="M16 13h4" />
+      <path d="m5 7 3 2" />
+      <path d="m16 9 3-2" />
+    </MenuIcon>
+  );
+}
+
+export function ClientIcon({ className = "size-4" }: { className?: string }) {
+  return (
+    <MenuIcon className={className}>
+      <path d="M3 21h18" />
+      <path d="M6 21V4h12v17" />
+      <path d="M9 8h1" />
+      <path d="M14 8h1" />
+      <path d="M9 12h1" />
+      <path d="M14 12h1" />
+      <path d="M9 16h1" />
+      <path d="M14 16h1" />
+    </MenuIcon>
+  );
+}
+
+export function ProjectIcon({ className = "size-4" }: { className?: string }) {
+  return (
+    <MenuIcon className={className}>
+      <path d="M3 7h6l2 2h10v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" />
+      <path d="M3 7V5a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v2" />
+      <path d="M8 13v4" />
+      <path d="M12 13v2" />
+      <path d="M16 13v3" />
+    </MenuIcon>
+  );
+}
+
+export function ClientUserIcon({
+  className = "size-4",
+}: {
+  className?: string;
+}) {
+  return (
+    <MenuIcon className={className}>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21a8 8 0 0 1 16 0" />
+    </MenuIcon>
+  );
+}
+
 export function EmptyState({
   title,
   description,
   actionHref,
-  actionLabel
+  actionLabel,
 }: {
   title: string;
   description: string;
@@ -147,7 +253,9 @@ export function EmptyState({
   return (
     <div className="rounded-2xl border border-dashed border-line bg-blue-soft/50 p-8 text-center">
       <p className="text-base font-bold text-ink">{title}</p>
-      <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted">{description}</p>
+      <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted">
+        {description}
+      </p>
       {actionHref && actionLabel ? (
         <Link
           className="mt-5 inline-flex rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white"
@@ -160,14 +268,17 @@ export function EmptyState({
   );
 }
 
-export function buttonClass(variant: "primary" | "secondary" | "ghost" | "danger" = "primary") {
+export function buttonClass(
+  variant: "primary" | "secondary" | "ghost" | "danger" = "primary",
+) {
   const base =
     "inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500";
   const variants = {
     primary: "bg-indigo-600 text-white hover:bg-indigo-700",
-    secondary: "border border-line bg-white text-muted hover:bg-blue-soft hover:text-ink",
+    secondary:
+      "border border-line bg-white text-muted hover:bg-blue-soft hover:text-ink",
     ghost: "text-muted hover:bg-blue-soft hover:text-ink",
-    danger: "border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100"
+    danger: "border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100",
   };
 
   return `${base} ${variants[variant]}`;

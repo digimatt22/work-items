@@ -3,18 +3,23 @@
 import {
   createPrismaClientOperationsRepository,
   createPrismaWorkspaceRepository,
-  prisma
+  prisma,
 } from "@digicolony/db";
 import {
   archiveWorkspaceClient,
   archiveWorkspaceProject,
   createClientUserForLaunch,
   createWorkspaceClient,
-  createWorkspaceProject
+  createWorkspaceProject,
 } from "@digicolony/shared";
 import { revalidatePath } from "next/cache";
 import { auth } from "../../auth";
+import {
+  clientUserCreationErrorMessage,
+  type CreateClientUserResult,
+} from "../../src/client-users/create-result";
 import { principalFromSession } from "../../src/auth/principal";
+import { generateTemporaryPassword } from "../../src/auth/temporary-password";
 
 function requirePrincipal() {
   return auth().then((session) => {
@@ -54,7 +59,7 @@ export async function createClientAction(formData: FormData) {
 
   await createWorkspaceClient(repository, principal, {
     name: String(formData.get("name") ?? ""),
-    description: String(formData.get("description") ?? "")
+    description: String(formData.get("description") ?? ""),
   });
 
   revalidatePath("/workspaces");
@@ -68,7 +73,7 @@ export async function createProjectAction(formData: FormData) {
   await createWorkspaceProject(repository, principal, {
     clientId: String(formData.get("clientId") ?? ""),
     name: String(formData.get("name") ?? ""),
-    description: String(formData.get("description") ?? "")
+    description: String(formData.get("description") ?? ""),
   });
 
   revalidatePath("/workspaces");
@@ -77,21 +82,41 @@ export async function createProjectAction(formData: FormData) {
   revalidatePath(`/clients/${String(formData.get("clientId") ?? "")}`);
 }
 
-export async function createClientUserAction(formData: FormData) {
-  const principal = await requirePrincipal();
-  const repository = createPrismaClientOperationsRepository(prisma, {
-    defaultPassword: process.env.SEED_DEFAULT_PASSWORD
-  });
+export async function createClientUserAction(
+  formData: FormData,
+): Promise<CreateClientUserResult> {
+  try {
+    const principal = await requirePrincipal();
+    const temporaryPassword = generateTemporaryPassword();
+    const repository = createPrismaClientOperationsRepository(prisma, {
+      initialPassword: temporaryPassword,
+    });
 
-  await createClientUserForLaunch(repository, principal, {
-    clientId: String(formData.get("clientId") ?? ""),
-    email: String(formData.get("email") ?? ""),
-    name: String(formData.get("name") ?? "")
-  });
+    const user = await createClientUserForLaunch(repository, principal, {
+      clientId: String(formData.get("clientId") ?? ""),
+      email: String(formData.get("email") ?? ""),
+      name: String(formData.get("name") ?? ""),
+    });
 
-  revalidatePath("/workspaces");
-  revalidatePath("/clients");
-  revalidatePath(`/clients/${String(formData.get("clientId") ?? "")}`);
+    revalidatePath("/workspaces");
+    revalidatePath("/clients");
+    revalidatePath(`/clients/${String(formData.get("clientId") ?? "")}`);
+
+    return {
+      ok: true,
+      credentials: {
+        username: user.email,
+        password: temporaryPassword,
+      },
+    };
+  } catch (error) {
+    console.error("Client user creation failed.", error);
+
+    return {
+      ok: false,
+      message: clientUserCreationErrorMessage(error),
+    };
+  }
 }
 
 export async function updateClientAction(formData: FormData) {
@@ -104,8 +129,10 @@ export async function updateClientAction(formData: FormData) {
       name: String(formData.get("name") ?? "").trim(),
       description: String(formData.get("description") ?? "").trim() || null,
       aiSummary: String(formData.get("aiSummary") ?? "").trim() || null,
-      structuredContext: parseOptionalJson(formData.get("structuredContext")) as never
-    }
+      structuredContext: parseOptionalJson(
+        formData.get("structuredContext"),
+      ) as never,
+    },
   });
 
   revalidatePath("/clients");
@@ -123,7 +150,7 @@ export async function updateProjectAction(formData: FormData) {
     structuredContext?: never;
   } = {
     name: String(formData.get("name") ?? "").trim(),
-    description: String(formData.get("description") ?? "").trim() || null
+    description: String(formData.get("description") ?? "").trim() || null,
   };
 
   if (formData.has("aiSummary")) {
@@ -131,12 +158,14 @@ export async function updateProjectAction(formData: FormData) {
   }
 
   if (formData.has("structuredContext")) {
-    data.structuredContext = parseOptionalJson(formData.get("structuredContext")) as never;
+    data.structuredContext = parseOptionalJson(
+      formData.get("structuredContext"),
+    ) as never;
   }
 
   await prisma.project.update({
     where: { id: projectId },
-    data
+    data,
   });
 
   revalidatePath("/clients");
@@ -152,9 +181,11 @@ export async function updateClientUserAction(formData: FormData) {
   await prisma.user.update({
     where: { id: userId },
     data: {
-      email: String(formData.get("email") ?? "").toLowerCase().trim(),
-      name: String(formData.get("name") ?? "").trim() || null
-    }
+      email: String(formData.get("email") ?? "")
+        .toLowerCase()
+        .trim(),
+      name: String(formData.get("name") ?? "").trim() || null,
+    },
   });
 
   revalidatePath(`/clients/${clientId}`);
@@ -166,7 +197,7 @@ export async function deleteClientUserAction(formData: FormData) {
   const userId = String(formData.get("userId") ?? "");
 
   await prisma.user.delete({
-    where: { id: userId }
+    where: { id: userId },
   });
 
   revalidatePath(`/clients/${clientId}`);
