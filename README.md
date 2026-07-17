@@ -10,6 +10,7 @@ The product is a client-facing operations platform that serves as the shared ope
 - PRD launch decisions: [docs/prd/launch-decisions-addendum.md](docs/prd/launch-decisions-addendum.md)
 - Accepted ADRs: [docs/adr/](docs/adr/)
 - Local development guide: [docs/LOCAL_DEVELOPMENT.md](docs/LOCAL_DEVELOPMENT.md)
+- Agent-delivery expansion plan: [docs/dpaf/expansion/](docs/dpaf/expansion/)
 
 ## Quick Start
 

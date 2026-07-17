@@ -27,6 +27,7 @@ This file helps agents target future reads and avoid scanning the whole repo for
 | `scripts/install-harness.sh`            | Canonical install/update behavior                                             | Before changing bootstrap or sync behavior                                      |
 | `scripts/bootstrap-install.sh`          | Hosted curl bootstrap content                                                 | Before publishing `https://harness.digicolony.com/install`                      |
 | `docs/dpaf/`                            | DPAF planning source                                                          | Before product or architecture changes                                          |
+| `docs/dpaf/expansion/`                  | Intake-to-agent delivery PRD, architecture, roadmap, and Codex handoff         | Before Work Items plugin, MCP, binding, dispatch, or agent-delivery work         |
 | `docs/prd/launch-decisions-addendum.md` | Launch decisions folded into PRD support docs                                 | Before launch-scope behavior changes                                            |
 | `docs/adr/`                             | Accepted architecture decisions                                               | Before changing boundaries, auth, audit, storage, search, or work item modeling |
 | `packages/db/prisma/schema.prisma`      | Prisma schema skeleton                                                        | Before database or domain model changes                                         |

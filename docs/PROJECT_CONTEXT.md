@@ -15,6 +15,8 @@ This repo contains the DigiColony AI-First Client Operations Platform, a Next.js
 - Bryan's account was created immediately before the new release by the legacy flow and received no email because outbound email is not implemented. After confirming it had no memberships, comments, or work-item relationships, the account and cascading credential were explicitly deleted on 2026-07-17 so it can be recreated through the deployed one-time credential flow.
 - Sheldon plugin `0.1.0+codex.20260717125641` adds per-release Next.js deployment IDs and exposes stable Server Action encryption keys to builds only through BuildKit secrets, reducing stale-tab failures without embedding the key in an image or release archive.
 - The mobile Add modal audit is recorded in `docs/reviews/mobile-add-modal-audit-2026-07-17/`; its recommended follow-up is a two-step full-screen mobile flow with a separate chooser and form.
+- The pre-expansion platform state is preserved at commit `c008778` with annotated tag `v0.0.0`.
+- A Digi-CTO v0.3.0 expansion pack now defines the proposed path from customer request intake to project-bound AI-agent delivery under `docs/dpaf/expansion/`. This is approved planning input, not implemented runtime behavior.
 
 ## lifeOS Registration
 
@@ -103,3 +105,5 @@ This repo contains the DigiColony AI-First Client Operations Platform, a Next.js
 - The durable production asset storage strategy
 - CI provider and required checks
 - Reviewers, code owners, and merge policy
+- The supported ChatGPT Work surface for plugin installation, repository config access, and secure connector credential storage
+- Final plugin distribution model and production ownership for project-binding credentials

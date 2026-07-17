@@ -26,6 +26,16 @@ Launch-specific decisions are recorded in [PRD Launch Decisions Addendum](../prd
 - [04 Implementation Plan](./04-implementation-plan.md)
 - [05 Risks Decisions And Open Questions](./05-risks-decisions-open-questions.md)
 
+## Platform Expansion
+
+The next-level intake-to-agent delivery architecture is maintained as a versioned DPAF pack under [expansion/](./expansion/). Its canonical sources are:
+
+- [Expansion PRD](./expansion/PRD.md)
+- [Roadmap](./expansion/16-roadmap.md)
+- [Open Questions](./expansion/17-open-questions.md)
+- [Codex Build Plan](./expansion/18-codex-build-plan.md)
+- [Implementation Kickoff Prompts](./expansion/19-implementation-kickoff-prompts.md)
+
 ## Guiding Test
 
 Every architecture and product decision should answer yes to:

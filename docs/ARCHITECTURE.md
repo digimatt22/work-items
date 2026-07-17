@@ -9,6 +9,7 @@ Canonical planning lives in:
 - `docs/dpaf/`
 - `docs/prd/launch-decisions-addendum.md`
 - `docs/adr/`
+- `docs/dpaf/expansion/` for the proposed customer-intake-to-agent-delivery expansion
 
 ## System Boundaries
 
@@ -77,3 +78,16 @@ Use this section for stable decisions that future work should respect. Include d
 - No Phase 1 feature implementation beyond skeletons/contracts.
 - No real Auth.js provider wiring until Phase 1A.
 - No rich document/video preview generation in MVP scope.
+
+## Proposed Agent Delivery Expansion
+
+The approved planning direction in `docs/dpaf/expansion/` introduces a control-plane layer without changing the current customer intake contract:
+
+1. An admin qualifies a work item for agent delivery.
+2. A non-secret `.work-items/project.json` binds a repository/workspace to an immutable Work Items project ID and revocable binding ID.
+3. A reusable Work Items plugin verifies that file against a separately stored scoped credential.
+4. An agent pulls only eligible work for the verified project and acquires an exclusive expiring claim lease.
+5. Progress, questions, evidence, and review readiness return through shared services with linked activity and AI audit.
+6. Merge, deploy, customer communication, and final closure remain human-controlled in the first release.
+
+Qualification, dispatch, lease, and delivery-attempt state remain separate from the customer-facing pipeline status. This section is a proposed future boundary until the expansion ADRs and implementation phases are approved and built.
