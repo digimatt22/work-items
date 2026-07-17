@@ -1,7 +1,7 @@
 # MCP Specification
 
 ## Applicability
-MCP is the primary agent-facing protocol for the Work Items plugin. It is a thin adapter over shared application services and must not implement independent permissions or workflow rules.
+MCP is the primary agent-facing protocol for the **Digi-Portal** plugin. It is a thin adapter over shared application services and must not implement independent permissions or workflow rules.
 
 ## Tools
 ### Binding and diagnostics

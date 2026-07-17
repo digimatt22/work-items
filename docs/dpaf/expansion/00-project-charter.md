@@ -8,7 +8,7 @@ Expand the existing client operations MVP into a trusted intake-to-agent deliver
 - Reviewers: DigiColony engineering; a human project owner for workspace binding and production authority
 
 ## Desired Outcome
-Create a reusable Work Items plugin and server-side integration contract that binds each repository/workspace to exactly one Work Items project, supplies agents with implementation-ready work packages, prevents duplicate execution, and writes progress and evidence back to the same audited work item.
+Create the reusable **Digi-Portal** plugin and server-side integration contract that binds each repository/workspace to exactly one Work Items project, supplies agents with implementation-ready work packages, prevents duplicate execution, and writes progress and evidence back to the same audited work item.
 
 ## Users
 - Customer reporters

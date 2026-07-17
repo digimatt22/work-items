@@ -16,14 +16,14 @@ Define the expansion of Work Items from a customer intake and operations applica
 - Work Items is a deployed Next.js/Prisma/PostgreSQL application with customer Bug/Feature intake, admin work management, comments/assets, status reporting, Auth.js roles, and shared service contracts.
 - Work items already belong to immutable project records under clients.
 - The architecture already reserves `packages/mcp`, scoped MCP identities, `ActivityEvent`, and `AiAction`.
-- The MCP package is a contract placeholder; no production MCP server or reusable Work Items plugin exists.
+- The MCP package is a contract placeholder; no production MCP server or reusable Digi-Portal plugin exists.
 - No dispatch, qualification, claim/lease, delivery-attempt, or project-binding data model exists.
 - The repository has no configured remote or CI; production assets are not durable across container replacement.
 - The current repo contains no verified ChatGPT Work API for automatically creating project tasks or selecting a workspace.
 
 ## Decisions
 - Work Items remains the canonical request, routing, dispatch, and audit record; project repositories remain the implementation source.
-- The first integration is a reusable Work Items plugin using MCP and an agent-initiated pull workflow.
+- The first integration is the reusable **Digi-Portal** plugin using MCP and an agent-initiated pull workflow.
 - Each target repository/workspace contains `.work-items/project.json` with a Work Items project ID, binding ID, platform URL, schema version, and environment. It contains no secret.
 - Server-side `ProjectBinding` state and a separately stored connector credential must agree with the file before any work is returned.
 - Qualification is a human-controlled gate. Agents may not self-approve raw customer reports in MVP.
@@ -36,8 +36,8 @@ Define the expansion of Work Items from a customer intake and operations applica
 
 ## Assumptions
 - One active repository/workspace binding per Work Items project is sufficient for the internal pilot. If false, the uniqueness and queue model must change before migration.
-- ChatGPT Work/Codex can install the plugin in a project workspace, read the repository config, and store a connector credential outside Git. If false, Phase 1 needs a different onboarding handshake.
-- Manual/private plugin distribution is acceptable for the first pilot. If false, marketplace packaging becomes a Phase 1 dependency.
+- ChatGPT Work/Codex can install the plugin and store connector credentials outside Git. Local repository sessions cross-check `.work-items/project.json`; hosted Work mode derives binding scope from a server-side OAuth grant because it cannot read local Codex configuration.
+- The plugin will use the stable manifest identity `digi-portal` and be added to `/Users/mwood/Documents/Digicolony/digicolony-codex-marketplace` after local validation.
 - A 30-minute heartbeat-based lease is suitable for initial tests. It remains configurable and should be tuned from pilot data.
 - One internal DigiColony project can be used before any external customer rollout.
 
@@ -123,7 +123,7 @@ Define the expansion of Work Items from a customer intake and operations applica
 - Continue the TypeScript monorepo, Next.js App Router, Prisma, and PostgreSQL.
 - Add ProjectBinding, WorkQualification, AgentDispatch, AgentClaim, DeliveryAttempt, DeliveryEvidence, and OutboxEvent without replacing WorkItem or customer pipeline state.
 - Keep `packages/mcp` as a thin adapter over new shared services; initial Streamable HTTP hosting may share the web deployment.
-- Build a reusable `work-items` plugin that reads `.work-items/project.json` and uses a separately stored binding credential.
+- Build the reusable `digi-portal` plugin with a remote MCP/OAuth connection. Local repository sessions read `.work-items/project.json`; hosted Work mode uses server-mediated binding verification without local-file access.
 - Start with read-only binding/queue/context tools, then feature-flag lease and delivery writes.
 - Use additive migrations, stable error codes, idempotency, optimistic versions, atomic audit, redaction, and fail-closed authorization.
 - Sheldon may host the internal pilot; customer production is blocked on durable storage, secrets/rotation, CI, backups, retention, and incident ownership.
@@ -166,4 +166,4 @@ Define the expansion of Work Items from a customer intake and operations applica
 - **Medium — plugin/server version drift:** schema negotiation, minimum compatible versions, upgrade diagnostics.
 
 ## Open Questions
-See `17-open-questions.md`. Phase 0 needs confirmation of the one-binding pilot model and qualification authority. Phase 1 needs a verified ChatGPT Work config/credential surface and distribution choice. Production additionally requires secrets ownership, retention, CI/backups/incident ownership, and durable asset storage.
+See `17-open-questions.md` and `docs/reviews/digi-portal-phase-1-capability-check-2026-07-17.md`. Phase 0 binding and qualification decisions are approved and implemented. Phase 1's host capabilities are verified: hosted Work mode needs server-side binding authorization, while local repository sessions may additionally validate the non-secret config file. Production additionally requires secrets ownership, retention, CI/backups/incident ownership, and durable asset storage.

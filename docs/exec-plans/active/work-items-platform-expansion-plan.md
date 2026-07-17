@@ -2,7 +2,7 @@
 
 ## Status
 
-Ready for review
+Phase 0 completed — Phase 1 binding spike ready for owner kickoff
 
 ## Owner
 
@@ -26,13 +26,12 @@ Included:
 
 - Current-state and gap assessment.
 - Product, data, integration, AI/MCP, security, and deployment direction.
-- Work Items plugin and project binding contract.
+- Digi-Portal plugin and project binding contract.
 - Phased Codex build plan and kickoff prompts.
 - Durable project-doc updates.
 
 Excluded:
 
-- Runtime implementation.
 - Live deployment or external connector mutation.
 - Automatic workspace/task creation in ChatGPT Work.
 
@@ -46,6 +45,10 @@ Excluded:
 - [x] Update project-level context and architecture references.
 - [x] Run structural validation and readiness review.
 - [x] Commit-ready planning artifacts prepared as a coherent checkpoint.
+- [x] Receive owner approval for one active binding per project, admin-only agent readiness, Digi-Portal naming, and marketplace destination.
+- [x] Implement the Phase 0 schema, shared services, rollout gates, and admin diagnostic.
+- [x] Complete full Phase 0 validation and checkpoint commit (`c64565b`).
+- [x] Record the Phase 1 ChatGPT Work capability finding and revised next steps.
 
 ## Key Decisions And Assumptions
 
@@ -64,13 +67,21 @@ Excluded:
 - Search generated docs for unresolved template placeholders.
 - Review `PRD.md`, `18-codex-build-plan.md`, and `19-implementation-kickoff-prompts.md` against the Digi-CTO Codex readiness rubric.
 
+Completed evidence:
+
+- Prisma schema validation and clean four-migration deployment to a disposable PostgreSQL database.
+- Safe migration `0004_agent_delivery_foundation` upgrade of the local development database.
+- `pnpm lint`, `pnpm typecheck`, `pnpm test` (38 tests), and `pnpm build`.
+- Desktop and 390px mobile visual inspection with no console warnings/errors or horizontal overflow.
+- `scripts/check-doc-links.sh`, `scripts/check-inbox.sh`, and `git diff --check`.
+
 ## Human Validation
 
 - Owner: Matthew
-- Steps: review the decisions and open questions in `docs/dpaf/expansion/PRD.md` and `17-open-questions.md`; confirm the one-workspace/one-project binding assumption, human approval boundaries, and whether plugin-first pull is the desired first milestone.
-- Expected result: approve the architecture direction or record corrections before Phase 0 implementation.
-- Evidence location: this plan or the future PR.
-- Blocks implementation: yes
+- Steps: review the Phase 1 capability check and select the internal project plus development OAuth/app-registration target for the binding spike.
+- Expected result: authorize Task 1.1 plus the narrow Task 1.2 `binding.get`/`binding.verify` spike.
+- Evidence location: `docs/reviews/digi-portal-phase-1-capability-check-2026-07-17.md`.
+- Blocks implementation: Phase 1 only
 - Blocks this planning deliverable: no
 
 ## Review And Closeout
@@ -79,3 +90,7 @@ Excluded:
 - Planning artifacts will be committed locally and left ready for human review.
 - lifeOS MCP was not available in this session; no lifeOS context informed the plan and no durable lifeOS update was identified.
 - Readiness report: `docs/reviews/work-items-platform-expansion-readiness-2026-07-17.md`.
+- Phase 0 approvals received on 2026-07-17: one active binding per project; admins-only agent-ready qualification.
+- Plugin identity: `Digi-Portal` / `digi-portal`; future private marketplace destination: `/Users/mwood/Documents/Digicolony/digicolony-codex-marketplace`.
+- Phase 0 implementation checkpoint: `c64565b`.
+- Phase 1 capability check confirms a remote MCP/OAuth plugin is supported, with server-side binding authorization for hosted Work mode and an additional repository-config assertion for local sessions.

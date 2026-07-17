@@ -9,7 +9,7 @@
 - User goal stated on 2026-07-17.
 
 ## Interview Notes
-The requested end state is customer-submitted bug and feature work being pulled by AI agents into the appropriate ChatGPT Work project. The likely product shape is a reusable Work Items plugin available to all projects, with a project-level ID/config binding.
+The requested end state is customer-submitted bug and feature work being pulled by AI agents into the appropriate ChatGPT Work project. The integration is named **Digi-Portal** and will be distributed through the private DigiColony marketplace, with a project-level ID/config binding.
 
 ## Facts
 - The customer intake and admin work-item experience exists and is deployed.
@@ -27,6 +27,7 @@ The requested end state is customer-submitted bug and feature work being pulled 
 - Model agent delivery separately from the customer-facing pipeline status.
 - Require qualification before an item is eligible for agent pickup.
 - Start with one project binding per repository/workspace; allow multiple bindings only in a later explicit design.
+- Publish the future `digi-portal` plugin through `/Users/mwood/Documents/Digicolony/digicolony-codex-marketplace` after local creation and validation.
 
 ## Assumptions
 - ChatGPT Work will permit a plugin/connector to run in the project context and access the local workspace config.

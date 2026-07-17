@@ -8,10 +8,12 @@
 - Add additive data model, services, permissions, audit invariants, and feature flags.
 - Deliver admin binding setup in read-only/verification mode.
 
-### Phase 1 — Read-only Work Items plugin
+### Phase 1 — Read-only Digi-Portal plugin
 
-- Package a reusable `work-items` Codex/ChatGPT Work plugin with connection setup and a small operator skill.
+- Package a reusable `digi-portal` Codex/ChatGPT Work plugin with connection setup and a small operator skill.
+- Add the validated plugin to `/Users/mwood/Documents/Digicolony/digicolony-codex-marketplace` as a private marketplace entry.
 - Connect to the Work Items MCP endpoint with a per-binding credential.
+- Use server-side OAuth grant binding for hosted Work mode; cross-check `.work-items/project.json` only when a local repository workspace is available.
 - Implement `binding.get`, `binding.verify`, `queue.list`, `queue.next`, and `work_items.get`.
 - Prove an agent in Project A cannot discover Project B.
 

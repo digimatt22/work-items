@@ -39,4 +39,3 @@ Phase 0 establishes the additive trust and data foundation for project-bound age
 - Remote MCP transport and read-only tools.
 - Digi-Portal plugin scaffolding and private marketplace publication.
 - Cross-project isolation and clean-install acceptance tests.
-

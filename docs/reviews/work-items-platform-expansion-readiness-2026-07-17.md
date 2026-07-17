@@ -10,7 +10,7 @@
 
 **Planning package: ready for human review.**
 
-**Implementation: conditionally ready.** Phase 0 can start after Matthew confirms the one-active-binding pilot model and admins-only qualification. Phase 1 additionally requires a short capability spike in the actual ChatGPT Work project surface. Production/customer rollout is not approved.
+**Implementation: Phase 0 complete.** Matthew confirmed the one-active-binding pilot model and admins-only qualification. The Phase 1 host-capability check is complete and supports a narrow plugin/OAuth binding spike. Production/customer rollout is not approved.
 
 ## PRD Quality Scores
 
@@ -43,7 +43,7 @@
 - Boundaries: pass. Work Items owns control-plane state; project workspaces own implementation; plugin/MCP is an adapter.
 - Data: pass with production blocker. Relationships, constraints, migration order, archive behavior, and audit preservation are defined; retention/export/deletion need approval.
 - Operations: pass for internal planning. Feature flags, observability, rotation/revocation, and rollback are specified; CI, backups, durable assets, and incident ownership block production.
-- ADRs: candidates identified. Binding, dispatch/lease, and authority ADRs are the first Phase 0 task.
+- ADRs: pass. Binding, dispatch/lease, and authority decisions are accepted in ADRs 0008–0010.
 
 ## Security And AI Review
 
@@ -53,14 +53,16 @@
 - Operations: conditional pass. Rotation, revocation, logging, rollback, and alert expectations exist; production secret owner and incident process remain open.
 - AI readiness: pass for MVP design. Roles, context sources, provenance, escalation, tools, audit, and evaluation are explicit.
 
-## Required Decisions Before Phase 0
+## Phase 0 Decisions
 
-1. Confirm one active repository/workspace binding per Work Items project for the pilot.
-2. Confirm only admins may qualify work as agent-ready in MVP.
+1. One active repository/workspace binding per Work Items project for the pilot: approved.
+2. Only admins may qualify work as agent-ready in MVP: approved.
+3. Plugin identity: `Digi-Portal` / `digi-portal`.
+4. Private marketplace destination: `/Users/mwood/Documents/Digicolony/digicolony-codex-marketplace`.
 
-## Required Spike Before Phase 1
+## Phase 1 Capability Result
 
-Verify in an actual ChatGPT Work project that the proposed plugin can read the repository config and use a securely stored connector credential. If not, revise the handshake without weakening server-side binding verification.
+ChatGPT Work supports remote MCP-backed plugins and host-managed OAuth credentials. Hosted Work mode cannot read local Codex config, so its project scope must come from a server-side binding grant. Local repository sessions may additionally verify `.work-items/project.json`. The next spike will scaffold Digi-Portal and prove `binding.get`/`binding.verify` plus cross-project denial before queue reads.
 
 ## Production Blockers
 
@@ -77,3 +79,5 @@ Verify in an actual ChatGPT Work project that the proposed plugin can read the r
 - Repository Markdown link check: passed.
 - Inbox index check: passed.
 - Git whitespace/error check: passed.
+- Phase 0 implementation, migration, 38-test suite, production build, and responsive visual review: passed; see `digi-portal-phase-0-completion-2026-07-17.md`.
+- Phase 1 official capability check: passed with a host-specific binding design; see `digi-portal-phase-1-capability-check-2026-07-17.md`.

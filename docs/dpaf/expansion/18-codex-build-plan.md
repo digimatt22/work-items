@@ -18,14 +18,14 @@ Each phase must be independently reviewable and should avoid mixing unrelated UI
 - Source docs: PRD, domain/database/backend/security sections, open questions.
 - Scope: ADRs, config schema, migrations, binding/qualification/dispatch services, shared policies, audit invariants, feature flags.
 - Non-goals: plugin distribution, live claims, UI polish, external automation.
-- Blocking dependencies: confirm one active binding per project and admins-only qualification.
+- Blocking dependencies: resolved — one active binding per project and admins-only qualification are approved.
 - Human review gate: schema, authority model, and state machine approval.
 
 ### Phase 1: Read-only plugin and binding verification
 - Outcome: an installed plugin can verify the current project and read only its eligible work packages.
 - Scope: plugin scaffold, MCP transport/auth, binding UI, read-only tools/resources, diagnostics, redaction tests.
 - Non-goals: claim or delivery writes.
-- Blocking dependencies: supported ChatGPT Work credential/config surface spike.
+- Blocking dependencies: resolved by the 2026-07-17 capability check; hosted Work mode uses a server-side OAuth binding grant, while local repository sessions also validate `.work-items/project.json`.
 - Human review gate: cross-project isolation and install/onboarding test.
 
 ### Phase 2: Claim and evidence workflow
@@ -66,10 +66,10 @@ Each phase must be independently reviewable and should avoid mixing unrelated UI
 - Acceptance: all agent tools disabled by default; admins can create a pending binding and view a non-secret config payload.
 - Validation: focused unit/e2e tests; `pnpm build`.
 
-### Task 1.1 — Scaffold the reusable Work Items plugin
+### Task 1.1 — Scaffold the reusable Digi-Portal plugin
 
-- Files: proposed `plugins/work-items/` manifest, skill/instructions, MCP connection metadata, docs; use the plugin-creator workflow during implementation.
-- Acceptance: plugin validates `.work-items/project.json`, never reads secrets from it, and provides actionable setup diagnostics.
+- Files: proposed `plugins/digi-portal/` manifest, skill/instructions, MCP connection metadata, and docs; use the plugin-creator workflow during implementation, then add the validated plugin to `/Users/mwood/Documents/Digicolony/digicolony-codex-marketplace`.
+- Acceptance: plugin never reads secrets from repository config, validates `.work-items/project.json` when a local repository is available, and provides a server-mediated binding flow for hosted Work mode.
 - Validation: plugin manifest validation and clean-workspace smoke test.
 
 ### Task 1.2 — Implement MCP read surface
@@ -121,18 +121,18 @@ Each phase must be independently reviewable and should avoid mixing unrelated UI
 Generate `19-implementation-kickoff-prompts.md` after this build plan is approved. Each phase should have a short kickoff command and a detailed Codex prompt with sources, scope, acceptance criteria, validation commands, and non-goals.
 
 ## Assumptions
-- Plugin source begins under `plugins/work-items/`; the implementation phase must use the plugin-creator skill and may revise the location through an ADR.
+- Plugin source begins under `plugins/digi-portal/`; the implementation phase must use the plugin-creator skill and publish the validated result through the private DigiColony marketplace repo.
 - MCP can initially share the web deployment while retaining a separable package boundary.
 - Read-only integration ships before write authority.
 - One internal project is available for a safe pilot.
 
 ## Risks
-- Unsupported ChatGPT Work workspace/config behavior could change Phase 1 onboarding.
+- Hosted and local Work surfaces have different context access; Phase 1 must test both paths and keep the server-side OAuth grant authoritative.
 - Missing durable asset storage limits attachment-rich pilots.
 - No remote/CI blocks normal review and automated gates.
 - Lease and audit bugs could create duplicate or unattributable work; write tools stay feature-flagged until proven.
 
 ## Open Questions
-- Blocking before implementation: one-binding assumption, plugin distribution path, supported host credential/config surface, qualification authority.
+- Blocking before implementation: none for the narrow Phase 1 binding spike. The 2026-07-17 capability check resolved the host split and records explicit go/no-go gates.
 - Non-blocking during implementation: lease duration, customer-safe status projection, plugin repo location, evidence policy.
 - Blocking before production: secrets/rotation ownership, retention, CI/backup/incident ownership, durable asset storage.

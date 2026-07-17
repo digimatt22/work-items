@@ -26,8 +26,8 @@ These prompts were generated from the approved planning sources:
 ### Phase 0: Contract And Trust Foundation
 
 #### Readiness
-- Blocking questions resolved: one-binding model and admins-only qualification must be confirmed.
-- Human approvals complete: Matthew approves PRD authority boundaries.
+- Blocking questions resolved: yes — one-binding model and admins-only qualification are confirmed.
+- Human approvals complete: Matthew approved the Phase 0 authority boundaries.
 - Validation commands known: yes.
 - Non-goals confirmed: no plugin distribution or live agent mutations.
 
@@ -94,7 +94,7 @@ Use the DPAF implementation kickoff prompt for Phase 1 in docs/dpaf/expansion/19
 
 #### Full Prompt
 ```text
-Set a goal: prove a reusable Work Items plugin can verify the current project workspace and read only that project's eligible work packages.
+Set a goal: prove the reusable Digi-Portal plugin can verify the current project workspace and read only that project's eligible work packages.
 
 Use these implementation sources:
 - docs/dpaf/expansion/PRD.md
@@ -104,16 +104,17 @@ Use these implementation sources:
 - docs/dpaf/expansion/18-codex-build-plan.md
 
 Milestone:
-A clean internal project can install the plugin, verify `.work-items/project.json`, and use read-only queue/context tools without discovering any other project.
+A clean internal project can install the plugin, authenticate through a project-bound OAuth grant, verify the binding, and use read-only queue/context tools without discovering any other project. Local repository sessions also verify `.work-items/project.json`.
 
 Scope:
-1. Run the plugin-creator workflow and scaffold the reviewed plugin source.
-2. Implement config parsing and secure connector credential setup.
+1. Run the plugin-creator workflow and scaffold `digi-portal`.
+2. Implement server-side OAuth grant binding plus local config parsing when a repository workspace is available.
 3. Implement binding verification and read-only MCP tools/resources.
 4. Complete clean-workspace, mismatch, revocation, and cross-project isolation tests.
 
 Acceptance criteria:
 - Repository config contains identifiers only.
+- Hosted Work mode does not depend on local repository config.
 - Mismatched or revoked binding fails closed.
 - Read tools return only the bound project's sanitized data.
 - No claim or delivery write tool is enabled.
@@ -124,6 +125,7 @@ Validation:
 - `pnpm test`
 - `pnpm build`
 - plugin validation and clean-workspace smoke test
+- private marketplace validation in `/Users/mwood/Documents/Digicolony/digicolony-codex-marketplace`
 
 Human review:
 - Matthew verifies installation and binding in the actual ChatGPT Work project surface.
