@@ -1,0 +1,25 @@
+{
+  "name": "digi-portal",
+  "version": "0.1.0",
+  "description": "Securely read administrator-approved DigiColony Work Portal items from the project bound to the current workspace.",
+  "author": {
+    "name": "DigiColony"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Digi-Portal",
+    "shortDescription": "Bring approved Work Portal items into the correct workspace.",
+    "longDescription": "Digi-Portal verifies the workspace-to-project binding and provides read-only access to administrator-qualified queue items through OAuth-protected MCP tools.",
+    "developerName": "DigiColony",
+    "category": "Productivity",
+    "capabilities": [
+      "Read-only work discovery",
+      "Project binding verification"
+    ],
+    "defaultPrompt": [
+      "Verify this workspace's Digi-Portal binding and show the next agent-ready item.",
+      "Search the bound Work Items project for approved work related to this request."
+    ]
+  },
+  "mcpServers": "./.mcp.json"
+}

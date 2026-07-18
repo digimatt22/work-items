@@ -13,6 +13,7 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
     "@digicolony/db": "workspace:^",
+    "@digicolony/mcp": "workspace:*",
     "@digicolony/shared": "workspace:*",
     "@digicolony/ui": "workspace:*",
     "bcryptjs": "^3.0.3",

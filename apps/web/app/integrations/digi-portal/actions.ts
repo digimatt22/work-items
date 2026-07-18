@@ -6,6 +6,7 @@ import {
 } from "@digicolony/db";
 import {
   buildDigiPortalProjectConfig,
+  activateProjectBinding,
   createPendingProjectBinding,
   type ProjectBindingEnvironment,
 } from "@digicolony/shared";
@@ -28,6 +29,23 @@ function parseEnvironment(
   }
 
   return environment as ProjectBindingEnvironment;
+}
+
+export async function activateDigiPortalBindingAction(formData: FormData) {
+  const session = await auth();
+  const principal = principalFromSession(session);
+  if (!principal) throw new Error("Authentication required.");
+  const repository = createPrismaAgentDeliveryFoundationRepository(prisma);
+  await activateProjectBinding(
+    repository,
+    principal,
+    digiPortalFeatureFlags(),
+    {
+      bindingId: String(formData.get("bindingId") ?? ""),
+      configFingerprint: String(formData.get("configFingerprint") ?? ""),
+    },
+  );
+  revalidatePath("/integrations/digi-portal");
 }
 
 export async function createPendingDigiPortalBindingAction(formData: FormData) {

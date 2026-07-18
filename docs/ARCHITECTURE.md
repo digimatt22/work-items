@@ -17,7 +17,7 @@ Canonical planning lives in:
 - `packages/db`: Prisma schema and database package.
 - `packages/shared`: shared roles, actors, permissions, activity, asset, storage, MCP, and work item contracts.
 - `packages/ui`: shared UI package placeholder.
-- `packages/mcp`: MCP tool contract and scope helpers.
+- `packages/mcp`: Digi-Portal's read-only MCP server and tool/scope contracts.
 - `tests/e2e`: Playwright placeholder for Phase 1+ flows.
 - `docs/`: DPAF, PRD addendum, ADRs, and harness documentation.
 
@@ -35,6 +35,7 @@ The important local development flow is:
 8. Admins can open `/status-report` directly or generate it from the work-item board; board query, client/project, and type filters scope the deterministic weekly email-ready summary.
 9. Client users land on `/report`, choose a visible project, submit a bug or feature request, and optionally attach files.
 10. Client reports create standard work items through shared work-item services, then upload attachments through the shared asset service and storage provider.
+11. An administrator may qualify a work item for the active Digi-Portal binding. OAuth authorization binds ChatGPT Work to exactly one active project binding, and the MCP endpoint derives every queue, search, fetch, and item read from that grant.
 
 ## Contracts
 
@@ -50,6 +51,8 @@ The important local development flow is:
 - Report attachments must use the existing asset constraints and storage-provider abstraction.
 - AI actions and delivery evidence are admin-only by default; only admins can qualify work as agent-ready.
 - MCP authorization uses OAuth 2.1-style bearer token scopes.
+- Digi-Portal OAuth uses authorization code plus PKCE S256, dynamic public-client registration, resource-bound opaque access tokens, and server-side binding selection by an administrator.
+- Phase 1 MCP tools are read-only and return only active, unrevoked, administrator-qualified dispatches for the authenticated binding.
 - Assets go through a storage provider abstraction.
 - Work items remain unified with type-specific detail records.
 
@@ -65,13 +68,14 @@ The important local development flow is:
 
 Use this section for stable decisions that future work should respect. Include date, context, decision, and consequences when the decision is important enough to survive beyond one PR.
 
-| Date       | Decision                                                                                                                                 | Consequence                                                                                                                     |
-| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-06-26 | Use accepted ADRs in `docs/adr/` as architecture guardrails                                                                              | Future implementation should update ADRs before changing boundaries, auth, audit, storage, search, or work item modeling        |
-| 2026-07-16 | Provide authenticated password changes through `/settings/password` using the existing credentials provider and bcrypt cost 12           | Users can rotate credentials without direct database or seed access; email recovery and MFA remain separate future work         |
-| 2026-07-16 | Create client-user identity and password records atomically and return expected creation failures to the form                            | Failed provisioning cannot leave a partial account, and duplicate emails no longer trigger a framework error page               |
-| 2026-07-17 | Generate a unique temporary password for each client user, display it once to the creating admin, and require replacement on first login | Accounts can be handed off without email delivery or a shared default password; plaintext temporary passwords are not persisted |
-| 2026-07-17 | Bind each pilot Work Items project to at most one active repository/workspace through Digi-Portal and let only admins qualify work for agents | Project routing has a single authoritative active binding, while customer status and agent-delivery state remain separate |
+| Date       | Decision                                                                                                                                      | Consequence                                                                                                                     |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-26 | Use accepted ADRs in `docs/adr/` as architecture guardrails                                                                                   | Future implementation should update ADRs before changing boundaries, auth, audit, storage, search, or work item modeling        |
+| 2026-07-16 | Provide authenticated password changes through `/settings/password` using the existing credentials provider and bcrypt cost 12                | Users can rotate credentials without direct database or seed access; email recovery and MFA remain separate future work         |
+| 2026-07-16 | Create client-user identity and password records atomically and return expected creation failures to the form                                 | Failed provisioning cannot leave a partial account, and duplicate emails no longer trigger a framework error page               |
+| 2026-07-17 | Generate a unique temporary password for each client user, display it once to the creating admin, and require replacement on first login      | Accounts can be handed off without email delivery or a shared default password; plaintext temporary passwords are not persisted |
+| 2026-07-17 | Bind each pilot Work Items project to at most one active repository/workspace through Digi-Portal and let only admins qualify work for agents | Project routing has a single authoritative active binding, while customer status and agent-delivery state remain separate       |
+| 2026-07-17 | Use the Work Items project itself as Digi-Portal's internal pilot and expose only OAuth-protected read tools in Phase 1                       | The pilot can prove routing and isolation before claims or agent mutations are enabled                                          |
 
 ## Architectural Boundaries
 
@@ -91,4 +95,4 @@ The approved planning direction in `docs/dpaf/expansion/` introduces a control-p
 5. Progress, questions, evidence, and review readiness return through shared services with linked activity and AI audit.
 6. Merge, deploy, customer communication, and final closure remain human-controlled in the first release.
 
-Qualification, dispatch, lease, and delivery-attempt state remain separate from the customer-facing pipeline status. Phase 0 implements the persistence contracts, shared authorization services, transition guards, audit/outbox writes, and an inert admin binding diagnostic. All binding activation and agent-facing behavior remains disabled behind independent feature flags.
+Qualification, dispatch, lease, and delivery-attempt state remain separate from the customer-facing pipeline status. Phase 1 activates the internal Work Items pilot binding, adds OAuth-protected binding/queue/search/fetch/item reads, and keeps all claim and mutation behavior disabled behind the independent `DIGI_PORTAL_AGENT_MUTATIONS_ENABLED` flag.

@@ -3,6 +3,7 @@ export * from "./agent-delivery";
 export * from "./actors";
 export * from "./assets";
 export * from "./client-services";
+export * from "./digi-portal-read";
 export * from "./collaboration-services";
 export * from "./mcp";
 export * from "./permissions";

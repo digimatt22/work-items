@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "digi-portal": {
+      "url": "https://portal.digicolony.net/mcp"
+    }
+  }
+}

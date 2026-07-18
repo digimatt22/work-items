@@ -19,7 +19,10 @@ import {
   compactFieldClass,
   fieldClass,
 } from "../../components/ui";
-import { createPendingDigiPortalBindingAction } from "./actions";
+import {
+  activateDigiPortalBindingAction,
+  createPendingDigiPortalBindingAction,
+} from "./actions";
 
 export default async function DigiPortalIntegrationPage() {
   const session = await auth();
@@ -74,8 +77,8 @@ export default async function DigiPortalIntegrationPage() {
               <div>
                 <h2 className="text-lg font-bold text-ink">Project bindings</h2>
                 <p className="mt-1 text-sm leading-6 text-muted">
-                  Pending bindings are inert. Verification and activation arrive
-                  in Phase 1.
+                  Pending bindings remain inert until an administrator verifies
+                  the repository config and activates them.
                 </p>
               </div>
               <Badge>{bindings.length}</Badge>
@@ -117,6 +120,30 @@ export default async function DigiPortalIntegrationPage() {
                     <p className="mt-2 break-all text-xs text-soft">
                       Fingerprint: {binding.configFingerprint}
                     </p>
+                    {binding.status === "PENDING" ? (
+                      <form
+                        action={activateDigiPortalBindingAction}
+                        className="mt-3"
+                      >
+                        <input
+                          type="hidden"
+                          name="bindingId"
+                          value={binding.id}
+                        />
+                        <input
+                          type="hidden"
+                          name="configFingerprint"
+                          value={binding.configFingerprint}
+                        />
+                        <button
+                          className={buttonClass()}
+                          disabled={!flags.adminBindings}
+                          type="submit"
+                        >
+                          Verify config and activate
+                        </button>
+                      </form>
+                    ) : null}
                   </article>
                 );
               })}

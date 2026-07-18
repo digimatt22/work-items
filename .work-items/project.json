@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "plugin": "digi-portal",
+  "platformUrl": "https://portal.digicolony.net",
+  "projectId": "cmrpqo9ir0001pgchn0pu9miy",
+  "bindingId": "eb2d47ad-c549-420b-b363-e53231a0db04",
+  "environment": "PILOT",
+  "repositoryRef": "digicolony/work-items"
+}

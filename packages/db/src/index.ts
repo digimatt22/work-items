@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 export * from "./collaboration-repository";
+export * from "./digi-portal-read-repository";
 export * from "./agent-delivery-repository";
 export * from "./launch-repository";
 export * from "./local-storage-provider";

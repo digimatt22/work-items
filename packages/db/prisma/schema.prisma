@@ -112,15 +112,17 @@ model User {
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
 
-  createdWorkItems       WorkItem[]          @relation("WorkItemCreator")
-  reportedWorkItems      WorkItem[]          @relation("WorkItemReporter")
-  assignedWorkItems      WorkItem[]          @relation("WorkItemAssignee")
+  createdWorkItems       WorkItem[]             @relation("WorkItemCreator")
+  reportedWorkItems      WorkItem[]             @relation("WorkItemReporter")
+  assignedWorkItems      WorkItem[]             @relation("WorkItemAssignee")
   projectMemberships     ProjectMember[]
   comments               Comment[]
   mentions               Mention[]
   watchedWorkItems       Watcher[]
-  createdProjectBindings ProjectBinding[]    @relation("ProjectBindingCreator")
-  workQualifications     WorkQualification[] @relation("WorkQualificationAdmin")
+  createdProjectBindings ProjectBinding[]       @relation("ProjectBindingCreator")
+  workQualifications     WorkQualification[]    @relation("WorkQualificationAdmin")
+  mcpAuthorizationCodes  McpAuthorizationCode[]
+  mcpAccessGrants        McpAccessGrant[]
 }
 
 model PasswordCredential {
@@ -403,16 +405,20 @@ model AiAction {
 }
 
 model McpOAuthClient {
-  id               String    @id @default(cuid())
-  name             String
-  clientId         String    @unique
-  clientSecretHash String
-  scopes           Json
-  revokedAt        DateTime?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  id                      String    @id @default(cuid())
+  name                    String
+  clientId                String    @unique
+  clientSecretHash        String?
+  redirectUris            Json      @default("[]")
+  tokenEndpointAuthMethod String    @default("none")
+  scopes                  Json
+  revokedAt               DateTime?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
 
-  projectBindings ProjectBinding[]
+  projectBindings    ProjectBinding[]
+  authorizationCodes McpAuthorizationCode[]
+  accessGrants       McpAccessGrant[]
 }
 
 model ProjectBinding {
@@ -434,13 +440,59 @@ model ProjectBinding {
   createdAt         DateTime                  @default(now())
   updatedAt         DateTime                  @updatedAt
 
-  project     Project         @relation(fields: [projectId], references: [id], onDelete: Restrict)
-  oauthClient McpOAuthClient? @relation(fields: [oauthClientId], references: [id], onDelete: SetNull)
-  createdBy   User            @relation("ProjectBindingCreator", fields: [createdById], references: [id], onDelete: Restrict)
-  dispatches  AgentDispatch[]
+  project            Project                @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  oauthClient        McpOAuthClient?        @relation(fields: [oauthClientId], references: [id], onDelete: SetNull)
+  createdBy          User                   @relation("ProjectBindingCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  dispatches         AgentDispatch[]
+  authorizationCodes McpAuthorizationCode[]
+  accessGrants       McpAccessGrant[]
 
   @@index([projectId, status])
   @@index([status, environment])
+}
+
+model McpAuthorizationCode {
+  id            String    @id @default(cuid())
+  codeHash      String    @unique
+  oauthClientId String
+  bindingId     String
+  userId        String
+  redirectUri   String
+  scopes        Json
+  codeChallenge String
+  resource      String
+  expiresAt     DateTime
+  usedAt        DateTime?
+  createdAt     DateTime  @default(now())
+
+  oauthClient McpOAuthClient @relation(fields: [oauthClientId], references: [id], onDelete: Restrict)
+  binding     ProjectBinding @relation(fields: [bindingId], references: [id], onDelete: Restrict)
+  user        User           @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([oauthClientId, expiresAt])
+  @@index([bindingId, expiresAt])
+}
+
+model McpAccessGrant {
+  id            String    @id @default(cuid())
+  tokenHash     String    @unique
+  oauthClientId String
+  bindingId     String
+  userId        String
+  agentId       String
+  scopes        Json
+  resource      String
+  expiresAt     DateTime
+  revokedAt     DateTime?
+  lastUsedAt    DateTime?
+  createdAt     DateTime  @default(now())
+
+  oauthClient McpOAuthClient @relation(fields: [oauthClientId], references: [id], onDelete: Restrict)
+  binding     ProjectBinding @relation(fields: [bindingId], references: [id], onDelete: Restrict)
+  user        User           @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([bindingId, revokedAt, expiresAt])
+  @@index([oauthClientId, revokedAt])
 }
 
 model WorkQualification {

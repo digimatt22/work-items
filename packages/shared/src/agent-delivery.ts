@@ -103,6 +103,11 @@ export interface AgentDeliveryFoundationRepository {
     readonly workspaceRef?: string;
     readonly configFingerprint: string;
   }): Promise<ProjectBindingRecord>;
+  activateBindingWithAudit(input: {
+    readonly bindingId: string;
+    readonly activatedById: string;
+    readonly configFingerprint: string;
+  }): Promise<ProjectBindingRecord>;
   markWorkItemReadyWithAudit(input: {
     readonly workItemId: string;
     readonly qualifiedById: string;
@@ -305,6 +310,48 @@ export async function createPendingProjectBinding(
     projectId: config.projectId,
     repositoryRef: config.repositoryRef,
     workspaceRef: input.workspaceRef?.trim() || undefined,
+  });
+}
+
+export async function activateProjectBinding(
+  repository: AgentDeliveryFoundationRepository,
+  principal: Principal,
+  flags: DigiPortalFeatureFlags,
+  input: {
+    readonly bindingId: string;
+    readonly configFingerprint: string;
+  },
+): Promise<ProjectBindingRecord> {
+  const activatedById = requireAdmin(principal);
+
+  if (!flags.adminBindings) {
+    throw new Error("Digi-Portal admin binding setup is disabled.");
+  }
+
+  const bindingId = normalizeRequired(input.bindingId, "Binding ID");
+  const fingerprint = normalizeRequired(
+    input.configFingerprint,
+    "Config fingerprint",
+  );
+  const binding = (await repository.listBindings()).find(
+    (candidate) => candidate.id === bindingId,
+  );
+
+  if (!binding || binding.status !== "PENDING") {
+    throw new Error("Pending Digi-Portal project binding not found.");
+  }
+
+  if (binding.configFingerprint !== fingerprint) {
+    throw new Error("Digi-Portal project config fingerprint does not match.");
+  }
+
+  assertProjectBindingTransition("PENDING", "VERIFIED");
+  assertProjectBindingTransition("VERIFIED", "ACTIVE");
+
+  return repository.activateBindingWithAudit({
+    bindingId,
+    activatedById,
+    configFingerprint: fingerprint,
   });
 }
 

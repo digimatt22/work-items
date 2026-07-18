@@ -9,6 +9,19 @@ Phase 1 is feasible as a reusable Digi-Portal plugin backed by a remote MCP serv
 
 The config file remains valuable as a local routing assertion. It is not the authorization source and is not a universal ChatGPT web transport.
 
+## Implementation Outcome
+
+Phase 1 is implemented for the internal pilot:
+
+- Work Items project ID: `cmrpqo9ir0001pgchn0pu9miy`
+- Active pilot binding ID: `eb2d47ad-c549-420b-b363-e53231a0db04`
+- Repository assertion: `.work-items/project.json`
+- OAuth: protected-resource and authorization-server metadata, dynamic public-client registration, authorization code with PKCE S256, one-time code exchange, resource-bound opaque grants, and admin binding selection
+- Read tools: `work_items_binding_get`, `work_items_binding_verify`, `work_items_queue_list`, `work_items_queue_next`, `work_items_get`, `search`, and `fetch`
+- Marketplace package: `digi-portal` version `0.1.0`
+
+Automated isolation validation proves that a grant for the pilot binding cannot fetch an agent-ready item from a different project. Hosted ChatGPT Work connection remains a human validation step after the MCP endpoint is deployed with the Phase 1 environment flags enabled.
+
 ## Verified Platform Facts
 
 Checked against the current OpenAI Codex manual on 2026-07-17:

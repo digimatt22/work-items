@@ -175,6 +175,62 @@ export function createPrismaAgentDeliveryFoundationRepository(
       });
     },
 
+    async activateBindingWithAudit(input): Promise<ProjectBindingRecord> {
+      return prisma.$transaction(
+        async (transaction) => {
+          const current = await transaction.projectBinding.findUnique({
+            where: { id: input.bindingId },
+            select: {
+              id: true,
+              projectId: true,
+              status: true,
+              configFingerprint: true,
+            },
+          });
+
+          if (
+            !current ||
+            current.status !== "PENDING" ||
+            current.configFingerprint !== input.configFingerprint
+          ) {
+            throw new Error(
+              "Pending binding or config fingerprint does not match.",
+            );
+          }
+
+          const now = new Date();
+          const binding = await transaction.projectBinding.update({
+            where: { id: current.id },
+            data: {
+              status: "ACTIVE",
+              activeKey: current.projectId,
+              verifiedAt: now,
+              activatedAt: now,
+            },
+            select: bindingSelect,
+          });
+
+          await transaction.activityEvent.create({
+            data: {
+              actorType: "USER",
+              actorId: input.activatedById,
+              entityType: "PROJECT_BINDING",
+              entityId: binding.id,
+              action: "VERIFIED_AND_ACTIVATED",
+              visibility: "ADMIN_ONLY",
+              metadata: asJson({
+                projectId: binding.projectId,
+                status: "ACTIVE",
+              }),
+            },
+          });
+
+          return toBindingRecord(binding);
+        },
+        { isolationLevel: "Serializable" },
+      );
+    },
+
     async markWorkItemReadyWithAudit(input): Promise<WorkQualificationRecord> {
       return prisma.$transaction(
         async (transaction) => {

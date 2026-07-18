@@ -58,6 +58,22 @@ function repository(): AgentDeliveryFoundationRepository {
         createdAt: new Date("2026-07-17T00:00:00.000Z"),
       };
     },
+    async activateBindingWithAudit(input) {
+      return {
+        id: input.bindingId,
+        projectId: "project-1",
+        projectName: "Portal",
+        clientName: "Client One",
+        environment: "PILOT",
+        status: "ACTIVE",
+        platformUrl: "https://portal.digicolony.net",
+        repositoryRef: "digicolony/portal",
+        configFingerprint: input.configFingerprint,
+        createdAt: new Date("2026-07-17T00:00:00.000Z"),
+        verifiedAt: new Date("2026-07-17T00:01:00.000Z"),
+        activatedAt: new Date("2026-07-17T00:01:00.000Z"),
+      };
+    },
     async markWorkItemReadyWithAudit(input) {
       return {
         id: "qualification-1",
