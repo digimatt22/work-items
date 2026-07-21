@@ -1,5 +1,5 @@
 import {
-  createLocalStorageProvider,
+  createConfiguredStorageProvider,
   getPublicDeliverableShare,
   prisma,
   recordDeliverableDownload,
@@ -7,10 +7,14 @@ import {
 } from "@digicolony/db";
 import { compare } from "bcryptjs";
 import type { NextRequest } from "next/server";
+import { deliveryFailureUrl } from "../../../../../src/deliveries/redirect";
 
 function backToDelivery(request: NextRequest, token: string): Response {
   return Response.redirect(
-    new URL(`/deliveries/${token}?error=1`, request.url),
+    deliveryFailureUrl(
+      token,
+      process.env.AUTH_URL ?? new URL(request.url).origin,
+    ),
     303,
   );
 }
@@ -50,9 +54,7 @@ export async function POST(
     return backToDelivery(request, token);
   }
 
-  const storage = createLocalStorageProvider(
-    process.env.UPLOADS_DIR ?? "./uploads",
-  );
+  const storage = createConfiguredStorageProvider(share.asset.provider);
   const bytes = await storage.getObject({ objectKey: share.asset.objectKey });
   await recordDeliverableDownload(prisma, share.id, now);
 

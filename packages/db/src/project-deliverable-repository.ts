@@ -187,6 +187,7 @@ export async function getPublicDeliverableShare(
       lockedUntil: true,
       asset: {
         select: {
+          provider: true,
           objectKey: true,
           filename: true,
           contentType: true,

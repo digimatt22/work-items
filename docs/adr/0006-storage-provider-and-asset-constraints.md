@@ -6,13 +6,15 @@ Accepted
 
 ## Context
 
-The PRD requires assets for images, PDFs, videos, documents, and logs. Storage starts locally and must remain S3-compatible later.
+The PRD requires assets for images, PDFs, videos, documents, and logs. Local development needs a zero-service default, while Sheldon needs storage that survives application container replacement and can be reused by future projects without adding AWS.
 
 ## Decision
 
 Store asset metadata in PostgreSQL and physical objects behind a storage provider abstraction.
 
-Use local filesystem storage for launch. Keep object keys and provider behavior compatible with future S3 storage.
+Use local filesystem storage as the default for local development. Select storage at runtime with `STORAGE_PROVIDER` and use a self-hosted Garage S3-compatible service on Sheldon. Keep one private bucket and restricted access key per application security boundary.
+
+The application streams authorized public downloads through the web process rather than exposing Garage endpoints or object keys. Existing `LOCAL` asset records remain readable through provider-aware lookup after the configured provider changes to S3.
 
 MVP asset constraints:
 
@@ -29,5 +31,7 @@ MVP asset constraints:
 ## Consequences
 
 - MVP upload behavior is bounded and testable.
-- S3 migration remains a provider swap rather than a domain rewrite.
+- Sheldon uploads survive application deployment because Garage data and metadata live in dedicated named volumes.
+- Future Sheldon projects can reuse the shared Garage service with separate buckets and keys.
+- A single Sheldon node remains one hardware failure domain and requires independent backups plus restore drills.
 - Rich previews for PDFs, office documents, and video remain out of launch scope.

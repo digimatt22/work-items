@@ -1,11 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 
 export * from "./collaboration-repository";
+export * from "./configured-storage-provider";
 export * from "./digi-portal-read-repository";
 export * from "./agent-delivery-repository";
 export * from "./launch-repository";
 export * from "./local-storage-provider";
 export * from "./project-deliverable-repository";
+export * from "./s3-storage-provider";
 export * from "./work-item-repository";
 export * from "./workspace-repository";
 

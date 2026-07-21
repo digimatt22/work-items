@@ -2,7 +2,7 @@
 
 import { randomBytes } from "node:crypto";
 import {
-  createLocalStorageProvider,
+  createConfiguredStorageProvider,
   createPrismaProjectDeliverableRepository,
   prisma,
 } from "@digicolony/db";
@@ -47,7 +47,7 @@ async function requireAdmin() {
 function repository() {
   return createPrismaProjectDeliverableRepository(
     prisma,
-    createLocalStorageProvider(process.env.UPLOADS_DIR ?? "./uploads"),
+    createConfiguredStorageProvider(),
   );
 }
 

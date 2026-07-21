@@ -1,5 +1,5 @@
 import {
-  createLocalStorageProvider,
+  createConfiguredStorageProvider,
   createPrismaCollaborationRepository,
   createPrismaWorkItemRepository,
   prisma
@@ -61,7 +61,7 @@ export default async function WorkItemDetailPage({
   const repository = createPrismaWorkItemRepository(prisma);
   const collaborationRepository = createPrismaCollaborationRepository(
     prisma,
-    createLocalStorageProvider(process.env.UPLOADS_DIR ?? "./uploads")
+    createConfiguredStorageProvider()
   );
   const item = (await listVisibleWorkItems(repository, principal)).find(
     (candidate) => candidate.id === workItemId

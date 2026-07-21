@@ -1,5 +1,5 @@
 import {
-  createLocalStorageProvider,
+  createConfiguredStorageProvider,
   createPrismaProjectDeliverableRepository,
   createPrismaWorkItemRepository,
   prisma,
@@ -59,7 +59,7 @@ export default async function ProjectWorkspacePage({
   const repository = createPrismaWorkItemRepository(prisma);
   const deliverableRepository = createPrismaProjectDeliverableRepository(
     prisma,
-    createLocalStorageProvider(process.env.UPLOADS_DIR ?? "./uploads"),
+    createConfiguredStorageProvider(),
   );
   const [projects, allItems, projectDetails, deliverables] = await Promise.all([
     listVisibleWorkItemProjects(repository, principal),

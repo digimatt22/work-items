@@ -1,7 +1,7 @@
 "use server";
 
 import {
-  createLocalStorageProvider,
+  createConfiguredStorageProvider,
   createPrismaCollaborationRepository,
   createPrismaWorkItemRepository,
   prisma
@@ -29,7 +29,7 @@ async function requireUserPrincipal() {
 function collaborationRepository() {
   return createPrismaCollaborationRepository(
     prisma,
-    createLocalStorageProvider(process.env.UPLOADS_DIR ?? "./uploads")
+    createConfiguredStorageProvider()
   );
 }
 

@@ -83,30 +83,37 @@ export function createPrismaCollaborationRepository(
         bytes: input.bytes
       });
 
-      const asset = await prisma.asset.create({
-        data: {
-          provider: "LOCAL",
-          objectKey: stored.objectKey,
-          filename: input.filename,
-          contentType: input.contentType,
-          sizeBytes: stored.sizeBytes,
-          checksum: stored.checksum,
-          links: {
-            create: {
-              workItemId: input.workItemId
+      try {
+        const asset = await prisma.asset.create({
+          data: {
+            provider: stored.provider === "s3" ? "S3" : "LOCAL",
+            objectKey: stored.objectKey,
+            filename: input.filename,
+            contentType: input.contentType,
+            sizeBytes: stored.sizeBytes,
+            checksum: stored.checksum,
+            links: {
+              create: {
+                workItemId: input.workItemId
+              }
             }
+          },
+          select: {
+            id: true,
+            filename: true,
+            contentType: true,
+            sizeBytes: true,
+            createdAt: true
           }
-        },
-        select: {
-          id: true,
-          filename: true,
-          contentType: true,
-          sizeBytes: true,
-          createdAt: true
-        }
-      });
+        });
 
-      return asset;
+        return asset;
+      } catch (error) {
+        await storageProvider
+          .deleteObject({ objectKey: stored.objectKey })
+          .catch(() => undefined);
+        throw error;
+      }
     },
     async listAssets(workItemId): Promise<readonly AssetRecord[]> {
       const links = await prisma.assetLink.findMany({

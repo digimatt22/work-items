@@ -38,6 +38,7 @@ The important local development flow is:
 11. An administrator may qualify a work item for the active Digi-Portal binding. OAuth authorization binds ChatGPT Work to exactly one active project binding, and the MCP endpoint derives every queue, search, fetch, and item read from that grant.
 12. An administrator can upload a project-linked deliverable, create a password-protected expiring share, copy the generated password once, and revoke the share from the project workspace.
 13. An unauthenticated client opens `/deliveries/[token]`, submits the share password, and receives only the linked file after expiry, revocation, and lockout checks. The application reads the object through the storage provider and records the successful download as admin-only activity.
+14. Local development defaults to the filesystem provider. Sheldon selects the S3 provider and reaches the private `sheldon-garage` service over the persisted rootless-Docker application network; Garage has no published ports.
 
 ## Contracts
 
@@ -81,10 +82,12 @@ Use this section for stable decisions that future work should respect. Include d
 | 2026-07-17 | Bind each pilot Work Items project to at most one active repository/workspace through Digi-Portal and let only admins qualify work for agents | Project routing has a single authoritative active binding, while customer status and agent-delivery state remain separate       |
 | 2026-07-17 | Use the Work Items project itself as Digi-Portal's internal pilot and expose only OAuth-protected read tools in Phase 1                       | The pilot can prove routing and isolation before claims or agent mutations are enabled                                          |
 | 2026-07-21 | Reuse project-linked assets for one-file, password-protected, expiring public deliveries; keep password plaintext one-time only               | Clients can download without accounts while storage, authorization, lockout, revocation, and audit remain server-controlled     |
+| 2026-07-21 | Run Garage v2.2.0 as shared private S3-compatible infrastructure on Sheldon, with a bucket/key boundary per application                       | Files persist independently of application releases and future projects can reuse the service without introducing AWS           |
 
 ## Architectural Boundaries
 
 - No production AWS infrastructure in Phase 0.
+- Garage remains private to Sheldon application networks; Caddy and Cloudflare do not expose its S3 or administration APIs.
 - No Phase 1 feature implementation beyond skeletons/contracts.
 - No real Auth.js provider wiring until Phase 1A.
 - No rich document/video preview generation in MVP scope.

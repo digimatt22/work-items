@@ -31,7 +31,9 @@ Important variables:
 - `AUTH_SECRET`: Auth.js local secret.
 - `AUTH_TRUST_HOST`: set to `true` for local network browser review so authentication uses the request host instead of forcing a localhost callback.
 - `SEED_DEFAULT_PASSWORD`: password assigned to seeded local users.
+- `STORAGE_PROVIDER`: `local` by default; set to `s3` to exercise Garage or another S3-compatible service.
 - `UPLOADS_DIR`: local filesystem storage root.
+- `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, and `S3_FORCE_PATH_STYLE`: required together only for S3-compatible storage. Keep credentials out of the repository.
 - `MCP_ISSUER`: expected MCP token issuer.
 - `MCP_AUDIENCE`: expected MCP token audience.
 - `DIGI_PORTAL_PLATFORM_URL`: canonical portal origin written into non-secret project binding files; HTTPS is required outside localhost.
