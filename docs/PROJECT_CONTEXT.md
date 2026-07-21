@@ -8,7 +8,7 @@ This repo contains the DigiColony AI-First Client Operations Platform, a Next.js
 
 - The product is a pnpm monorepo with a Next.js App Router web application, Prisma/PostgreSQL persistence, Auth.js credentials authentication, shared contracts, and Playwright/Vitest coverage.
 - The project is initialized for deployment to the Sheldon development server through `sheldon.json`, `Dockerfile`, `SHELDON_DEPLOY.md`, and `server-configuration-report.md`.
-- Sheldon release `20260717T132949Z` is live at `https://portal.digicolony.net`; origin and public health, Auth.js callbacks, generic invalid-credential handling, non-root execution, the persisted application network, and database preservation were verified on 2026-07-17.
+- Sheldon release `20260721T184200Z` is live at `https://portal.digicolony.net`; origin and public health, canonical Auth.js URLs, non-root execution, the persisted application network, the additive deliverable-sharing schema, and database preservation were verified on 2026-07-21.
 - The live database contains the sole admin and password credential, four required pipeline statuses, two user-created clients, four projects, and no work items. Existing user-created data must be preserved during deployment and diagnostics.
 - Client-user identity and credential creation are atomic, and expected failures remain in the form. The deployed release passed 26 unit tests locally, 26 tests in the Sheldon image build, a targeted success/duplicate-email browser test, and production builds locally and on Sheldon.
 - The deployed client-user flow generates unique temporary passwords, shows copy-ready username/password credentials once to the creating admin, and forces replacement before any other authenticated route. Validation passed 28 unit tests, TypeScript checks, all 17 browser scenarios, and clean local and Sheldon production container builds.
@@ -19,6 +19,7 @@ This repo contains the DigiColony AI-First Client Operations Platform, a Next.js
 - A Digi-CTO v0.3.0 expansion pack defines the path from customer request intake to project-bound AI-agent delivery under `docs/dpaf/expansion/`.
 - Digi-Portal Phase 0 now provides the database foundation, non-secret `.work-items/project.json` contract, admin-only qualification policy, lease/dispatch transition guards, audit/outbox writes, independent rollout flags, and an inert admin binding diagnostic. No binding can be activated and no agent read or write surface is exposed yet.
 - Project workspaces now support admin-only deliverable upload and one-file public shares with generated one-time passwords, required expiry, revocation, five-attempt lockout, and download evidence. The flow reuses project-linked assets and the storage provider; it still requires durable storage and human browser validation before external production use.
+- The post-deployment storage audit found zero `Asset` records, zero `DeliverableShare` records, zero physical upload files, and no application-container mounts. `docs/exec-plans/active/project-upload-preservation.md` defines the required named-volume, backup, reconciliation, and restore work before important client deliverables are uploaded.
 
 ## lifeOS Registration
 

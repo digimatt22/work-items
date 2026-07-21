@@ -69,6 +69,8 @@ Completed 2026-07-21:
 - Markdown link, inbox, and diff checks passed.
 - In-app browser validation at the local development URL passed upload, share generation, signed-out public access, wrong-password rejection, successful download, download count, revocation, and revoked-link failure. The test asset/share and physical test file were removed afterward.
 - Desktop and 390 × 844 reviews showed no computed horizontal overflow for the project-deliverable controls or public delivery card. The public card and all new mobile controls remained within their containers.
+- Sheldon migration and deployment completed on 2026-07-21 as release `20260721T184200Z`. Origin/public health and canonical Auth.js URLs passed; live preservation counts remained 2 users, 2 password credentials, 2 clients, 5 projects, and 1 work item. The new share table and current asset inventory were empty.
+- Important production-like deliverables remain blocked on `docs/exec-plans/active/project-upload-preservation.md` because the current container has no `/app/uploads` mount.
 
 ## Human Validation
 

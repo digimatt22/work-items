@@ -19,11 +19,12 @@ Use the Codex skill `$deploy-to-sheldon` for deployment, status, and rollback op
 
 ## Current deployment notes
 
-- Live release `20260717T132949Z` is deployed at `https://portal.digicolony.net` with origin `127.0.0.1:39732`.
+- Live release `20260721T184200Z` is deployed at `https://portal.digicolony.net` with origin `127.0.0.1:39732` and the additive project-deliverable-sharing schema applied transactionally beforehand.
 - PostgreSQL is reached through its rootful internal network at `172.18.0.2:5432`. The rootless application network is pinned to `172.30.0.0/16` in the deployed Compose file to prevent a subnet collision. Reverify this route after Docker network or PostgreSQL topology changes.
-- The current local asset provider writes uploads to the container filesystem. Sheldon releases do not mount persistent storage, so asset uploads will not survive a container replacement. Add a persistent storage strategy before treating uploaded assets as durable.
+- The current local asset provider writes uploads to `/app/uploads` in the container. Sheldon releases do not yet mount persistent storage, so asset uploads will not survive a container replacement. The post-deploy audit found zero asset records and zero physical upload files. Complete [the active preservation plan](docs/exec-plans/active/project-upload-preservation.md) before uploading important client deliverables.
 - Sheldon plugin version `0.1.0+codex.20260717125641` excludes mutable/test output, assigns every Next.js release a deployment ID, and mounts the stable Server Action encryption key as a build-only secret. This lets stale tabs recover from version skew without placing the key in a release archive, Compose build argument, or image layer.
 - Configure the Git remote and obtain review before treating the local deployment changes as shared project history.
 - The live database was originally initialized with Prisma schema synchronization and has no `_prisma_migrations` ledger. The additive `mustChangePassword` column was applied transactionally before release `20260717T132949Z`; do not run `prisma migrate deploy` against Sheldon until the existing schema has been formally baselined.
+- Migration `0006_project_deliverable_sharing` was applied as reviewed raw SQL in one transaction before release `20260721T184200Z`. A schema-only recovery snapshot is stored server-side at `/home/mwood/sheldon/apps/digicolony-client-ops/backups/pre-f885ac4-schema.sql`, mode `0600`. Existing users, password credentials, clients, projects, and work items were verified unchanged before and after the migration and deployment.
 
 Initialization does not authorize a deployment, rollback, secret change, database change, or Cloudflare route change. Each live operation needs explicit authorization through the deployment skill.
