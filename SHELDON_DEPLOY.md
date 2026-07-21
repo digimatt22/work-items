@@ -7,7 +7,7 @@ Use the Codex skill `$deploy-to-sheldon` for deployment, status, and rollback op
 - The container serves Next.js on `0.0.0.0:3000`; Sheldon probes `/api/health` without querying PostgreSQL.
 - Run `pnpm lint`, `pnpm test`, `pnpm build`, and a local container build before deployment.
 - Never commit or upload `.env` files. Secrets live on Sheldon in `~/.config/sheldon/secrets/<app>.env`.
-- `~/.config/sheldon/secrets/digicolony-client-ops.env` must be mode `0600` and define the names listed in `sheldon.json`, including the database/authentication values and the `STORAGE_PROVIDER`/`S3_*` Garage connection values.
+- `~/.config/sheldon/secrets/digicolony-client-ops.env` must be mode `0600` and define the names listed in `sheldon.json`, including the database/authentication values, the `STORAGE_PROVIDER`/`S3_*` Garage connection values, and the four independent `DIGI_PORTAL_*` rollout settings.
 - Set `AUTH_URL=https://portal.digicolony.net` so Auth.js emits public sign-in and callback URLs instead of container-internal URLs.
 - The production `DATABASE_URL` must be reachable from inside the rootless application container. Do not reuse the local development URL whose host is `localhost`.
 - Applications must listen on `0.0.0.0` inside the container.
@@ -19,7 +19,7 @@ Use the Codex skill `$deploy-to-sheldon` for deployment, status, and rollback op
 
 ## Current deployment notes
 
-- Live release `20260721T201923Z` is deployed at `https://portal.digicolony.net` with origin `127.0.0.1:39732` and the additive project-deliverable-sharing schema applied transactionally beforehand.
+- Live release `20260721T205301Z` is deployed at `https://portal.digicolony.net` with origin `127.0.0.1:39732`, the Digi-Portal administrator binding form enabled, and the agent read/mutation gates disabled.
 - PostgreSQL is reached through its rootful internal network at `172.18.0.2:5432`. The rootless application network is pinned to `172.30.0.0/16` in the deployed Compose file to prevent a subnet collision. Reverify this route after Docker network or PostgreSQL topology changes.
 - Asset storage on Sheldon uses the private `sheldon-garage` container, pinned to `dxflrs/garage:v2.2.0`, with no published ports. Garage shares `sheldon-digicolony-client-ops_default` with the portal, uses the private bucket `digicolony-client-ops`, and persists LMDB metadata and object data in `sheldon-garage-meta` and `sheldon-garage-data`.
 - `scripts/provision-garage-on-sheldon-remote.sh` is the idempotent bootstrap record. `scripts/backup-and-verify-garage-on-sheldon-remote.sh` stops Garage briefly, creates a mode-`0600` archive under `~/sheldon/shared/garage/backups/`, restores into isolated temporary volumes, verifies the bucket/key/statistics, and removes the temporary restore resources.
@@ -28,6 +28,7 @@ Use the Codex skill `$deploy-to-sheldon` for deployment, status, and rollback op
 - Configure the Git remote and obtain review before treating the local deployment changes as shared project history.
 - The live database was originally initialized with Prisma schema synchronization and has no `_prisma_migrations` ledger. The additive `mustChangePassword` column was applied transactionally before release `20260717T132949Z`; do not run `prisma migrate deploy` against Sheldon until the existing schema has been formally baselined.
 - Migrations `0004_agent_delivery_foundation` and `0005_digi_portal_oauth` were applied together as reviewed raw SQL in one transaction on 2026-07-21. The pre-migration full PostgreSQL backup is `/home/mwood/sheldon/apps/digicolony-client-ops/backups/pre-digi-portal-0004-0005-20260721T204511Z.dump`, mode `0600`, with SHA-256 `fb9eab6fe8571aa240282ae2a7259f50b6ab4d2dd55a0cfde1274f2345895c03`. Protected user, credential, client, project, and work-item counts were unchanged after migration.
+- Sheldon enables administrator binding setup with `DIGI_PORTAL_PLATFORM_URL=https://portal.digicolony.net` and `DIGI_PORTAL_ADMIN_BINDINGS_ENABLED=true`. Agent reads and mutations remain explicitly disabled through their independent rollout flags.
 - Migration `0006_project_deliverable_sharing` was applied as reviewed raw SQL in one transaction before release `20260721T184200Z`. A schema-only recovery snapshot is stored server-side at `/home/mwood/sheldon/apps/digicolony-client-ops/backups/pre-f885ac4-schema.sql`, mode `0600`. Existing users, password credentials, clients, projects, and work items were verified unchanged before and after the migration and deployment.
 
 Initialization does not authorize a deployment, rollback, secret change, database change, or Cloudflare route change. Each live operation needs explicit authorization through the deployment skill.
