@@ -25,9 +25,13 @@ Preserve project deliverables and work-item attachments across Sheldon deploymen
 
 Use one rootless-Docker named volume, scoped to `digicolony-client-ops`, mounted at `/app/uploads`. Keep the existing local storage provider and object-key layout unchanged. Add persistence as a supported Sheldon deployment-manifest capability rather than hand-editing a generated release Compose file.
 
+Do not introduce AWS S3 or another managed object-storage dependency during the Sheldon development phase. Sheldon remains the system of record for both application metadata and uploaded objects, with backups stored independently from release directories.
+
 Recommended volume identity: `sheldon-digicolony-client-ops-uploads`.
 
 Set `UPLOADS_DIR=/app/uploads` explicitly in Sheldon configuration even though it is currently the application default. The deployment preflight must fail when the declared persistent mount is absent.
+
+If S3 API compatibility becomes valuable before external production hosting, use a self-hosted Garage container on Sheldon as the preferred evaluation path. Keep its S3 and administration ports private to the application network, pin the image version, persist both Garage metadata and object data outside the container, and preserve them with the same backup-and-restore discipline. Do not use the archived MinIO community server for a new deployment.
 
 ## Implementation Plan
 
@@ -60,6 +64,8 @@ Set `UPLOADS_DIR=/app/uploads` explicitly in Sheldon configuration even though i
 ### Future Production Path
 
 Move physical objects to S3-compatible storage with versioning, lifecycle rules, and independent backup once the external-production requirements justify it. The `Asset.objectKey` and `StorageProvider` boundaries allow that change without replacing the deliverable-sharing domain model.
+
+Before adopting Garage or another S3-compatible service, implement and test an S3 `StorageProvider`; the current application only includes the local-filesystem implementation. Migration must copy objects, verify checksums, update storage-provider metadata transactionally, and retain the local recovery set until a restore drill passes.
 
 ## Acceptance Criteria
 
