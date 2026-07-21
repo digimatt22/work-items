@@ -18,6 +18,7 @@ This repo contains the DigiColony AI-First Client Operations Platform, a Next.js
 - The pre-expansion platform state is preserved at commit `c008778` with annotated tag `v0.0.0`.
 - A Digi-CTO v0.3.0 expansion pack defines the path from customer request intake to project-bound AI-agent delivery under `docs/dpaf/expansion/`.
 - Digi-Portal Phase 0 now provides the database foundation, non-secret `.work-items/project.json` contract, admin-only qualification policy, lease/dispatch transition guards, audit/outbox writes, independent rollout flags, and an inert admin binding diagnostic. No binding can be activated and no agent read or write surface is exposed yet.
+- Project workspaces now support admin-only deliverable upload and one-file public shares with generated one-time passwords, required expiry, revocation, five-attempt lockout, and download evidence. The flow reuses project-linked assets and the storage provider; it still requires durable storage and human browser validation before external production use.
 
 ## lifeOS Registration
 
@@ -96,6 +97,7 @@ This repo contains the DigiColony AI-First Client Operations Platform, a Next.js
 ## Repo Constraints
 
 - The local filesystem asset provider is not durable across Sheldon container replacement until persistent storage is added.
+- Public project deliveries currently stream through the application from the local provider; external production use is blocked until persistent or S3-compatible storage is configured and the public workflow receives browser/security validation.
 - The deployed Compose network retains its existing `172.30.0.0/16` application subnet; the updated Sheldon plugin persists existing networks and collision-checks new allocations.
 - No CI workflow is included yet.
 - Sheldon deployment and rollback procedures are defined, and the first live deployment has completed.

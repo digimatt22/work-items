@@ -36,6 +36,8 @@ The important local development flow is:
 9. Client users land on `/report`, choose a visible project, submit a bug or feature request, and optionally attach files.
 10. Client reports create standard work items through shared work-item services, then upload attachments through the shared asset service and storage provider.
 11. An administrator may qualify a work item for the active Digi-Portal binding. OAuth authorization binds ChatGPT Work to exactly one active project binding, and the MCP endpoint derives every queue, search, fetch, and item read from that grant.
+12. An administrator can upload a project-linked deliverable, create a password-protected expiring share, copy the generated password once, and revoke the share from the project workspace.
+13. An unauthenticated client opens `/deliveries/[token]`, submits the share password, and receives only the linked file after expiry, revocation, and lockout checks. The application reads the object through the storage provider and records the successful download as admin-only activity.
 
 ## Contracts
 
@@ -54,6 +56,7 @@ The important local development flow is:
 - Digi-Portal OAuth uses authorization code plus PKCE S256, dynamic public-client registration, resource-bound opaque access tokens, and server-side binding selection by an administrator.
 - Phase 1 MCP tools are read-only and return only active, unrevoked, administrator-qualified dispatches for the authenticated binding.
 - Assets go through a storage provider abstraction.
+- Public deliverable links authorize one project-linked asset only. They use a high-entropy token plus a bcrypt-hashed password, expire in 7, 14, or 30 days, lock for 15 minutes after five failed attempts, and never create a client session.
 - Work items remain unified with type-specific detail records.
 
 ## Operational Risks
@@ -62,6 +65,7 @@ The important local development flow is:
 - Missing activity/audit writes for mutations.
 - Search leakage across client boundaries.
 - Filesystem assumptions leaking into asset domain code.
+- Password/link leakage or brute-force attempts against public deliverable shares.
 - Premature Phase 1 feature implementation inside Phase 0 scaffolding.
 
 ## Design Decisions
@@ -76,6 +80,7 @@ Use this section for stable decisions that future work should respect. Include d
 | 2026-07-17 | Generate a unique temporary password for each client user, display it once to the creating admin, and require replacement on first login      | Accounts can be handed off without email delivery or a shared default password; plaintext temporary passwords are not persisted |
 | 2026-07-17 | Bind each pilot Work Items project to at most one active repository/workspace through Digi-Portal and let only admins qualify work for agents | Project routing has a single authoritative active binding, while customer status and agent-delivery state remain separate       |
 | 2026-07-17 | Use the Work Items project itself as Digi-Portal's internal pilot and expose only OAuth-protected read tools in Phase 1                       | The pilot can prove routing and isolation before claims or agent mutations are enabled                                          |
+| 2026-07-21 | Reuse project-linked assets for one-file, password-protected, expiring public deliveries; keep password plaintext one-time only               | Clients can download without accounts while storage, authorization, lockout, revocation, and audit remain server-controlled     |
 
 ## Architectural Boundaries
 

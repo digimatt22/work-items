@@ -62,6 +62,15 @@ Admins should be able to see all AI action audit records.
 - Generate basic previews for images only in MVP.
 - Store metadata for other allowed file types and defer rich preview generation.
 
+## Project Deliverable Sharing
+
+- Administrators can upload one or more deliverable assets against a project.
+- Each public link downloads one file and requires its generated password; no client account is required.
+- Passwords are shown once and stored only as bcrypt hashes. Links expire after 7, 14, or 30 days and can be revoked immediately.
+- Five failed password attempts lock the link for 15 minutes. Public failure responses do not distinguish wrong passwords from unavailable links.
+- Share management and successful downloads are admin-only activity. Public access never exposes the underlying storage key.
+- Durable object storage is required before this flow is relied upon for external production delivery.
+
 ## Accepted Risk Mitigations
 
 - Permission drift: shared policy functions and application services; permission tests for web and MCP paths.

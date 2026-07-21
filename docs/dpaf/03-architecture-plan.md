@@ -136,6 +136,8 @@ Future provider:
 
 Database records should store provider, object key, content type, size, checksum if available, preview metadata, and ownership links.
 
+Project deliverables reuse project-linked `Asset` records. A `DeliverableShare` binds one asset to one project and stores a high-entropy public token, bcrypt password hash, required expiry, revocation state, failed-attempt lockout state, and download evidence. The public download route verifies that record before reading through `StorageProvider.getObject`; it never exposes the object key. See [ADR 0011](../adr/0011-password-protected-project-deliveries.md).
+
 MVP asset constraints:
 
 - Maximum file size: 100 MB per file.

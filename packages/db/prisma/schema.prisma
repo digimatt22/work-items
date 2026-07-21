@@ -121,6 +121,7 @@ model User {
   watchedWorkItems       Watcher[]
   createdProjectBindings ProjectBinding[]       @relation("ProjectBindingCreator")
   workQualifications     WorkQualification[]    @relation("WorkQualificationAdmin")
+  deliverableShares      DeliverableShare[]     @relation("DeliverableShareCreator")
   mcpAuthorizationCodes  McpAuthorizationCode[]
   mcpAccessGrants        McpAccessGrant[]
 }
@@ -197,12 +198,13 @@ model Project {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
-  client          Client           @relation(fields: [clientId], references: [id])
-  members         ProjectMember[]
-  workItems       WorkItem[]
-  releaseTargets  ReleaseTarget[]
-  assets          AssetLink[]
-  projectBindings ProjectBinding[]
+  client            Client             @relation(fields: [clientId], references: [id])
+  members           ProjectMember[]
+  workItems         WorkItem[]
+  releaseTargets    ReleaseTarget[]
+  assets            AssetLink[]
+  projectBindings   ProjectBinding[]
+  deliverableShares DeliverableShare[]
 }
 
 model ProjectMember {
@@ -361,7 +363,8 @@ model Asset {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  links AssetLink[]
+  links             AssetLink[]
+  deliverableShares DeliverableShare[]
 }
 
 model AssetLink {
@@ -374,6 +377,30 @@ model AssetLink {
   asset    Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade)
   project  Project?  @relation(fields: [projectId], references: [id])
   workItem WorkItem? @relation(fields: [workItemId], references: [id])
+}
+
+model DeliverableShare {
+  id               String    @id @default(cuid())
+  projectId        String
+  assetId          String
+  createdById      String
+  publicToken      String    @unique
+  passwordHash     String
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  failedAttempts   Int       @default(0)
+  lockedUntil      DateTime?
+  downloadCount    Int       @default(0)
+  lastDownloadedAt DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  asset     Asset   @relation(fields: [assetId], references: [id], onDelete: Restrict)
+  createdBy User    @relation("DeliverableShareCreator", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([projectId, createdAt])
+  @@index([assetId, revokedAt])
 }
 
 model ActivityEvent {

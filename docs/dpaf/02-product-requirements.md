@@ -47,6 +47,9 @@ Phase 1 should deliver the complete human-facing foundation.
 - Store files through a storage service abstraction.
 - Store file metadata and basic image previews in MVP; defer rich PDF, document, and video preview generation.
 - Associate assets with work items and projects in Phase 1.
+- Let an administrator mark project-linked assets as client deliverables and create one-file password-protected download links that require no client account.
+- Show the generated share password only once; allow the link to be copied again, revoked, and monitored for expiry and download count.
+- Default links to 14-day expiry with 7- and 30-day choices, and temporarily lock a link after five failed password attempts.
 - Enforce MVP asset constraints:
   - Maximum file size: 100 MB per file.
   - Maximum upload batch: 10 files per request.
@@ -55,6 +58,13 @@ Phase 1 should deliver the complete human-facing foundation.
   - Allowed video types: MP4, MOV, WebM.
   - Allowed log/archive types: LOG, JSON, ZIP.
   - Block executable files, scripts, HTML uploads, and unknown binary formats.
+
+Project-deliverable sharing acceptance criteria:
+
+- A public share exposes only the linked filename and limited project/client identity before password verification.
+- The stored credential is a bcrypt hash; plaintext passwords, tokens, and provider object keys never enter activity metadata or logs.
+- Expired, revoked, locked, unknown, and incorrect-password requests return a generic failure.
+- Successful downloads increment share evidence and create an admin-only activity event.
 
 ### Views
 

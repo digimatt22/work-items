@@ -7,6 +7,7 @@ export * from "./digi-portal-read";
 export * from "./collaboration-services";
 export * from "./mcp";
 export * from "./permissions";
+export * from "./project-deliverables";
 export * from "./readiness";
 export * from "./storage";
 export * from "./work-items";
