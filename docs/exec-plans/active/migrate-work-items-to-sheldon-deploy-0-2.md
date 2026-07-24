@@ -184,6 +184,17 @@ Validation results are appended here by phase with date, commit, command, result
 - The repository-wide Prettier check continues to report its pre-existing
   144-file formatting baseline. Every file changed for this migration was
   formatted directly and passes `git diff --check`.
+- Clean implementation commit `4091ba9` was produced from the validated source.
+  The released 0.1 CLI's plan, status, and read-only preflight passed; preflight
+  retained origin port `39732`, persisted subnet `172.30.0.0/16`, and confirmed
+  all required environment names without printing their values.
+- The unreleased Phase 0 package audit stopped on false positives for files
+  already excluded from release packaging (`.env`, `.env.example`,
+  `.pnpm-store`) and Next.js `next-env.d.ts`. Its provisional inventory
+  correctly reports the absent PID limit but has no schema-2 declarations,
+  cannot discover the documented backups, and incorrectly classifies the valid
+  private `172.30.0.0/16` subnet as outside policy. These results are platform
+  contract defects, not approval-ready 0.2.0 evidence.
 - Current gaps: released 0.2.0 manifest validator and exact schema contract,
   isolated PostgreSQL restore evidence for the latest full live dump, live
   foreign-bucket `403` evidence, exact-commit 0.2.0 package

@@ -118,6 +118,7 @@ will be available only after an approved deployment.
 
 ## Local Candidate Evidence
 
+- Clean implementation commit: `4091ba9`.
 - A production candidate image built successfully and runs as non-root
   `nextjs`.
 - The disposable readiness harness passed 19 Playwright checks, including
@@ -132,3 +133,20 @@ will be available only after an approved deployment.
   submitted the stale form successfully without a missing-action error.
 - The release-skew drill explicitly recorded
   `database_downgrade=not_run`.
+
+## Deployment Tool Compatibility Evidence
+
+- Released plugin `0.1.0+codex.20260717125641` plan passed against schema 1.
+- Released read-only preflight passed, preserving port `39732` and persisted
+  subnet `172.30.0.0/16` and confirming all required environment names.
+- Released status reported the expected current release, origin HTTP `200`,
+  non-root `nextjs` user, and current container.
+- The unreleased Phase 0 package audit rejected excluded `.env`,
+  `.env.example`, `.pnpm-store`, and Next.js `next-env.d.ts` paths. This is a
+  scanner false-positive blocker and not evidence that those files enter the
+  release archive.
+- The unreleased provisional inventory reported the missing PID limit, but
+  schema-2 declarations and backup discovery were absent. It also incorrectly
+  treated the valid private `172.30.0.0/16` subnet as outside policy. Do not use
+  this checkout for approval until those platform defects are fixed and the
+  0.2.0 contract is released.
