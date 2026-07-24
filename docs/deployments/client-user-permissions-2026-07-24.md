@@ -2,18 +2,18 @@
 
 ## Outcome
 
-- Live release: `20260724T134359Z`
-- Source: commit `d3bd09b` only
+- Live release: `20260724T140218Z`
+- Source: clean committed branch state at `7d92fbc`
 - Public URL: `https://portal.digicolony.net`
 - Origin: `127.0.0.1:39732`
 - Application network: `172.30.0.0/16`
 - Container user: `nextjs`
 
-An earlier working-tree release packaged concurrent uncommitted project-picker
-changes that appeared after the clean preflight. It was immediately superseded
-by `20260724T134359Z`, built from a fresh archive of `d3bd09b`. The concurrent
-workspace changes were neither overwritten nor committed and are not present in
-the live release.
+The permission foundation was first deployed as `20260724T134359Z`, built from
+a fresh archive of `d3bd09b` after an earlier over-inclusive working-tree
+release was immediately superseded. The preserved project-picker work was then
+reviewed, tested, committed, and deployed in `20260724T140218Z` from the clean
+branch state at `7d92fbc`.
 
 ## Database Migration
 
@@ -42,6 +42,10 @@ permissions default.
 - The application remained non-root on the persisted network and loopback-only
   port.
 - Recent application logs contained no Prisma or application errors.
+- The packaged `ProjectPicker.tsx` SHA-256 matched the committed local source:
+  `3aec1a5f97366af8db3b0c90d7acbedaf9aa2cada4c2af31b9774967432b3778`.
+- Migration `0007_client_user_permissions` was already applied; this picker
+  release performed no database migration, reset, seed, or credential change.
 
 ## Remaining Human Validation
 

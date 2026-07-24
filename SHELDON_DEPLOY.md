@@ -19,7 +19,7 @@ Use the Codex skill `$deploy-to-sheldon` for deployment, status, and rollback op
 
 ## Current deployment notes
 
-- Live release `20260724T134359Z` is deployed at `https://portal.digicolony.net` with origin `127.0.0.1:39732`, per-client-user permission assignment, the Digi-Portal administrator binding form enabled, and the agent read/mutation gates disabled. It was packaged from committed source `d3bd09b` only.
+- Live release `20260724T140218Z` is deployed at `https://portal.digicolony.net` with origin `127.0.0.1:39732`, per-client-user permission assignment, client-first administrator project selection, project-only client reporting, the Digi-Portal administrator binding form enabled, and the agent read/mutation gates disabled. It was packaged from clean committed source `7d92fbc`.
 - PostgreSQL is reached through its rootful internal network at `172.18.0.2:5432`. The rootless application network is pinned to `172.30.0.0/16` in the deployed Compose file to prevent a subnet collision. Reverify this route after Docker network or PostgreSQL topology changes.
 - Asset storage on Sheldon uses the private `sheldon-garage` container, pinned to `dxflrs/garage:v2.2.0`, with no published ports. Garage shares `sheldon-digicolony-client-ops_default` with the portal, uses the private bucket `digicolony-client-ops`, and persists LMDB metadata and object data in `sheldon-garage-meta` and `sheldon-garage-data`.
 - `scripts/provision-garage-on-sheldon-remote.sh` is the idempotent bootstrap record. `scripts/backup-and-verify-garage-on-sheldon-remote.sh` stops Garage briefly, creates a mode-`0600` archive under `~/sheldon/shared/garage/backups/`, restores into isolated temporary volumes, verifies the bucket/key/statistics, and removes the temporary restore resources.

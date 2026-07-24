@@ -65,6 +65,12 @@
 - Sheldon preflight passed with origin `127.0.0.1:39732`, persisted network `172.30.0.0/16`, and every required environment name present.
 - Full backup `pre-client-user-permissions-20260724T133857Z.dump` passed `pg_restore --list`; migration `0007_client_user_permissions` applied transactionally with protected counts unchanged at 3 users, 3 credentials, 3 clients, 6 projects, and 1 work item.
 - Sheldon release `20260724T134359Z`, packaged from committed source `d3bd09b` only, deployed successfully. Origin/public health, canonical Auth.js provider URLs, non-root execution, database-backed administrator authentication, the permission assignment UI, empty permission defaults, and recent error logs passed. An earlier over-inclusive working-tree release was immediately superseded after concurrent uncommitted project-picker changes were detected; those changes remain untouched in the workspace and are absent from the live release.
+- Sheldon release `20260724T140218Z`, packaged from clean committed branch state
+  `7d92fbc`, deployed the client/project picker successfully. The remote image
+  build passed 58 tests and the optimized Next.js build; origin/public health,
+  canonical Auth.js URLs, non-root execution, persisted port/network, recent
+  logs, and the deployed picker source checksum passed. No database or
+  credential change was performed.
 - Focused picker tests passed on 2026-07-24.
 - Authenticated administrator and client reporting picker tests passed on
   2026-07-24. Administrator coverage verifies the disabled initial project
@@ -98,6 +104,8 @@
 
 ## Closeout
 
-- Final status: implementation, migration, deployment, and automated/live smoke validation complete; client-user movement and revocation remain human validation
+- Final status: implementation, migration, client/project picker deployment,
+  and automated/live smoke validation complete; client-user movement and
+  revocation remain human validation
 - Merge or abandonment notes: TBD
 - Follow-up work items: add future grants only alongside a shared policy, assignment UI, and regression tests.
