@@ -21,6 +21,7 @@ This repo contains the DigiColony AI-First Client Operations Platform, a Next.js
 - Project workspaces support admin-only Garage-backed deliverable upload and one-file public shares with generated one-time passwords, required expiry, revocation, five-attempt lockout, and download evidence. Live validation covered wrong-password rejection, exact-byte anonymous download, and revocation.
 - Shared Sheldon storage is `sheldon-garage` v2.2.0 with private bucket `digicolony-client-ops` and persistent `sheldon-garage-meta`/`sheldon-garage-data` volumes. Two S3-backed validation assets survived application redeployment and a Garage restart; both validation shares are revoked.
 - Backup `garage-20260721T201449Z.tgz` restored successfully into isolated temporary volumes and passed Garage bucket, key, and statistics checks. Off-server backup and retention cadence remain operational follow-up decisions.
+- Client users support enum-backed per-user permission grants. The initial `MOVE_WORK_ITEMS` grant lets an administrator authorize a client user to move only work items already visible to that user within their client; additive migration `0007_client_user_permissions` requires normal environment deployment.
 
 ## lifeOS Registration
 

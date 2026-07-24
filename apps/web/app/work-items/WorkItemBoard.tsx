@@ -6,7 +6,7 @@ import { useRef, useState, type DragEvent } from "react";
 import { EmptyState } from "../components/ui";
 
 type WorkItemBoardProps = {
-  admin: boolean;
+  canMoveItems: boolean;
   cardTestIdPrefix?: string;
   changeStatusAction: (formData: FormData) => void | Promise<void>;
   emptyDescription: string;
@@ -24,7 +24,7 @@ function columnItems(
 }
 
 export function WorkItemBoard({
-  admin,
+  canMoveItems,
   cardTestIdPrefix = "work-item-card",
   changeStatusAction,
   emptyDescription,
@@ -46,7 +46,7 @@ export function WorkItemBoard({
     setDraggedWorkItemId(null);
     setDropTargetStatusId(null);
 
-    if (!admin || !workItemId) {
+    if (!canMoveItems || !workItemId) {
       return;
     }
 
@@ -103,7 +103,7 @@ export function WorkItemBoard({
               id={`status-${status.key.toLowerCase()}`}
               onDragLeave={() => setDropTargetStatusId(null)}
               onDragOver={(event) => {
-                if (!admin) {
+                if (!canMoveItems) {
                   return;
                 }
 
@@ -126,10 +126,10 @@ export function WorkItemBoard({
                     className={[
                       "min-w-0 rounded-lg border border-line bg-white p-3 shadow-sm transition",
                       item.type === "BUG" ? "border-l-4 border-l-rose-500" : "border-l-4 border-l-indigo-500",
-                      admin ? "cursor-grab active:cursor-grabbing" : ""
+                      canMoveItems ? "cursor-grab active:cursor-grabbing" : ""
                     ].join(" ")}
                     data-testid={`${cardTestIdPrefix}-${item.id}`}
-                    draggable={admin}
+                    draggable={canMoveItems}
                     onDragEnd={() => {
                       setDraggedWorkItemId(null);
                       setDropTargetStatusId(null);
@@ -157,7 +157,7 @@ export function WorkItemBoard({
                 ))}
                 {currentItems.length === 0 ? (
                   <div className="border border-dashed border-line bg-white/70 p-4 text-xs leading-5 text-soft">
-                    {admin ? "Drop work here." : "No requests here."}
+                    {canMoveItems ? "Drop work here." : "No requests here."}
                   </div>
                 ) : null}
               </div>

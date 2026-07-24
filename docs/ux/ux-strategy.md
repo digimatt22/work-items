@@ -13,7 +13,7 @@ CTO integrator decision: apply all requested specialist tracks as supporting art
 ## Existing Facts
 - The app is a TypeScript monorepo using Next.js App Router, Prisma, PostgreSQL, Auth.js, Tailwind, shared service packages, and Playwright.
 - The current admin IA is Board first, then Clients.
-- Client users can view their client projects and create work, but status movement is admin-only.
+- Client users can view their client projects and create work. Status movement is read-only by default and can be granted per user.
 - AI actions are admin-only by product decision; Phase 2 MCP and AI summaries are not fully implemented.
 - Active plans show the admin workflow is ready for review, with e2e tests passing in prior work.
 
@@ -48,4 +48,3 @@ The UX should make each record progressively more useful as operational memory:
 - Should status movement support only linear Back/Advance, arbitrary status select, or drag-and-drop in launch?
 - Which work item fields are required for launch: assignee, reporter, release target, labels, watchers?
 - Should client users be able to archive their own work items, or only admins?
-

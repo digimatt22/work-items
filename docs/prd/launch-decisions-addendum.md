@@ -19,6 +19,7 @@ This addendum records decisions made after review of the DPAF risk, decision, an
 - Client users belong to exactly one client for launch.
 - Client users can view all projects belonging to their client.
 - Client users can create Bugs and Features, comment, upload assets, and view non-AI activity for their client projects.
+- Admins can grant additional permissions to individual client users. The initial `MOVE_WORK_ITEMS` permission allows a user to change the status of work items already visible to them within their client.
 - Client users cannot configure pipelines.
 - Authorized AI agents may change work item status when their system and client scopes permit it.
 - All AI actions are admin-only.

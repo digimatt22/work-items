@@ -43,7 +43,7 @@ Recommended improvements:
 2. Client user sees only their client scope.
 3. Client user creates a Bug or Feature.
 4. Client user comments and uploads assets.
-5. Client user sees non-AI activity and status, but cannot move status.
+5. Client user sees non-AI activity and status. Status is read-only unless an admin grants that user `MOVE_WORK_ITEMS`.
 
 Open questions:
 - Client-user landing page is not explicitly designed.
@@ -62,4 +62,3 @@ Recommended improvements:
 - Show accepted file types and max size near the file input.
 - Show upload error text inline.
 - Show comment author display name, timestamp, and mention chips.
-

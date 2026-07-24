@@ -96,6 +96,8 @@ export async function createClientUserAction(
       clientId: String(formData.get("clientId") ?? ""),
       email: String(formData.get("email") ?? ""),
       name: String(formData.get("name") ?? ""),
+      permissions:
+        formData.get("moveWorkItems") === "on" ? ["MOVE_WORK_ITEMS"] : [],
     });
 
     revalidatePath("/workspaces");
@@ -178,15 +180,21 @@ export async function updateClientUserAction(formData: FormData) {
   const clientId = String(formData.get("clientId") ?? "");
   const userId = String(formData.get("userId") ?? "");
 
-  await prisma.user.update({
-    where: { id: userId },
+  const result = await prisma.user.updateMany({
+    where: { id: userId, clientId, role: "CLIENT_USER" },
     data: {
       email: String(formData.get("email") ?? "")
         .toLowerCase()
         .trim(),
       name: String(formData.get("name") ?? "").trim() || null,
+      permissions:
+        formData.get("moveWorkItems") === "on" ? ["MOVE_WORK_ITEMS"] : [],
     },
   });
+
+  if (result.count !== 1) {
+    throw new Error("Client user not found.");
+  }
 
   revalidatePath(`/clients/${clientId}`);
 }

@@ -12,6 +12,10 @@ enum UserRole {
   CLIENT_USER
 }
 
+enum UserPermission {
+  MOVE_WORK_ITEMS
+}
+
 enum ActorType {
   USER
   AI_AGENT
@@ -104,6 +108,7 @@ model User {
   emailVerified      DateTime?
   image              String?
   role               UserRole            @default(CLIENT_USER)
+  permissions        UserPermission[]    @default([])
   clientId           String?
   client             Client?             @relation(fields: [clientId], references: [id])
   accounts           Account[]

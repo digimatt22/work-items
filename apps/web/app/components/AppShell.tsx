@@ -543,6 +543,19 @@ export function AppShell({
                     name="name"
                     placeholder="Name"
                   />
+                  <label className="mt-4 flex items-start gap-3 rounded-xl border border-line bg-blue-soft/60 p-3 text-sm text-ink">
+                    <input
+                      className="mt-0.5 size-4 accent-indigo-600"
+                      name="moveWorkItems"
+                      type="checkbox"
+                    />
+                    <span>
+                      <span className="block font-bold">Move work items</span>
+                      <span className="mt-1 block text-xs leading-5 text-muted">
+                        Allow this user to change the status of requests they can see.
+                      </span>
+                    </span>
+                  </label>
                   {clientUserMessage ? (
                     <p
                       className="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-semibold text-rose-700"

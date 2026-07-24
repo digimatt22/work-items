@@ -1,4 +1,9 @@
-import type { AiAgentPrincipal, Principal, UserPrincipal } from "./actors";
+import type {
+  AiAgentPrincipal,
+  Principal,
+  UserPermission,
+  UserPrincipal
+} from "./actors";
 
 function isAdmin(user: UserPrincipal): boolean {
   return user.role === "ADMIN";
@@ -6,6 +11,13 @@ function isAdmin(user: UserPrincipal): boolean {
 
 function userBelongsToClient(user: UserPrincipal, clientId: string): boolean {
   return user.clientId === clientId;
+}
+
+export function userHasPermission(
+  user: UserPrincipal,
+  permission: UserPermission
+): boolean {
+  return isAdmin(user) || user.permissions?.includes(permission) === true;
 }
 
 function agentHasClientAccess(agent: AiAgentPrincipal, clientId: string): boolean {
@@ -44,7 +56,13 @@ export function canCreateWorkItem(principal: Principal, clientId: string): boole
 
 export function canMovePipelineStatus(principal: Principal, clientId: string): boolean {
   if (principal.kind === "user") {
-    return isAdmin(principal.user);
+    return (
+      isAdmin(principal.user) ||
+      (
+        userBelongsToClient(principal.user, clientId) &&
+        userHasPermission(principal.user, "MOVE_WORK_ITEMS")
+      )
+    );
   }
 
   if (principal.kind === "ai_agent") {

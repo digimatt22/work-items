@@ -1,7 +1,7 @@
 # Interaction Spec
 
 ## Status Movement
-- Current: Admins can move work via Back/Advance and direct status select; client users see status only.
+- Current: Admins can move work; client users see status only unless granted `MOVE_WORK_ITEMS`, which enables board drag/drop and detail status controls for their visible requests.
 - Required behavior: server-side permission check, activity write, revalidation of board/detail/project routes.
 - Recommended next behavior: pending state, inline error recovery, and keyboard-accessible status controls.
 - Future behavior: drag-and-drop only after equivalent keyboard status movement and error recovery exist.
@@ -34,4 +34,3 @@
 - Current: server-action submits rely on navigation/revalidation; no optimistic UI is visible.
 - Recommended launch behavior: use pending state and disable duplicate submits; show errors inline when possible.
 - Future behavior: optimistic card movement with rollback after accessible pending/error behavior is in place.
-

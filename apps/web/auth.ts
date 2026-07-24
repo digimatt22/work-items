@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcryptjs";
 import { prisma } from "@digicolony/db";
+import type { UserPermission } from "@digicolony/shared";
 
 declare module "next-auth" {
   interface Session {
@@ -10,6 +11,7 @@ declare module "next-auth" {
       id: string;
       role: "ADMIN" | "CLIENT_USER";
       clientId?: string | null;
+      permissions: UserPermission[];
       mustChangePassword: boolean;
     } & DefaultSession["user"];
   }
@@ -17,6 +19,7 @@ declare module "next-auth" {
   interface User {
     role?: "ADMIN" | "CLIENT_USER";
     clientId?: string | null;
+    permissions?: UserPermission[];
     mustChangePassword?: boolean;
   }
 }
@@ -24,6 +27,7 @@ declare module "next-auth" {
 type LaunchJwtFields = {
   role?: "ADMIN" | "CLIENT_USER";
   clientId?: string | null;
+  permissions?: UserPermission[];
   mustChangePassword?: boolean;
 };
 
@@ -82,19 +86,36 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           image: user.image,
           role: user.role,
           clientId: user.clientId,
+          permissions: user.permissions,
           mustChangePassword: user.passwordCredential.mustChangePassword,
         };
       },
     }),
   ],
   callbacks: {
-    jwt({ token, user }) {
+    async jwt({ token, user }) {
       const launchToken = token as typeof token & LaunchJwtFields;
 
       if (user) {
         launchToken.role = user.role;
         launchToken.clientId = user.clientId;
+        launchToken.permissions = user.permissions ?? [];
         launchToken.mustChangePassword = user.mustChangePassword;
+      } else if (token.sub) {
+        const currentUser = await prisma.user.findUnique({
+          where: { id: token.sub },
+          select: {
+            clientId: true,
+            permissions: true,
+            role: true
+          }
+        });
+
+        if (currentUser) {
+          launchToken.role = currentUser.role;
+          launchToken.clientId = currentUser.clientId;
+          launchToken.permissions = currentUser.permissions;
+        }
       }
 
       return launchToken;
@@ -106,6 +127,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.id = token.sub ?? "";
         session.user.role = launchToken.role ?? "CLIENT_USER";
         session.user.clientId = launchToken.clientId;
+        session.user.permissions = launchToken.permissions ?? [];
         session.user.mustChangePassword =
           launchToken.mustChangePassword ?? false;
       }
