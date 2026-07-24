@@ -6,7 +6,8 @@
 - Owner: Matthew / Codex
 - Branch: `codex/sheldon-deploy-0-2-migration`
 - Base: `32cc294` from `codex/client-user-permissions`; this preserves the code in live release `20260724T140218Z` and intentionally stacks on open PR #1 because `main` does not yet contain that deployed behavior
-- PR: TBD
+- PR: [#2](https://github.com/digimatt22/work-items/pull/2), stacked on
+  `codex/client-user-permissions` while PR #1 remains open
 - Last updated: 2026-07-24
 - Platform plan: `social-content/docs/exec-plans/active/sheldon-platform-hardening-and-deployment-migration.md`
 - Target platform contract: Sheldon Deploy 0.2.1, manifest schema 2
