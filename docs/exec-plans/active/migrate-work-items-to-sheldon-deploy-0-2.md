@@ -327,6 +327,14 @@ Validation results are appended here by phase with date, commit, command, result
   Existing read-only database/Garage baseline evidence remains valid, but this
   platform defect must be fixed and released before inventory can become a
   green deployment gate.
+- A diagnostic-only run with the concurrently prepared, unreleased 0.2.1
+  one-line collector fix completed read-only. It reconfirmed release
+  `20260724T140218Z`, origin HTTP 200, loopback port `39732`, non-root user
+  `nextjs`, 2-GiB/1.5-CPU limits, missing PID limit, 14 retained releases, and
+  the preserved `172.30.0.0/16` network. It also correctly reports missing
+  schema-2 backup/restore and dependency metadata. The packaged baseline still
+  produces the known false self-sharing `work-items` database/role finding.
+  Diagnostic output does not replace a released inventory gate.
 
 ## Human Validation
 
