@@ -1,5 +1,7 @@
 export type UserRole = "ADMIN" | "CLIENT_USER";
 
+export type UserPermission = "MOVE_WORK_ITEMS";
+
 export type ActorType = "USER" | "AI_AGENT" | "SYSTEM";
 
 export interface ActorRef {
@@ -12,6 +14,7 @@ export interface UserPrincipal {
   readonly id: string;
   readonly role: UserRole;
   readonly clientId?: string;
+  readonly permissions?: readonly UserPermission[];
 }
 
 export interface AiAgentPrincipal {

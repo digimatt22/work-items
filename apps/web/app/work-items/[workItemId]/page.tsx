@@ -6,6 +6,7 @@ import {
 } from "@digicolony/db";
 import {
   assetConstraints,
+  canMovePipelineStatus,
   listVisibleAssets,
   listVisibleComments,
   listVisibleWorkItems,
@@ -86,6 +87,7 @@ export default async function WorkItemDetailPage({
   }
 
   const admin = isAdmin(principal);
+  const canMoveItem = canMovePipelineStatus(principal, item.clientId);
   const [comments, assets, statuses, details, activity] = await Promise.all([
     listVisibleComments(collaborationRepository, principal, workItemId),
     listVisibleAssets(collaborationRepository, principal, workItemId),
@@ -244,7 +246,7 @@ export default async function WorkItemDetailPage({
 
         <aside className="grid content-start gap-4">
           <Panel title="Status">
-            {admin ? (
+            {canMoveItem ? (
               <StatusMoveControls
                 action={changeWorkItemStatusAction}
                 currentStatusId={item.pipelineStatusId}

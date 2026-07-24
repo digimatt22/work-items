@@ -33,7 +33,9 @@ The important local development flow is:
 6. Admins land on the work-item board and manage clients, projects, users, and work items through the admin shell.
 7. Client-user provisioning generates a unique 20-character temporary password and creates the user and forced-change bcrypt credential as one atomic Prisma write. The plaintext credential is returned once to the creating administrator for copying and is never stored or logged. Expected failures return a safe result to the add-user form instead of rejecting into Next.js's client error boundary.
 8. Admins can open `/status-report` directly or generate it from the work-item board; board query, client/project, and type filters scope the deterministic weekly email-ready summary.
-9. Client users land on `/report`, choose a visible project, submit a bug or feature request, and optionally attach files.
+9. Client users land on `/report`, choose a visible project from their single
+   server-authorized client, submit a bug or feature request, and optionally
+   attach files. They never select a client.
 10. Client reports create standard work items through shared work-item services, then upload attachments through the shared asset service and storage provider.
 11. An administrator may qualify a work item for the active Digi-Portal binding. OAuth authorization binds ChatGPT Work to exactly one active project binding, and the MCP endpoint derives every queue, search, fetch, and item read from that grant.
 12. An administrator can upload a project-linked deliverable, create a password-protected expiring share, copy the generated password once, and revoke the share from the project workspace.
@@ -44,7 +46,12 @@ The important local development flow is:
 
 - The web app and MCP server must use shared service/policy contracts rather than drifting into separate business rules.
 - Client users belong to one client at launch and can view all projects for that client.
-- Client users use `/report` as the primary entry point and `/work-items` as a read-only board/status view.
+- Administrator work-item creation selects a client first and then limits the
+  project selector to that client's projects. Changing the client clears the
+  selected project. Client-user reporting keeps the authenticated client
+  implicit and exposes only server-authorized projects.
+- Client users use `/report` as the primary entry point and `/work-items` as a board/status view. It is read-only by default; users granted `MOVE_WORK_ITEMS` can move only requests already visible to them within their client.
+- Additional client-user authority is represented by enum-backed per-user grants, refreshed from the database into the authenticated principal, and enforced by shared server-side policies.
 - The admin weekly status report is copy/paste only for now; it does not send email, store report history, or manage recipients.
 - Client reports must create normal `BUG` or `FEATURE` work items, not a separate reporting-only entity.
 - Password changes require the signed-in user's current password, a distinct 12–128 character replacement, and confirmation. Successful changes return the user to sign-in.
@@ -83,6 +90,7 @@ Use this section for stable decisions that future work should respect. Include d
 | 2026-07-17 | Use the Work Items project itself as Digi-Portal's internal pilot and expose only OAuth-protected read tools in Phase 1                       | The pilot can prove routing and isolation before claims or agent mutations are enabled                                          |
 | 2026-07-21 | Reuse project-linked assets for one-file, password-protected, expiring public deliveries; keep password plaintext one-time only               | Clients can download without accounts while storage, authorization, lockout, revocation, and audit remain server-controlled     |
 | 2026-07-21 | Run Garage v2.2.0 as shared private S3-compatible infrastructure on Sheldon, with a bucket/key boundary per application                       | Files persist independently of application releases and future projects can reuse the service without introducing AWS           |
+| 2026-07-24 | Represent additional client-user authority as per-user permission grants, beginning with `MOVE_WORK_ITEMS`                                    | Admins can delegate selected actions without creating more roles; grants remain client-scoped and shared policy-enforced        |
 
 ## Architectural Boundaries
 

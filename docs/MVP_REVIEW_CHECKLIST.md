@@ -25,7 +25,7 @@ The live local database path now supports a more complete admin review:
 - Client detail page with context, project list, activity, and client user management.
 - Collapsed contextual create client, create project, create client user, and client edit forms.
 - Work item creation switches between Bug-specific and Feature-specific detail fields.
-- Admin-only status movement from the work item list and board cards.
+- Status movement for admins and client users individually granted `MOVE_WORK_ITEMS`.
 - Board cards support one-click Back/Advance movement plus direct status selection.
 - Work item detail view with comments and assets.
 - Auth-aware shell with sign-out.
@@ -59,10 +59,12 @@ The live local database path now supports a more complete admin review:
 - Admin can open a client detail page and manage client context.
 - Admin can create a client user.
 - Admin can edit and delete client users.
+- Admin can grant or revoke a client user's ability to move visible work items.
 - Client user lands on Report, can use the request Board, and is redirected away from admin-only Clients/Project Workspace routes.
 - User can create a Bug work item.
 - User can create a Feature work item.
 - Admin can move work item status.
+- A permitted client user can move their visible work item status; a client user without the grant cannot.
 - Admin can filter the work item board by search text, client, project, type, or status.
 - User can comment on a work item.
 - Mentions are persisted from comment text.

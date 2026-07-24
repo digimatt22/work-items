@@ -18,6 +18,7 @@ export function createPrismaClientOperationsRepository(
           email: input.email,
           name: input.name,
           role: input.role,
+          permissions: [...input.permissions],
           client: {
             connect: { id: input.clientId },
           },
@@ -33,6 +34,7 @@ export function createPrismaClientOperationsRepository(
         name: user.name,
         role: user.role,
         clientId: user.clientId,
+        permissions: user.permissions,
       };
     },
     async listProjects(): Promise<readonly ProjectRecord[]> {

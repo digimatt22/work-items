@@ -71,6 +71,7 @@ export default async function ClientDetailPage({
         email: true,
         name: true,
         role: true,
+        permissions: true,
         createdAt: true
       }
     })
@@ -257,6 +258,9 @@ export default async function ClientDetailPage({
                       <span className="block truncate text-sm font-bold text-ink">{user.name ?? user.email}</span>
                       <span className="block truncate text-xs text-muted">{user.email}</span>
                       <span className="mt-2 block text-xs text-soft">{user.role} / added {user.createdAt.toLocaleDateString()}</span>
+                      {user.permissions.includes("MOVE_WORK_ITEMS") ? (
+                        <span className="mt-1 block text-xs font-semibold text-indigo-600">Can move work items</span>
+                      ) : null}
                     </span>
                     {admin ? (
                       <span className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-line bg-white px-2 py-1 text-xs font-bold text-muted hover:text-indigo-600">
@@ -272,6 +276,20 @@ export default async function ClientDetailPage({
                       <input name="userId" type="hidden" value={user.id} />
                       <input className={compactFieldClass} defaultValue={user.email} name="email" type="email" />
                       <input className={`mt-2 ${compactFieldClass}`} defaultValue={user.name ?? ""} name="name" placeholder="Name" />
+                      <label className="mt-3 flex items-start gap-2 rounded-xl bg-blue-soft/60 p-3 text-sm text-ink">
+                        <input
+                          className="mt-0.5 size-4 accent-indigo-600"
+                          defaultChecked={user.permissions.includes("MOVE_WORK_ITEMS")}
+                          name="moveWorkItems"
+                          type="checkbox"
+                        />
+                        <span>
+                          <span className="block font-bold">Move work items</span>
+                          <span className="mt-1 block text-xs leading-5 text-muted">
+                            Change the status of requests this user can see.
+                          </span>
+                        </span>
+                      </label>
                       <div className="mt-3 flex gap-2">
                         <button className={buttonClass("secondary")} type="submit">
                           Save

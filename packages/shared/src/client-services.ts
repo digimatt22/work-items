@@ -1,4 +1,4 @@
-import type { Principal, UserRole } from "./actors";
+import type { Principal, UserPermission, UserRole } from "./actors";
 import { canViewClientProject } from "./permissions";
 
 export interface ClientRecord {
@@ -18,6 +18,7 @@ export interface ClientUserDraft {
   readonly email: string;
   readonly name?: string;
   readonly clientId: string;
+  readonly permissions?: readonly UserPermission[];
   readonly role?: Extract<UserRole, "CLIENT_USER">;
 }
 
@@ -27,6 +28,7 @@ export interface ClientUserRecord {
   readonly name?: string | null;
   readonly role: UserRole;
   readonly clientId?: string | null;
+  readonly permissions: readonly UserPermission[];
 }
 
 export interface ClientOperationsRepository {
@@ -57,6 +59,7 @@ export async function createClientUserForLaunch(
     email: normalizedEmail,
     name: input.name?.trim() || normalizedEmail,
     clientId: input.clientId,
+    permissions: input.permissions ?? [],
     role: "CLIENT_USER"
   });
 }

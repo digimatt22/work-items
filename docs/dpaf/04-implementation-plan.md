@@ -74,12 +74,12 @@ Deliverables:
 - Assignee, reporter, creator.
 - Pipeline statuses.
 - List view with filters.
-- Kanban view with human status movement restricted to admins.
+- Kanban view with human status movement restricted to admins and individually authorized client users.
 
 Validation:
 
 - Client user can create Bug and Feature items.
-- Client user cannot move pipeline status.
+- Client user cannot move pipeline status by default; a user granted `MOVE_WORK_ITEMS` can move only visible work within their client.
 - Admin can move status and activity is recorded.
 - Client users cannot see AI audit records.
 

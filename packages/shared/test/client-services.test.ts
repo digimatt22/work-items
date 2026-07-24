@@ -15,7 +15,8 @@ function repository(projects: readonly ProjectRecord[] = []): ClientOperationsRe
         email: input.email,
         name: input.name,
         role: input.role,
-        clientId: input.clientId
+        clientId: input.clientId,
+        permissions: input.permissions
       };
     },
     async listProjects() {
@@ -39,7 +40,24 @@ describe("launch client operations services", () => {
     ).resolves.toMatchObject({
       email: "client@example.test",
       role: "CLIENT_USER",
-      clientId: "client-1"
+      clientId: "client-1",
+      permissions: []
+    });
+  });
+
+  it("assigns selected permissions when an admin creates a client user", async () => {
+    await expect(
+      createClientUserForLaunch(
+        repository(),
+        { kind: "user", user: { id: "admin", role: "ADMIN" } },
+        {
+          email: "client@example.test",
+          clientId: "client-1",
+          permissions: ["MOVE_WORK_ITEMS"]
+        }
+      )
+    ).resolves.toMatchObject({
+      permissions: ["MOVE_WORK_ITEMS"]
     });
   });
 

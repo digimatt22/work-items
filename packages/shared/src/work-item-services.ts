@@ -177,6 +177,16 @@ export async function changeWorkItemStatusForLaunch(
     throw new Error("Status movement is not permitted.");
   }
 
+  if (
+    principal.kind === "user" &&
+    principal.user.role === "CLIENT_USER" &&
+    (existing.archivedAt ||
+      (existing.reporterId !== principal.user.id &&
+        existing.creatorId !== principal.user.id))
+  ) {
+    throw new Error("Status movement is not permitted.");
+  }
+
   const item = await repository.changeStatus(input);
   const actorId = principal.kind === "user" ? principal.user.id : principal.kind === "ai_agent" ? principal.agent.id : principal.actor.id;
 

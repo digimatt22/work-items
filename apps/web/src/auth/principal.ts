@@ -11,7 +11,8 @@ export function principalFromSession(session: Session | null): Principal | null 
     user: {
       id: session.user.id,
       role: session.user.role,
-      clientId: session.user.clientId ?? undefined
+      clientId: session.user.clientId ?? undefined,
+      permissions: session.user.permissions
     }
   };
 }

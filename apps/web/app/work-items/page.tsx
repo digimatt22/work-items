@@ -1,5 +1,6 @@
 import { createPrismaWorkItemRepository, prisma } from "@digicolony/db";
 import {
+  canMovePipelineStatus,
   listVisibleWorkItemProjects,
   listVisibleWorkItems,
   type Principal
@@ -106,6 +107,11 @@ async function WorkItemsPageContent({
     repository.listPipelineStatuses()
   ]);
   const admin = isAdmin(principal);
+  const canMoveItems =
+    admin ||
+    (principal.kind === "user" &&
+      Boolean(principal.user.clientId) &&
+      canMovePipelineStatus(principal, principal.user.clientId ?? ""));
   const filteredItems = items.filter((item) => {
     if (query) {
       const haystack = `${item.title} ${item.description} ${item.clientName ?? ""} ${item.projectName ?? ""}`.toLowerCase();
@@ -228,7 +234,7 @@ async function WorkItemsPageContent({
       <section className={view === "board" ? "min-h-0 flex-1" : "min-h-0 flex-1 px-3 py-3 sm:px-5"}>
         {view === "board" ? (
           <WorkItemBoard
-            admin={admin}
+            canMoveItems={canMoveItems}
             changeStatusAction={changeWorkItemStatusAction}
             emptyDescription={admin ? "Your current filters excluded every visible work item. Clear filters or broaden client/project selections." : "Your current filters excluded every visible request. Clear filters or broaden project selections."}
             emptyTitle={admin ? "No work items match" : "No requests match"}

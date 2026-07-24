@@ -162,4 +162,43 @@ describe("work item services", () => {
       pipelineStatusId: "done"
     });
   });
+
+  it("allows permitted client users to move their visible work items", async () => {
+    await expect(
+      changeWorkItemStatusForLaunch(
+        repository(),
+        {
+          kind: "user",
+          user: {
+            id: "client-user",
+            role: "CLIENT_USER",
+            clientId: "c1",
+            permissions: ["MOVE_WORK_ITEMS"]
+          }
+        },
+        { workItemId: "w1", pipelineStatusId: "done" }
+      )
+    ).resolves.toMatchObject({
+      id: "w1",
+      pipelineStatusId: "done"
+    });
+  });
+
+  it("blocks permitted client users from moving hidden work items", async () => {
+    await expect(
+      changeWorkItemStatusForLaunch(
+        repository(),
+        {
+          kind: "user",
+          user: {
+            id: "client-user",
+            role: "CLIENT_USER",
+            clientId: "c1",
+            permissions: ["MOVE_WORK_ITEMS"]
+          }
+        },
+        { workItemId: "w-admin", pipelineStatusId: "done" }
+      )
+    ).rejects.toThrow("Status movement is not permitted.");
+  });
 });
