@@ -76,7 +76,7 @@ const observed = JSON.parse(
 );
 
 if (
-  observed.version !== expectedVersion ||
+  observed.version.split(/\s+/, 1)[0] !== expectedVersion ||
   observed.database !== expectedDatabase ||
   observed.runtime_role !== expectedRuntimeRole ||
   observed.runtime_role_limit !== Number(expectedConnectionLimit) ||
