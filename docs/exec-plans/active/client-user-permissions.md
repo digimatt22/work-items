@@ -5,7 +5,7 @@
 - Status: ready for review
 - Owner: Codex
 - Branch: `codex/client-user-permissions`
-- PR: TBD
+- PR: https://github.com/digimatt22/work-items/pull/1
 - Last updated: 2026-07-24
 
 ## Summary
