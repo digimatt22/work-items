@@ -48,11 +48,20 @@ RUN --mount=type=secret,id=sheldon_app_env,required=false \
   && mkdir -p /app/prisma-engines \
   && cp /app/node_modules/.pnpm/@prisma+client@*/node_modules/.prisma/client/libquery_engine-*.so.node /app/prisma-engines/
 
-FROM base AS runner
+FROM postgres:17-bookworm AS postgres-runtime
+
+# Assemble the PostgreSQL runtime filesystem in a fresh image stage so the web
+# image keeps pg_dump/initdb tooling without inheriting PostgreSQL's data
+# VOLUME declaration. The application does not store database files locally.
+FROM scratch AS runner
+
+COPY --from=postgres-runtime / /
+COPY --from=base /usr/local /usr/local
 
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
+ENV PATH=/usr/lib/postgresql/17/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 RUN groupadd --system --gid 1001 nodejs \
   && useradd --system --uid 1001 --gid nodejs nextjs \
@@ -62,9 +71,11 @@ RUN groupadd --system --gid 1001 nodejs \
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/prisma-engines /tmp/prisma-engines
+COPY --from=builder --chown=nextjs:nodejs /app/scripts/sheldon-hooks /app/hooks
 
 USER nextjs
 
 EXPOSE 3000
 
+ENTRYPOINT []
 CMD ["node", "apps/web/server.js"]

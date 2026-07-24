@@ -8,7 +8,7 @@ This repo contains the DigiColony AI-First Client Operations Platform, a Next.js
 
 - The product is a pnpm monorepo with a Next.js App Router web application, Prisma/PostgreSQL persistence, Auth.js credentials authentication, shared contracts, and Playwright/Vitest coverage.
 - The project is initialized for deployment to the Sheldon development server through `sheldon.json`, `Dockerfile`, `SHELDON_DEPLOY.md`, and `server-configuration-report.md`.
-- Sheldon release `20260724T140218Z`, packaged from clean committed source `7d92fbc`, is live at `https://portal.digicolony.net`; origin and public health, canonical Auth.js URLs, non-root execution, the persisted application network, per-client-user permission assignment, and the client/project picker source checksum were verified on 2026-07-24.
+- Sheldon schema-2 release `20260724T221955Z-2fe481bb6c`, packaged from clean committed source `70e24ca05931555f6367df9dc441a75025dd0da5`, is live at `https://portal.digicolony.net`; origin/public health and readiness, canonical Auth.js URLs, non-root execution, bounded resources, desktop/mobile rendering, sign-in failure handling, protected-route enforcement, and preserved database counts were verified on 2026-07-24.
 - The live database contains three users, three password credentials, three clients, six projects, and one work item as of the protected-count verification on 2026-07-24. Existing user-created data must be preserved during deployment and diagnostics.
 - Client-user identity and credential creation are atomic, and expected failures remain in the form. The deployed release passed 26 unit tests locally, 26 tests in the Sheldon image build, a targeted success/duplicate-email browser test, and production builds locally and on Sheldon.
 - The deployed client-user flow generates unique temporary passwords, shows copy-ready username/password credentials once to the creating admin, and forces replacement before any other authenticated route. Validation passed 28 unit tests, TypeScript checks, all 17 browser scenarios, and clean local and Sheldon production container builds.
@@ -26,6 +26,32 @@ This repo contains the DigiColony AI-First Client Operations Platform, a Next.js
   keep long project lists navigable. Single-client users never select a client;
   their report form lists only projects authorized by their authenticated
   client scope.
+- The Work Items Sheldon Deploy 0.2 migration is complete on
+  `codex/sheldon-deploy-0-2-migration`. Read-only inventory reconfirmed the
+  protected database counts, Garage object count/bytes, canonical Auth.js URLs,
+  non-root runtime, resource gaps, backup metadata, and current release
+  retention without changing live state.
+- Sheldon Deploy 0.2.1 deployed exact committed source
+  `70e24ca05931555f6367df9dc441a75025dd0da5`, containing 467 files, no generated
+  inputs, source digest
+  `c02971d967b72dbc6fafb7c5bc84bda46fdccd28a32f2b3627812d3297e03272`,
+  and manifest digest
+  `a12cfe4c7aecd2d770c38d6411c37223f2dcf1ec99e8221018b3a78efdc26368`.
+  Local lint, typecheck, 70 unit tests, production build, exact-source
+  production-image build, non-root execution, and `/api/health` passed.
+- Live schema-2 adoption is complete. The stable dependency network, scoped
+  database identities and secret names, Garage sentinel isolation, and
+  backup/restore evidence are in place; the live Compose service is `web`.
+  The 0.2.1 inventory's
+  `work-items` shared-database/shared-role finding is a packaged-baseline
+  self-alias for this application, not a second consumer of `appdb`/`appuser`.
+  The final origin and public endpoints remain healthy at HTTP 200.
+- `/api/health` remains process-only liveness. Live `/api/ready` checks
+  PostgreSQL and the configured Garage bucket in parallel with a bounded
+  deadline and returns only sanitized `ok`/`unavailable` states.
+- Manifest schema 2 is supported by the installed Sheldon Deploy 0.2.1 plugin.
+  Remaining drift is limited to release retention, the packaged self-alias,
+  and the shared PostgreSQL cluster failure domain.
 
 ## lifeOS Registration
 
@@ -58,7 +84,10 @@ This repo contains the DigiColony AI-First Client Operations Platform, a Next.js
 - The web app builds with Next.js 15 and serves production traffic on `0.0.0.0:3000`.
 - Runtime persistence requires PostgreSQL through `DATABASE_URL`; authentication requires `AUTH_SECRET` and trusted-host configuration.
 - Sheldon allocates a deterministic loopback host port, fronts it with Caddy, and requires a separate Cloudflare Tunnel route for public HTTPS.
-- The deployed rootless application network uses `172.30.0.0/16` so it does not collide with PostgreSQL's rootful `172.18.0.0/16` network.
+- The deployed rootless application network uses allocated subnet `10.244.52.0/24`; PostgreSQL and Garage are reached over stable dependency network `10.152.101.0/24`.
+- Schema-2 rollout targets retain 2 GiB memory and 1.5 CPU limits and add a PID
+  limit, deployment lock, exact-commit provenance, bounded release retention,
+  dependency readiness, and drift reporting.
 
 ## Repository Inventory
 
@@ -105,14 +134,20 @@ This repo contains the DigiColony AI-First Client Operations Platform, a Next.js
 
 - Local development still defaults to filesystem storage; Sheldon requires the configured Garage S3 provider and fails preflight when its required environment names are absent.
 - Public project deliveries stream through the application from Garage after authorization. Garage is a single-node development deployment, so a Sheldon disk/server failure remains a risk until backups are copied off-server.
-- The deployed Compose network retains its existing `172.30.0.0/16` application subnet; the updated Sheldon plugin persists existing networks and collision-checks new allocations.
+- The deployed Compose network persists allocated `10.244.52.0/24`; the stable dependency network uses `10.152.101.0/24`.
 - No CI workflow is included yet.
 - Sheldon deployment and rollback procedures are defined, and the first live deployment has completed.
+- Database migration, database backup/restore, Garage topology/policy,
+  secrets, Caddy, container recreation, deployment, and rollback remain
+  separately approved operations.
 - Branch protection policy is defined in docs but cannot be enforced on the private remote with the current GitHub account plan.
 
 ## Known Unknowns
 
 - Off-server Garage backup target, retention schedule, and restore-drill cadence
+- A real second application Garage bucket for live HTTP `403` isolation proof
+- An isolated restore check for the latest Work Items PostgreSQL full backup
+- Released and installed Sheldon Deploy 0.2.0 manifest schema and CLI
 - CI provider and required checks
 - Reviewers, code owners, and merge policy
 - Hosted ChatGPT Work's project-to-binding selection and verification handshake; the web surface cannot depend on a local repository config file

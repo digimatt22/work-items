@@ -18,7 +18,7 @@ The product is a client-facing operations platform that serves as the shared ope
 corepack enable
 corepack prepare pnpm@9.15.4 --activate
 pnpm install
-cp .env.example .env
+cp config/local-development.example .env
 pnpm prisma:generate
 pnpm lint
 pnpm test
@@ -62,6 +62,7 @@ This milestone intentionally stops at scaffolding and contracts. Phase 1A begins
 This repository is a lightweight starter harness for AI-assisted software and automation projects. It provides a durable documentation structure, execution-plan workflow, and collaboration rules that can be copied into a new project and customized without carrying project-specific paths or assumptions.
 
 ## What Is Here
+
 - `AGENTS.md`: short operating instructions for coding agents.
 - `docs/PROJECT_CONTEXT.md`: current repo facts, constraints, and unknowns.
 - `docs/ARCHITECTURE.md`: system boundaries, data flow, and design decisions.
@@ -98,6 +99,7 @@ This repository is a lightweight starter harness for AI-assisted software and au
 - `docs/templates/`: reusable templates for specs, plans, and runbooks.
 
 ## Start Here
+
 - Agent entrypoint: [AGENTS.md](AGENTS.md)
 - Repo context: [docs/PROJECT_CONTEXT.md](docs/PROJECT_CONTEXT.md)
 - System behavior: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
@@ -122,6 +124,7 @@ This repository is a lightweight starter harness for AI-assisted software and au
 - Harness backlog: [docs/HARNESS_IMPROVEMENT_BACKLOG.md](docs/HARNESS_IMPROVEMENT_BACKLOG.md)
 
 ## Intended Use
+
 1. Install or update the harness in the current project:
    ```sh
    curl -fsSL https://harness.digicolony.com/install | bash
@@ -142,6 +145,7 @@ This repository is a lightweight starter harness for AI-assisted software and au
 8. Keep project-specific deviations in `docs/PROJECT_OVERRIDES.md`, not protected harness core files.
 
 ## Install And Update
+
 The hosted installer at `https://harness.digicolony.com/install` contains no protected harness content. It clones the private upstream repo with the machine's configured GitHub SSH identity, then runs `scripts/install-harness.sh` from that checkout.
 
 The installer is safe to rerun. It updates protected harness files listed in `.harness/core-files.txt`, preserves project-owned files, creates missing starter docs when needed, and updates `.harness/version.json` with the upstream version and commit.
@@ -155,6 +159,7 @@ scripts/update-harness.sh
 Use the hosted curl command as the recovery path when a project has an old or broken local update script.
 
 ## Kick Off Project Intake
+
 After creating or copying the harness into a real repo, ask an agent to run intake:
 
 ```text
@@ -164,6 +169,7 @@ Run the project intake workflow. Review this repo, interview me for missing cont
 The agent should combine repo inspection with a focused user interview, check lifeOS project registration when available, record returned review keys such as `CTX-*` when proposals are submitted, then update [docs/REPO_MAP.md](docs/REPO_MAP.md), [docs/PROJECT_CONTEXT.md](docs/PROJECT_CONTEXT.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/AUTOMATIONS.md](docs/AUTOMATIONS.md), and [docs/VALIDATION.md](docs/VALIDATION.md). Use [docs/PROJECT_INTAKE_WORKFLOW.md](docs/PROJECT_INTAKE_WORKFLOW.md) for the full workflow.
 
 ## Kick Off Issue Work
+
 To pull GitHub issues into an agent work session, ask:
 
 ```text
@@ -173,6 +179,7 @@ Start an issue session for these GitHub issues: <issue numbers or URLs>. Triage 
 Use [docs/GITHUB_ISSUE_WORKFLOW.md](docs/GITHUB_ISSUE_WORKFLOW.md) for the full process.
 
 ## Collaboration Defaults
+
 - Work on short-lived branches.
 - Run the current-state gate before starting or resuming work.
 - Use the fast current-state gate for local iteration and `scripts/check-current-state.sh --full` before pushing or opening a PR.
@@ -182,6 +189,7 @@ Use [docs/GITHUB_ISSUE_WORKFLOW.md](docs/GITHUB_ISSUE_WORKFLOW.md) for the full 
 - Record manual validation steps when automated tests are not enough or not available.
 
 ## Local Validation
+
 Run the documentation link check before opening documentation-heavy PRs:
 
 ```sh
@@ -209,4 +217,5 @@ scripts/check-current-state.sh --full
 ```
 
 ## Current Caveat
+
 This harness starts generic. A project is not ready for routine development until the project intake workflow has filled in repo-specific context, architecture, operational inventory, validation commands, repo map, remote, and review rules.

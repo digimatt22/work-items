@@ -14,7 +14,8 @@
     "prisma:migrate": "prisma migrate dev --schema prisma/schema.prisma",
     "prisma:review:reset": "prisma db push --schema prisma/schema.prisma --force-reset --accept-data-loss && tsx prisma/seed.ts",
     "prisma:format": "prisma format --schema prisma/schema.prisma",
-    "prisma:seed": "tsx prisma/seed.ts"
+    "prisma:seed": "tsx prisma/seed.ts",
+    "storage:verify-isolation": "tsx scripts/verify-garage-bucket-isolation.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

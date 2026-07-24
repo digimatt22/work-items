@@ -2,6 +2,8 @@ import { createHash, randomUUID } from "node:crypto";
 import {
   DeleteObjectCommand,
   GetObjectCommand,
+  HeadBucketCommand,
+  ListObjectsV2Command,
   PutObjectCommand,
   S3Client,
   type S3ClientConfig,
@@ -28,6 +30,71 @@ type S3StorageDependencies = {
     expiresIn: number,
   ) => Promise<string>;
 };
+
+export async function checkS3StorageReadiness(
+  config: S3StorageConfig,
+  dependencies: Pick<S3StorageDependencies, "client"> = {},
+): Promise<void> {
+  const client = dependencies.client ?? new S3Client(clientConfig(config));
+
+  await client.send(new HeadBucketCommand({ Bucket: config.bucket }));
+}
+
+export interface S3BucketIsolationResult {
+  readonly ownBucketAccess: "ok";
+  readonly foreignBucketAccess: "denied";
+  readonly deniedStatus: 403;
+}
+
+export async function verifyS3BucketIsolation(
+  config: S3StorageConfig,
+  foreignBucket: string,
+  dependencies: Pick<S3StorageDependencies, "client"> = {},
+): Promise<S3BucketIsolationResult> {
+  if (!foreignBucket || foreignBucket === config.bucket) {
+    throw new Error(
+      "A distinct existing foreign bucket is required for isolation verification.",
+    );
+  }
+
+  const client = dependencies.client ?? new S3Client(clientConfig(config));
+  await client.send(new HeadBucketCommand({ Bucket: config.bucket }));
+
+  try {
+    await client.send(
+      new ListObjectsV2Command({
+        Bucket: foreignBucket,
+        MaxKeys: 1,
+      }),
+    );
+  } catch (error) {
+    const status =
+      typeof error === "object" &&
+      error !== null &&
+      "$metadata" in error &&
+      typeof error.$metadata === "object" &&
+      error.$metadata !== null &&
+      "httpStatusCode" in error.$metadata
+        ? error.$metadata.httpStatusCode
+        : undefined;
+
+    if (status === 403) {
+      return {
+        ownBucketAccess: "ok",
+        foreignBucketAccess: "denied",
+        deniedStatus: 403,
+      };
+    }
+
+    throw new Error(
+      "Foreign-bucket isolation did not return an explicit access denial.",
+    );
+  }
+
+  throw new Error(
+    "Configured storage credentials can access a foreign bucket.",
+  );
+}
 
 function clientConfig(config: S3StorageConfig): S3ClientConfig {
   return {

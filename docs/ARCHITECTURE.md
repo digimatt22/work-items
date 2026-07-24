@@ -41,6 +41,10 @@ The important local development flow is:
 12. An administrator can upload a project-linked deliverable, create a password-protected expiring share, copy the generated password once, and revoke the share from the project workspace.
 13. An unauthenticated client opens `/deliveries/[token]`, submits the share password, and receives only the linked file after expiry, revocation, and lockout checks. The application reads the object through the storage provider and records the successful download as admin-only activity.
 14. Local development defaults to the filesystem provider. Sheldon selects the S3 provider and reaches the private `sheldon-garage` service over the persisted rootless-Docker application network; Garage has no published ports.
+15. `/api/health` reports process liveness without touching stateful
+    dependencies. `/api/ready` concurrently checks PostgreSQL with `SELECT 1`
+    and Garage with `HeadBucket`, applies a bounded deadline, and exposes only
+    sanitized component status.
 
 ## Contracts
 
@@ -64,6 +68,9 @@ The important local development flow is:
 - Digi-Portal OAuth uses authorization code plus PKCE S256, dynamic public-client registration, resource-bound opaque access tokens, and server-side binding selection by an administrator.
 - Phase 1 MCP tools are read-only and return only active, unrevoked, administrator-qualified dispatches for the authenticated binding.
 - Assets go through a storage provider abstraction.
+- Work Items storage credentials must have read/write access only to the
+  Work Items Garage bucket, cannot create buckets, and must receive an explicit
+  HTTP `403` when used against another application's existing bucket.
 - Public deliverable links authorize one project-linked asset only. They use a high-entropy token plus a bcrypt-hashed password, expire in 7, 14, or 30 days, lock for 15 minutes after five failed attempts, and never create a client session.
 - Work items remain unified with type-specific detail records.
 
@@ -91,11 +98,15 @@ Use this section for stable decisions that future work should respect. Include d
 | 2026-07-21 | Reuse project-linked assets for one-file, password-protected, expiring public deliveries; keep password plaintext one-time only               | Clients can download without accounts while storage, authorization, lockout, revocation, and audit remain server-controlled     |
 | 2026-07-21 | Run Garage v2.2.0 as shared private S3-compatible infrastructure on Sheldon, with a bucket/key boundary per application                       | Files persist independently of application releases and future projects can reuse the service without introducing AWS           |
 | 2026-07-24 | Represent additional client-user authority as per-user permission grants, beginning with `MOVE_WORK_ITEMS`                                    | Admins can delegate selected actions without creating more roles; grants remain client-scoped and shared policy-enforced        |
+| 2026-07-24 | Treat PostgreSQL and Garage as declared external Sheldon stateful dependencies and separate liveness from readiness                           | Application releases preserve state identities, readiness fails closed, and rollback never implies database downgrade           |
 
 ## Architectural Boundaries
 
 - No production AWS infrastructure in Phase 0.
 - Garage remains private to Sheldon application networks; Caddy and Cloudflare do not expose its S3 or administration APIs.
+- Deployment manifests contain database/role and Garage bucket/key metadata
+  without credentials. Stateful mutation hooks require approvals independent
+  of application deploy or rollback.
 - No Phase 1 feature implementation beyond skeletons/contracts.
 - No real Auth.js provider wiring until Phase 1A.
 - No rich document/video preview generation in MVP scope.

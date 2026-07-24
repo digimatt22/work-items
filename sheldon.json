@@ -1,28 +1,172 @@
 {
-  "schema": 1,
+  "schema": 2,
   "name": "digicolony-client-ops",
-  "hostname": "portal.digicolony.net",
-  "framework": "nextjs",
-  "container_port": 3000,
-  "host_port": null,
-  "health_path": "/api/health",
-  "dockerfile": "Dockerfile",
-  "requires_env": [
-    "DATABASE_URL",
-    "AUTH_SECRET",
-    "AUTH_TRUST_HOST",
-    "AUTH_URL",
-    "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY",
-    "STORAGE_PROVIDER",
-    "S3_ENDPOINT",
-    "S3_REGION",
-    "S3_BUCKET",
-    "S3_ACCESS_KEY_ID",
-    "S3_SECRET_ACCESS_KEY",
-    "S3_FORCE_PATH_STYLE",
-    "DIGI_PORTAL_PLATFORM_URL",
-    "DIGI_PORTAL_ADMIN_BINDINGS_ENABLED",
-    "DIGI_PORTAL_AGENT_READS_ENABLED",
-    "DIGI_PORTAL_AGENT_MUTATIONS_ENABLED"
-  ]
+  "release": {
+    "source": {
+      "type": "git",
+      "require_clean": true,
+      "generated_allowlist": []
+    }
+  },
+  "services": {
+    "web": {
+      "framework": "nextjs",
+      "build": {
+        "dockerfile": "Dockerfile",
+        "target": "runner"
+      },
+      "container_port": 3000,
+      "user": "1001:1001",
+      "resources": {
+        "memory_bytes": 2147483648,
+        "cpus": 1.5,
+        "pids": 256
+      },
+      "restart": "unless-stopped",
+      "stop_grace_seconds": 30,
+      "health": {
+        "path": "/api/health"
+      },
+      "secrets": {
+        "runtime": [
+          "DATABASE_URL",
+          "AUTH_SECRET",
+          "AUTH_TRUST_HOST",
+          "AUTH_URL",
+          "STORAGE_PROVIDER",
+          "S3_ENDPOINT",
+          "S3_REGION",
+          "S3_BUCKET",
+          "S3_ACCESS_KEY_ID",
+          "S3_SECRET_ACCESS_KEY",
+          "S3_FORCE_PATH_STYLE",
+          "DIGI_PORTAL_PLATFORM_URL",
+          "DIGI_PORTAL_ADMIN_BINDINGS_ENABLED",
+          "DIGI_PORTAL_AGENT_READS_ENABLED",
+          "DIGI_PORTAL_AGENT_MUTATIONS_ENABLED"
+        ],
+        "build": ["NEXT_SERVER_ACTIONS_ENCRYPTION_KEY"]
+      }
+    }
+  },
+  "ingress": {
+    "hostname": "portal.digicolony.net",
+    "service": "web",
+    "host_port": null
+  },
+  "networks": {
+    "application_subnet": null,
+    "platform_subnet": null
+  },
+  "secrets": {
+    "runtime": [
+      "DATABASE_URL",
+      "DATABASE_MIGRATION_URL",
+      "DATABASE_BACKUP_URL",
+      "AUTH_SECRET",
+      "AUTH_TRUST_HOST",
+      "AUTH_URL",
+      "STORAGE_PROVIDER",
+      "S3_ENDPOINT",
+      "S3_REGION",
+      "S3_BUCKET",
+      "S3_ACCESS_KEY_ID",
+      "S3_SECRET_ACCESS_KEY",
+      "S3_FORCE_PATH_STYLE",
+      "DIGI_PORTAL_PLATFORM_URL",
+      "DIGI_PORTAL_ADMIN_BINDINGS_ENABLED",
+      "DIGI_PORTAL_AGENT_READS_ENABLED",
+      "DIGI_PORTAL_AGENT_MUTATIONS_ENABLED"
+    ],
+    "build": ["NEXT_SERVER_ACTIONS_ENCRYPTION_KEY"]
+  },
+  "storage": [
+    {
+      "name": "work-items-private",
+      "profile": "garage",
+      "owner": "digicolony-client-ops",
+      "endpoint": "http://sheldon-garage:3900",
+      "bucket": "digicolony-client-ops",
+      "foreign_bucket_sentinel": "work-items-foreign-sentinel",
+      "region": "garage",
+      "isolation_command": [
+        "node",
+        "/app/hooks/garage-check.mjs",
+        "isolation",
+        "http://sheldon-garage:3900",
+        "garage",
+        "digicolony-client-ops",
+        "work-items-foreign-sentinel",
+        "work-items-private",
+        "digicolony-client-ops"
+      ],
+      "secret_names": {
+        "access_key": "S3_ACCESS_KEY_ID",
+        "secret_key": "S3_SECRET_ACCESS_KEY"
+      },
+      "health_command": [
+        "node",
+        "/app/hooks/garage-check.mjs",
+        "health",
+        "http://sheldon-garage:3900",
+        "garage",
+        "digicolony-client-ops",
+        "work-items-foreign-sentinel",
+        "work-items-private",
+        "digicolony-client-ops"
+      ]
+    }
+  ],
+  "database": {
+    "profile": "external-postgresql",
+    "engine": "postgresql",
+    "version": "17.10",
+    "cluster": "rootful-shared-postgres",
+    "host": "172.18.0.2",
+    "port": 5432,
+    "database": "appdb",
+    "runtime_role": "appuser",
+    "migration_role": "appuser_migrator",
+    "connection_limit": 10,
+    "isolation_tier": "ordinary-internal",
+    "secret_names": {
+      "runtime_url": "DATABASE_URL",
+      "migration_url": "DATABASE_MIGRATION_URL",
+      "backup_url": "DATABASE_BACKUP_URL"
+    },
+    "readiness_command": [
+      "node",
+      "/app/hooks/database-readiness.mjs",
+      "17.10",
+      "appdb",
+      "appuser",
+      "appuser_migrator",
+      "10",
+      "rootful-shared-postgres"
+    ],
+    "backup": {
+      "command": [
+        "node",
+        "/app/hooks/database-backup.mjs",
+        "work-items-no-ledger-0007"
+      ],
+      "owner": "mwood",
+      "max_age_hours": 168
+    },
+    "restore_check": {
+      "command": [
+        "node",
+        "/app/hooks/database-restore-check.mjs",
+        "work-items-no-ledger-0007"
+      ]
+    }
+  },
+  "rollout": {
+    "health_deadline_seconds": 120,
+    "release_retention": 5,
+    "lock_timeout_seconds": 30
+  },
+  "observability": {
+    "inventory": true
+  }
 }

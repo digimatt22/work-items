@@ -101,3 +101,39 @@ The personal Codex plugin `sheldon-deploy` provides the `$deploy-to-sheldon` ski
 - Cloudflare Published application routes map each public hostname to `http://localhost:80`.
 
 On 2026-07-16, a disposable application passed initial deployment, repeat deployment, localhost-only port verification, Caddy routing, health checks, rollback, and cleanup.
+
+## Work Items schema-2 migration baseline
+
+Post-deployment inventory on 2026-07-24 found:
+
+- Work Items release `20260724T221955Z-2fe481bb6c` at
+  `portal.digicolony.net`, loopback origin `127.0.0.1:39732`, and rootless
+  subnet `10.244.52.0/24`.
+- The application runs as non-root user `1001:1001` with 2 GiB memory, 1.5 CPU,
+  and 256 PID limits.
+- The stable dependency network is
+  `sheldon-digicolony-client-ops-platform` at `10.152.101.0/24`.
+- Twenty application release directories are retained. The declared retention
+  is five; deleting existing releases remains a
+  separately approved cleanup.
+- PostgreSQL is version 17.10, database `appdb`, runtime role `appuser`, with
+  runtime-role connection limit 10 and no `_prisma_migrations`
+  ledger. The deployment migration does not rename or recredential it.
+- Garage 2.2.0 is healthy, has no published ports, stores 2 objects totaling
+  112 bytes for Work Items, and preserves the existing bucket/key and
+  `sheldon-garage-meta`/`sheldon-garage-data` volumes.
+- The mode-`0600` application environment file remains the only application
+  secret source. Inventory did not print its values.
+
+See
+[Sheldon 0.2 Migration Baseline](docs/deployments/sheldon-0-2-migration-baseline-2026-07-24.md)
+for evidence and approval-readiness gaps.
+
+The application repository contains the live Sheldon Deploy 0.2.1 schema-2
+declaration and non-root database/Garage hooks. Distinct migration and backup
+roles, the scoped database URL names, the stable Garage network, the foreign
+sentinel, and protected backup/restore evidence are in place. Release
+`20260724T221955Z-2fe481bb6c` passed origin/public health and readiness,
+dependency isolation, protected-count preservation, and desktop/mobile browser
+verification. See
+[Sheldon 0.2.1 Live Migration](docs/deployments/sheldon-0-2-1-live-migration-2026-07-24.md).
