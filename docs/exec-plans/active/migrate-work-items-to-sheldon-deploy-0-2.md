@@ -102,7 +102,7 @@ live mutation.
 |  11 | Database/storage readiness without secret exposure                                                                           | Complete for candidate        | `/api/ready`, bounded checks, sanitized failure reporting, unit tests, and outage/recovery container tests                                                                                                             |
 |  12 | Required auth, permissions, file, outage, stale-tab, and app-only rollback tests                                             | Complete for candidate        | 70 unit tests, 19 candidate Playwright checks, Garage/PostgreSQL outage drills, explicit foreign-bucket denial, A→B stale-tab recovery, and `database_downgrade=not_run`                                               |
 |  13 | Separate approval gates                                                                                                      | Complete                      | Approval matrix plus database, Garage, and release/rollback runbooks                                                                                                                                                   |
-|  14 | Commit and push each phase                                                                                                   | Partial                       | Three local phase commits exist; push is paused pending informed approval to publish internal operational metadata                                                                                                     |
+|  14 | Commit and push each phase                                                                                                   | Complete to date              | Matthew approved publication on 2026-07-24; all current phase commits through `ef572af` are published on `origin/codex/sheldon-deploy-0-2-migration`                                                                   |
 |  15 | Continue through code, docs, tests, containers, plan, preflight, inventory, and dry run                                      | Partial                       | All safe application work plus 0.1.1 exact package audit/plan/preflight/inventory and released status are complete; authoritative schema-2 validation and a dry-run command do not yet exist                           |
 |  16 | Stop before any live mutation                                                                                                | Complete to date              | Only read-only live inventory/status/preflight/probes ran; no database, Garage, secret, Caddy, container, release, deployment, or rollback state changed                                                               |
 
@@ -249,11 +249,11 @@ Validation results are appended here by phase with date, commit, command, result
   foreign-bucket `403` evidence, exact-commit 0.2.0 package
   audit/plan/inventory/preflight/dry-run, and final live approval.
 
-### 2026-07-24 platform Phase 2 draft check
+### 2026-07-24 platform Phase 2 check
 
-- The canonical platform branch developed an uncommitted schema-2 Phase 2
-  draft after the application audit. Its 39 deployment tests and source package
-  validation pass.
+- The canonical platform branch committed schema-2 Phase 2 as `d815a54` after
+  the application audit. Its 39 deployment tests and source package validation
+  pass.
 - The draft explicitly rejects any non-null `database` declaration and any
   non-empty `storage` declaration, deferring both dependency profiles to
   platform Phase 4. It also has no `dry-run` command.
@@ -262,9 +262,11 @@ Validation results are appended here by phase with date, commit, command, result
   manifest therefore remains on the supported schema-1 migration-window
   declaration until a committed, reviewed, released contract covers those
   requirements.
-- The remaining application branch commits cannot be pushed until Matthew
-  explicitly approves publishing the redacted internal operational metadata.
-  No live mutation approval is requested at this stage.
+- Matthew approved release publication and application deployment on
+  2026-07-24. The branch was pushed successfully. Deployment was not started
+  because the schema-2 contract cannot yet preserve the required PostgreSQL and
+  Garage declarations, no dry-run command exists, and isolated PostgreSQL
+  restore evidence remains separately approval-gated.
 
 ## Human Validation
 
@@ -282,6 +284,6 @@ Validation results are appended here by phase with date, commit, command, result
 
 ## Closeout
 
-- Final status: in progress.
+- Final status: blocked.
 - Merge or abandonment notes: TBD.
 - Follow-up work items: formal Prisma migration baseline; off-server Garage backup target/retention; Relay Hub move from the shared PostgreSQL process; separately reviewed database role hardening if desired later.

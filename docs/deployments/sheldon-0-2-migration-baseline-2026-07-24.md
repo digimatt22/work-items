@@ -186,9 +186,9 @@ renaming the database/role or replacing the live network.
 
 ## Platform Phase 2 Draft Limitation
 
-An uncommitted platform Phase 2/schema-2 draft appeared after this application
+Platform Phase 2/schema 2 was committed as `d815a54` after this application
 evidence was prepared. Its 39 deployment tests and source package validation
-pass, but the draft deliberately requires:
+pass, but the contract deliberately requires:
 
 - `database: null`;
 - `storage: []`;
@@ -198,3 +198,22 @@ Database and storage profiles are explicitly deferred to platform Phase 4.
 Adopting this partial schema 2 would erase required declarations rather than
 complete the Work Items contract, so it is not an approval-ready migration
 target.
+
+## Approved Release Gate Check
+
+Matthew approved branch publication and application deployment on 2026-07-24.
+The branch push succeeded. A fresh clone of published commit `ef572af` passed
+exact package audit, plan, and preflight with source digest
+`aa1f4e14edecf64b449e0d9ea021410d5cd7193f12452bf2d603aeba58b7d94e`,
+origin port `39732`, and persisted subnet `172.30.0.0/16`.
+
+Read-only live inventory immediately before the deployment gate reconfirmed:
+
+- PostgreSQL 17.10, `appdb`, `appuser`, no migration ledger, and unchanged
+  protected counts;
+- Garage 2.2.0 healthy with the preserved bucket/key, two objects totaling
+  112 bytes, and both preserved volumes.
+
+Deployment was not executed because the contract and evidence gates above
+remain unsatisfied. No database, Garage, secret, Caddy, container, release, or
+public state changed.
