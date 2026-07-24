@@ -150,3 +150,14 @@ will be available only after an approved deployment.
   treated the valid private `172.30.0.0/16` subnet as outside policy. Do not use
   this checkout for approval until those platform defects are fixed and the
   0.2.0 contract is released.
+
+Application-side package compatibility was subsequently tightened:
+
+- the tracked configuration sample is now
+  `config/local-development.example`;
+- generated `apps/web/next-env.d.ts` is ignored rather than committed;
+- the release-skew key fixture is created temporarily with mode `0600` and
+  removed after the test;
+- schema 1's supported migration-window inventory declaration now records the
+  intended resource, retention, backup, database, Garage volume, and Garage
+  dependency state without secrets.

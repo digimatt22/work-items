@@ -80,6 +80,32 @@
 | Public application deployment                                                                         | Separate deployment approval              | Exact commit/digest, clean package audit, plan, preflight, inventory, tests, backups, health and rollback steps |
 | Application rollback                                                                                  | Separate rollback approval                | Target release/commit, database compatibility, drift report, post-rollback smoke steps                          |
 
+## Objective Completion Audit
+
+`Complete` means the objective has authoritative evidence at its full scope.
+`Partial` means safe implementation or evidence exists, but the schema-2 or
+live-approval portion remains outstanding. Nothing in this table authorizes a
+live mutation.
+
+|   # | Requirement                                                                                                                  | Status                        | Authoritative evidence or remaining proof                                                                                                                                                                            |
+| --: | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|   1 | New `codex/` branch and active plan                                                                                          | Complete                      | Branch `codex/sheldon-deploy-0-2-migration`; this active plan; local commits `445bff2`, `4091ba9`, and `89a53dc`                                                                                                     |
+|   2 | Schema 2 and exact-commit packaging                                                                                          | Partial                       | Exact-source application cleanup and schema-1 migration inventory are implemented; authoritative platform source still validates only schema 1, so a released schema-2 manifest/package audit is missing             |
+|   3 | Preserve hostname, Auth.js URLs, accounts, credentials, permissions, projects, work items, deliverables, and objects         | Partial                       | Read-only baseline records hostname/Auth.js URLs, protected counts, Garage IDs/counts, and secret-file preservation; post-migration comparison awaits an approved deployment                                         |
+|   4 | Retain current PostgreSQL, then treat it as Work Items after Relay Hub moves                                                 | Partial                       | Database runbook and interim inventory declare `rootful-shared-postgres`; Relay Hub migration is an external platform prerequisite                                                                                   |
+|   5 | Keep `appdb`, `appuser`, and credentials unchanged                                                                           | Complete for repository scope | Manifest/runbooks preserve names, inventory reads are non-mutating, and no credential value or database operation changed                                                                                            |
+|   6 | Declare external stateful database metadata, migration state, limits/timeouts, backup/restore hooks, readiness, and failures | Partial                       | Schema-1 inventory covers identity/isolation/backup policy; database runbook, baseline, inventory script, and `/api/ready` cover the rest; schema-2 hook fields await the released contract                          |
+|   7 | Provenance, lock, bounded resources, non-root, retention, and drift                                                          | Partial                       | Exact-source cleanup, local 2-GiB/1.5-CPU/256-PID non-root proof, five-release interim declaration, and inventory drift exist; deployment lock and persisted schema-2 provenance await platform Phase 2              |
+|   8 | Garage becomes a Sheldon platform dependency                                                                                 | Partial                       | Interim inventory and Garage runbook declare it; live network/topology adoption is separately approval-gated and awaits schema 2                                                                                     |
+|   9 | Preserve Garage volumes, bucket, objects, and credentials                                                                    | Partial                       | Read-only baseline records both volume names, bucket/key identity, two objects/112 bytes, and restore evidence; post-migration comparison awaits approved adoption                                                   |
+|  10 | Unique Garage bucket/key and foreign-bucket denial                                                                           | Partial                       | Live metadata proves the key is scoped only to its existing Work Items bucket; disposable Garage integration proves explicit foreign-bucket HTTP `403`; a live foreign application bucket is not currently available |
+|  11 | Database/storage readiness without secret exposure                                                                           | Complete for candidate        | `/api/ready`, bounded checks, sanitized failure reporting, unit tests, and outage/recovery container tests                                                                                                           |
+|  12 | Required auth, permissions, file, outage, stale-tab, and app-only rollback tests                                             | Complete for candidate        | 70 unit tests, 19 candidate Playwright checks, Garage/PostgreSQL outage drills, explicit foreign-bucket denial, A→B stale-tab recovery, and `database_downgrade=not_run`                                             |
+|  13 | Separate approval gates                                                                                                      | Complete                      | Approval matrix plus database, Garage, and release/rollback runbooks                                                                                                                                                 |
+|  14 | Commit and push each phase                                                                                                   | Partial                       | Three local phase commits exist; push is paused pending informed approval to publish internal operational metadata                                                                                                   |
+|  15 | Continue through code, docs, tests, containers, plan, preflight, inventory, and dry run                                      | Partial                       | All safe application work and released 0.1 plan/status/preflight plus provisional inventory are complete; authoritative schema-2 package audit/inventory/dry-run commands do not yet exist                           |
+|  16 | Stop before any live mutation                                                                                                | Complete to date              | Only read-only live inventory/status/preflight/probes ran; no database, Garage, secret, Caddy, container, release, deployment, or rollback state changed                                                             |
+
 ## Implementation Phases
 
 ### Phase 1 — Contract and evidence scaffolding
@@ -195,6 +221,15 @@ Validation results are appended here by phase with date, commit, command, result
   cannot discover the documented backups, and incorrectly classifies the valid
   private `172.30.0.0/16` subnet as outside policy. These results are platform
   contract defects, not approval-ready 0.2.0 evidence.
+- Package-safety follow-up moved the tracked local configuration example to
+  `config/local-development.example`, stopped tracking generated
+  `apps/web/next-env.d.ts`, and generates the test-only Server Action key in a
+  mode-`0600` temporary file. This keeps generated environment/type files and
+  the test key out of exact-commit release source.
+- The supported schema-1 migration-window inventory now declares the target
+  2-GiB/1.5-CPU/256-PID budget, five-release retention, preserved Garage
+  volumes, backup owner/age policy, `appdb`/`appuser` ordinary-internal
+  database identity, and the owned Garage dependency without secret values.
 - Current gaps: released 0.2.0 manifest validator and exact schema contract,
   isolated PostgreSQL restore evidence for the latest full live dump, live
   foreign-bucket `403` evidence, exact-commit 0.2.0 package

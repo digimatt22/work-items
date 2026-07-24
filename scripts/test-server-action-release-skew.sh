@@ -5,7 +5,7 @@ compose_file="docker-compose.release-skew.yml"
 project_name="work-items-release-skew-test"
 release_a="digicolony-client-ops:release-skew-a"
 release_b="digicolony-client-ops:release-skew-b"
-build_secret="tests/fixtures/sheldon/server-action-key.fixture"
+build_secret=""
 
 compose() {
   WORK_ITEMS_IMAGE="${WORK_ITEMS_IMAGE:-$release_a}" docker compose \
@@ -16,10 +16,18 @@ compose() {
 
 cleanup() {
   compose down --volumes --remove-orphans >/dev/null 2>&1 || true
+  if [[ -n "$build_secret" && -f "$build_secret" ]]; then
+    rm -f -- "$build_secret"
+  fi
 }
 trap cleanup EXIT
 
 cleanup
+build_secret="$(mktemp "${TMPDIR:-/tmp}/work-items-action-key.XXXXXX")"
+chmod 600 "$build_secret"
+printf '%s\n' \
+  'NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA=' \
+  >"$build_secret"
 
 docker build \
   --target runner \

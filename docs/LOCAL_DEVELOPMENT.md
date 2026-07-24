@@ -22,7 +22,7 @@ pnpm install
 Copy the sample file and adjust values for your machine:
 
 ```sh
-cp .env.example .env
+cp config/local-development.example .env
 ```
 
 Important variables:
@@ -97,7 +97,7 @@ The harness is green when:
 - Vitest runs;
 - Playwright request-level smoke tests pass;
 - Prisma client generation succeeds;
-- `.env.example` exists;
+- `config/local-development.example` exists;
 - this local development flow is documented.
 
 ## Digi-Portal Phase 0 Boundary
@@ -111,7 +111,7 @@ After Phase 1E, use [MVP Review Checklist](./MVP_REVIEW_CHECKLIST.md) for the fi
 Recommended local review path:
 
 ```sh
-cp .env.example .env
+cp config/local-development.example .env
 pnpm db:start
 pnpm db:review:reset
 pnpm dev

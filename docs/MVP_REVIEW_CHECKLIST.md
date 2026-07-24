@@ -33,7 +33,7 @@ The live local database path now supports a more complete admin review:
 
 ## Local Database Readiness
 
-1. Copy `.env.example` to `.env`.
+1. Copy `config/local-development.example` to `.env`.
 2. Start PostgreSQL and ensure `DATABASE_URL` points at it. If Docker is available:
    ```sh
    pnpm db:start

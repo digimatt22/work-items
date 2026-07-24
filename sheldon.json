@@ -7,6 +7,37 @@
   "host_port": null,
   "health_path": "/api/health",
   "dockerfile": "Dockerfile",
+  "release": {
+    "generated_allowlist": []
+  },
+  "inventory": {
+    "resource_limits_required": true,
+    "resource_budget": {
+      "memory_bytes": 2147483648,
+      "nano_cpus": 1500000000,
+      "pids": 256
+    },
+    "release_retention": 5,
+    "volumes": ["sheldon-garage-meta", "sheldon-garage-data"],
+    "backup": {
+      "required": true,
+      "max_age_hours": 168,
+      "owner": "mwood"
+    },
+    "database": {
+      "cluster": "rootful-shared-postgres",
+      "database": "appdb",
+      "runtime_role": "appuser",
+      "isolation_tier": "ordinary-internal"
+    },
+    "storage": [
+      {
+        "name": "work-items-private",
+        "profile": "garage",
+        "owner": "digicolony-client-ops"
+      }
+    ]
+  },
   "requires_env": [
     "DATABASE_URL",
     "AUTH_SECRET",

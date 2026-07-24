@@ -36,6 +36,10 @@ Use the Codex skill `$deploy-to-sheldon` for deployment, status, and rollback op
 - `sheldon.json` must remain schema 1 until the released Sheldon Deploy 0.2.0
   field definitions and validator are installed. Do not guess schema-2 field
   names from the platform plan.
+- During that bounded migration window, its supported schema-1 inventory
+  section declares the intended resource budget, five-release retention,
+  preserved Garage volumes, external PostgreSQL identity/isolation tier,
+  backup ownership/freshness policy, and Garage dependency without secrets.
 - Schema 2 will describe PostgreSQL as an external stateful dependency and
   Garage as an existing Sheldon platform dependency. Adoption does not
   authorize database, secret, Garage, network, volume, Caddy, container,
@@ -62,7 +66,9 @@ Use the Codex skill `$deploy-to-sheldon` for deployment, status, and rollback op
   `scripts/test-sheldon-readiness-containers.sh` for browser, dependency,
   bucket-isolation, non-root, and resource-limit checks, and
   `scripts/test-server-action-release-skew.sh` for A-to-B stale-tab recovery.
-  Both use disposable local services and test-only credentials.
+  Both use disposable local services and test-only credentials. The latter
+  creates its build-secret fixture in a mode-`0600` temporary file and removes
+  it during cleanup, so no action key fixture enters committed release source.
 - Configure the Git remote and obtain review before treating the local deployment changes as shared project history.
 - The live database was originally initialized with Prisma schema synchronization and has no `_prisma_migrations` ledger. The additive `mustChangePassword` column was applied transactionally before release `20260717T132949Z`; do not run `prisma migrate deploy` against Sheldon until the existing schema has been formally baselined.
 - Migrations `0004_agent_delivery_foundation` and `0005_digi_portal_oauth` were applied together as reviewed raw SQL in one transaction on 2026-07-21. The pre-migration full PostgreSQL backup is `/home/mwood/sheldon/apps/digicolony-client-ops/backups/pre-digi-portal-0004-0005-20260721T204511Z.dump`, mode `0600`, with SHA-256 `fb9eab6fe8571aa240282ae2a7259f50b6ab4d2dd55a0cfde1274f2345895c03`. Protected user, credential, client, project, and work-item counts were unchanged after migration.

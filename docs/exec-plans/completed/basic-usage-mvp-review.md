@@ -44,20 +44,20 @@ Results:
 
 ## Checklist Audit
 
-| Requirement | Current evidence | Status |
-| --- | --- | --- |
-| Admin can view workspace shell | `/workspaces` route exists; `/mvp-review` shows admin workspace setup flow | Review checkpoint complete |
-| Admin can create a client | Server action and shared service exist; `/mvp-review` shows client creation outcome | Review checkpoint complete |
-| Admin can create a project | Server action and shared service exist; `/mvp-review` shows project creation outcome | Review checkpoint complete |
-| Admin can create a client user | Server action and shared service exist; `/mvp-review` shows client user creation outcome | Review checkpoint complete |
+| Requirement                                    | Current evidence                                                                                  | Status                     |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------- | -------------------------- |
+| Admin can view workspace shell                 | `/workspaces` route exists; `/mvp-review` shows admin workspace setup flow                        | Review checkpoint complete |
+| Admin can create a client                      | Server action and shared service exist; `/mvp-review` shows client creation outcome               | Review checkpoint complete |
+| Admin can create a project                     | Server action and shared service exist; `/mvp-review` shows project creation outcome              | Review checkpoint complete |
+| Admin can create a client user                 | Server action and shared service exist; `/mvp-review` shows client user creation outcome          | Review checkpoint complete |
 | Client user can view projects for their client | Permission/service tests cover client-scoped visibility; `/mvp-review` shows client-scoped access | Review checkpoint complete |
-| User can create a Bug work item | Server action, repository, service tests, and `/mvp-review` Bug example exist | Review checkpoint complete |
-| User can create a Feature work item | Server action, repository, service tests, and `/mvp-review` Feature example exist | Review checkpoint complete |
-| Admin can move work item status | Server action and service tests exist; `/mvp-review` shows status transition | Review checkpoint complete |
-| User can comment on a work item | Server action, repository, service tests, and `/mvp-review` comment example exist | Review checkpoint complete |
-| Mentions are persisted from comment text | Mention parser test, Prisma model, and `/mvp-review` mention example exist | Review checkpoint complete |
-| User can upload an allowed asset | Server action, local storage provider, asset tests, and `/mvp-review` asset example exist | Review checkpoint complete |
-| Client users do not see AI action details | Permission/activity tests and `/mvp-review` privacy note exist | Review checkpoint complete |
+| User can create a Bug work item                | Server action, repository, service tests, and `/mvp-review` Bug example exist                     | Review checkpoint complete |
+| User can create a Feature work item            | Server action, repository, service tests, and `/mvp-review` Feature example exist                 | Review checkpoint complete |
+| Admin can move work item status                | Server action and service tests exist; `/mvp-review` shows status transition                      | Review checkpoint complete |
+| User can comment on a work item                | Server action, repository, service tests, and `/mvp-review` comment example exist                 | Review checkpoint complete |
+| Mentions are persisted from comment text       | Mention parser test, Prisma model, and `/mvp-review` mention example exist                        | Review checkpoint complete |
+| User can upload an allowed asset               | Server action, local storage provider, asset tests, and `/mvp-review` asset example exist         | Review checkpoint complete |
+| Client users do not see AI action details      | Permission/activity tests and `/mvp-review` privacy note exist                                    | Review checkpoint complete |
 
 ## Live Database Follow-Up
 
@@ -77,7 +77,7 @@ All are unavailable here. Because of that, authenticated seeded persistence vali
 Run this on a machine with Docker available:
 
 ```sh
-cp .env.example .env
+cp config/local-development.example .env
 pnpm db:start
 pnpm prisma:migrate
 pnpm db:seed
