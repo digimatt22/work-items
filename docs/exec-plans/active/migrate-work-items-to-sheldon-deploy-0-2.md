@@ -44,7 +44,10 @@
 - Planned: live read-only inventory, live backup/restore evidence refresh, live smoke checks, and each separately approved mutation.
 - In progress: schema-2 manifest, operational contracts, dependency-aware readiness, regression coverage, packaging and dry-run validation.
 - Blocked: final 0.2.0 CLI validation until the enhanced plugin is installed or an approved source checkout is available. The canonical plugin checkout currently contains uncommitted Phase 0 packaging work and must not be treated as a released 0.2.0 contract.
-- Needs human validation: administrator/client permission boundary, authenticated file flow, public Auth.js callbacks, stale-tab recovery, and final live approval.
+- Needs human validation: final live approval and any live-only checks explicitly
+  listed in the evidence bundle. Administrator/client permission boundaries,
+  authenticated file flow, public Auth.js callbacks, and stale-tab recovery
+  now have automated candidate-release evidence.
 - Ready for review: only after local and non-mutating remote validation passes and the evidence bundle is complete.
 - Completed: repository instructions, platform plan, current manifest/runbook/server report, Dockerfile, Auth.js configuration, Prisma schema/migration history, Garage scripts, storage contracts, relevant tests, and current deployment evidence reviewed; current-state gate passed; migration branch created.
 
@@ -56,24 +59,26 @@
 - Declare Garage as a Sheldon platform dependency attached through an approved private network contract, not as an application-owned sidecar.
 - Preserve Garage container, image, volumes, bucket, key identity, object identifiers, and credentials during the deployment migration.
 - Work Items receives a unique Garage bucket/key policy. Validation must prove its key can read/write its own bucket and is denied access to another application's bucket.
-- Use separate public liveness and authenticated dependency readiness endpoints. Neither response may contain connection strings, credential material, bucket credentials, object names, database error details, or customer data.
+- Use separate public liveness and sanitized dependency readiness endpoints.
+  Neither response may contain connection strings, credential material, bucket
+  credentials, object names, database error details, or customer data.
 - Use exact Git commit packaging with a clean-worktree requirement and no generated artifacts unless explicitly reviewed and allowlisted.
 - Require CPU, memory, and PID limits, a stop grace period, non-root user `1001`, release retention, deployment lock, source digest, image digest, and configuration drift reporting.
 - Keep the application release rollback independent from schema history. Rollback selects a compatible known-healthy app release and reports database drift; it never applies down migrations.
 
 ## Approval Matrix
 
-| Operation | Approval required | Evidence required before approval |
-| --- | --- | --- |
-| Read-only status, inventory, health probes, object/key policy checks, database metadata/count queries | No additional approval | Redacted commands; no secret values or customer content |
-| Database backup or isolated restore check that changes live performance or creates server state | Separate database-backup/restore approval | Exact command, target path/temporary resources, capacity check, cleanup plan |
-| Database schema migration or Prisma baseline | Separate database-migration approval | Exact SQL/hash, protected counts, fresh backup and restore evidence, compatibility and recovery plan |
-| Garage network attachment, topology, volume, bucket policy, or key change | Separate Garage approval | Current inventory, exact affected resources, own-bucket success and foreign-bucket denial plan |
-| Secret-file or credential change | Separate secret-change approval | Exact variable names or key identities; no values; rollback source |
-| Caddy or public route change | Separate Caddy/route approval | Validated config diff and route rollback |
-| Container recreation or platform dependency adoption | Separate container approval | Image/volume/network inventory, readiness, data-preservation and recovery evidence |
-| Public application deployment | Separate deployment approval | Exact commit/digest, clean package audit, plan, preflight, inventory, tests, backups, health and rollback steps |
-| Application rollback | Separate rollback approval | Target release/commit, database compatibility, drift report, post-rollback smoke steps |
+| Operation                                                                                             | Approval required                         | Evidence required before approval                                                                               |
+| ----------------------------------------------------------------------------------------------------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Read-only status, inventory, health probes, object/key policy checks, database metadata/count queries | No additional approval                    | Redacted commands; no secret values or customer content                                                         |
+| Database backup or isolated restore check that changes live performance or creates server state       | Separate database-backup/restore approval | Exact command, target path/temporary resources, capacity check, cleanup plan                                    |
+| Database schema migration or Prisma baseline                                                          | Separate database-migration approval      | Exact SQL/hash, protected counts, fresh backup and restore evidence, compatibility and recovery plan            |
+| Garage network attachment, topology, volume, bucket policy, or key change                             | Separate Garage approval                  | Current inventory, exact affected resources, own-bucket success and foreign-bucket denial plan                  |
+| Secret-file or credential change                                                                      | Separate secret-change approval           | Exact variable names or key identities; no values; rollback source                                              |
+| Caddy or public route change                                                                          | Separate Caddy/route approval             | Validated config diff and route rollback                                                                        |
+| Container recreation or platform dependency adoption                                                  | Separate container approval               | Image/volume/network inventory, readiness, data-preservation and recovery evidence                              |
+| Public application deployment                                                                         | Separate deployment approval              | Exact commit/digest, clean package audit, plan, preflight, inventory, tests, backups, health and rollback steps |
+| Application rollback                                                                                  | Separate rollback approval                | Target release/commit, database compatibility, drift report, post-rollback smoke steps                          |
 
 ## Implementation Phases
 
@@ -150,6 +155,39 @@ python3 <sheldon-deploy-0.2.0>/scripts/deploy.py dry-run --project-dir .
 ```
 
 Validation results are appended here by phase with date, commit, command, result, and gaps.
+
+### 2026-07-24 baseline and readiness implementation
+
+- Read-only live inventory confirmed release/container/network/resource state,
+  14 retained releases, PostgreSQL 17.10 metadata and protected counts, Garage
+  2.2.0 health/object counts/policy/volumes, backup metadata, and canonical
+  origin/public Auth.js URLs without changing live state.
+- Targeted database tests passed: 12 tests, including S3 readiness and
+  own-bucket/foreign-bucket fail-closed behavior.
+- Targeted web tests passed: 22 tests, including dependency success,
+  PostgreSQL failure, Garage failure, error sanitization, and timeout.
+- Database and web TypeScript checks passed.
+- Database/Garage inventory scripts passed `bash -n`.
+- A bounded candidate container passed 19 Playwright checks covering canonical
+  Auth.js URLs, administrator/client permission boundaries, file upload and
+  retrieval authorization, own-bucket access, a real foreign-bucket HTTP
+  `403`, and recovery after disposable Garage and PostgreSQL outages.
+- Disposable release A and B images built with the same test-only Server Action
+  key. A sign-in form loaded from A submitted safely after replacement by B;
+  no missing-action/application error appeared and no database downgrade ran.
+- Candidate runtime verification passed as non-root with 2 GiB memory, 1.5 CPU,
+  256 PID, and 30-second stop-grace limits.
+- `pnpm prisma:generate`, Prisma format, lint, typecheck, all 70 Vitest
+  tests, production build, Markdown links, inbox consistency, shell syntax,
+  Compose validation, `git diff --check`, and the full current-state gate
+  passed.
+- The repository-wide Prettier check continues to report its pre-existing
+  144-file formatting baseline. Every file changed for this migration was
+  formatted directly and passes `git diff --check`.
+- Current gaps: released 0.2.0 manifest validator and exact schema contract,
+  isolated PostgreSQL restore evidence for the latest full live dump, live
+  foreign-bucket `403` evidence, exact-commit 0.2.0 package
+  audit/plan/inventory/preflight/dry-run, and final live approval.
 
 ## Human Validation
 

@@ -58,19 +58,36 @@ Use the lightest checks that give meaningful confidence for the risk:
 
 Each project should define its required checks in `docs/AUTOMATIONS.md` or a dedicated validation section. Use `TBD` only with an owner and follow-up.
 
-| Change type                      | Expected checks                                                                                                                                        |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Documentation only               | Markdown link check and consistency review                                                                                                             |
-| Inbox context changes            | Inbox check; Markdown link check when docs are touched                                                                                                 |
-| GitHub issue-session changes     | Current-state check; generated issue-session docs reviewed; GitHub comments posted for status/questions                                                |
-| Harness bootstrap helper changes | Shell syntax check; dry-run copy; real copy to a temporary directory; Markdown link check                                                              |
-| Formatting-only code changes     | Format check plus targeted smoke check when behavior risk exists                                                                                       |
-| Shared runtime behavior          | Lint, typecheck when available, unit tests, and focused integration tests                                                                              |
-| User-facing UI                   | Automated checks plus browser or visual verification using `docs/reviews/visual-review-rules.md`                                                       |
-| Public file delivery             | Schema/type/unit/build checks plus private-browser wrong-password, correct-download, expiry, revocation, filename, and downloaded-content verification |
-| Launch-readiness review package  | `pnpm audit:launch-evidence`, Markdown link check, screenshot review, and Matthew human validation checklist                                           |
-| Data migrations                  | Dry run or backup verification, migration test, rollback plan                                                                                          |
-| Deployment changes               | CI checks, release runbook, rollback runbook, human validation owner                                                                                   |
+| Change type                      | Expected checks                                                                                                                                                                                                             |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Documentation only               | Markdown link check and consistency review                                                                                                                                                                                  |
+| Inbox context changes            | Inbox check; Markdown link check when docs are touched                                                                                                                                                                      |
+| GitHub issue-session changes     | Current-state check; generated issue-session docs reviewed; GitHub comments posted for status/questions                                                                                                                     |
+| Harness bootstrap helper changes | Shell syntax check; dry-run copy; real copy to a temporary directory; Markdown link check                                                                                                                                   |
+| Formatting-only code changes     | Format check plus targeted smoke check when behavior risk exists                                                                                                                                                            |
+| Shared runtime behavior          | Lint, typecheck when available, unit tests, and focused integration tests                                                                                                                                                   |
+| User-facing UI                   | Automated checks plus browser or visual verification using `docs/reviews/visual-review-rules.md`                                                                                                                            |
+| Public file delivery             | Schema/type/unit/build checks plus private-browser wrong-password, correct-download, expiry, revocation, filename, and downloaded-content verification                                                                      |
+| Launch-readiness review package  | `pnpm audit:launch-evidence`, Markdown link check, screenshot review, and Matthew human validation checklist                                                                                                                |
+| Data migrations                  | Dry run or backup verification, migration test, rollback plan                                                                                                                                                               |
+| Deployment changes               | CI checks, release runbook, rollback runbook, human validation owner                                                                                                                                                        |
+| Sheldon schema-2 migration       | Exact-commit package audit; manifest validation; plan/inventory/status/preflight/dry-run; non-root/resource checks; dependency failure/recovery; protected counts; backup/restore evidence; app-only rollback compatibility |
+| Garage key isolation             | Own-bucket readiness plus explicit HTTP `403` against another application's existing bucket; never use a missing bucket as proof                                                                                            |
+
+For the Sheldon migration candidate, run:
+
+```sh
+scripts/test-sheldon-readiness-containers.sh
+scripts/test-server-action-release-skew.sh
+```
+
+The first command uses disposable PostgreSQL and Garage services to verify
+authentication URLs, administrator/client boundaries, upload and retrieval
+authorization, real foreign-bucket denial, dependency outage/recovery, and
+bounded non-root runtime behavior. The second builds two releases with one
+test-only stable Server Action key, loads a form from release A, replaces the
+container with release B, submits the stale form, and confirms that application
+rollback compatibility does not invoke a database downgrade.
 
 ## CI Guidance
 
@@ -124,3 +141,26 @@ When a check cannot be completed by the agent, record:
 ## Merge Guidance
 
 Do not mark work `completed` while required validation is missing. Use `needs human validation` until the check is done, or document an explicit deferral with owner and risk.
+
+## Work Items Deployment Migration Gate
+
+Before live approval, record:
+
+- exact source commit, source digest, image digest, and clean package audit;
+- manifest schema-2 validation and declared/live drift;
+- PostgreSQL version, database/role metadata, migration state, connection
+  limits/timeouts, protected counts, backup checksum, and isolated restore
+  comparison;
+- Garage version/health, bucket/key policy, object count/bytes, preserved
+  volumes, backup/restore result, and foreign-bucket `403`;
+- origin/public liveness and readiness;
+- canonical Auth.js sign-in/callback URLs;
+- administrator and client permission boundaries;
+- upload, authorized retrieval, denied retrieval, Garage unavailable,
+  PostgreSQL unavailable, and recovery paths;
+- stale-tab Server Action recovery;
+- exact application rollback target and proof that rollback does not downgrade
+  the database.
+
+Missing evidence blocks live deployment approval. It does not authorize filling
+the gap through a state-changing check without its own approval.

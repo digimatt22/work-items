@@ -26,6 +26,17 @@ This repo contains the DigiColony AI-First Client Operations Platform, a Next.js
   keep long project lists navigable. Single-client users never select a client;
   their report form lists only projects authorized by their authenticated
   client scope.
+- The Work Items Sheldon Deploy 0.2.0 migration is active on
+  `codex/sheldon-deploy-0-2-migration`. Read-only inventory reconfirmed the
+  protected database counts, Garage object count/bytes, canonical Auth.js URLs,
+  non-root runtime, resource gaps, backup metadata, and current release
+  retention without changing live state.
+- `/api/health` remains process-only liveness. The candidate adds `/api/ready`,
+  which checks PostgreSQL and the configured Garage bucket in parallel with a
+  bounded deadline and returns only sanitized `ok`/`unavailable` states.
+- Manifest schema 2 is blocked on the released Sheldon Deploy 0.2.0 validator;
+  the canonical plugin checkout currently contains unreleased, uncommitted
+  packaging work and is not treated as the contract.
 
 ## lifeOS Registration
 
@@ -59,6 +70,9 @@ This repo contains the DigiColony AI-First Client Operations Platform, a Next.js
 - Runtime persistence requires PostgreSQL through `DATABASE_URL`; authentication requires `AUTH_SECRET` and trusted-host configuration.
 - Sheldon allocates a deterministic loopback host port, fronts it with Caddy, and requires a separate Cloudflare Tunnel route for public HTTPS.
 - The deployed rootless application network uses `172.30.0.0/16` so it does not collide with PostgreSQL's rootful `172.18.0.0/16` network.
+- Schema-2 rollout targets retain 2 GiB memory and 1.5 CPU limits and add a PID
+  limit, deployment lock, exact-commit provenance, bounded release retention,
+  dependency readiness, and drift reporting.
 
 ## Repository Inventory
 
@@ -108,11 +122,17 @@ This repo contains the DigiColony AI-First Client Operations Platform, a Next.js
 - The deployed Compose network retains its existing `172.30.0.0/16` application subnet; the updated Sheldon plugin persists existing networks and collision-checks new allocations.
 - No CI workflow is included yet.
 - Sheldon deployment and rollback procedures are defined, and the first live deployment has completed.
+- Database migration, database backup/restore, Garage topology/policy,
+  secrets, Caddy, container recreation, deployment, and rollback remain
+  separately approved operations.
 - Branch protection policy is defined in docs but cannot be enforced on the private remote with the current GitHub account plan.
 
 ## Known Unknowns
 
 - Off-server Garage backup target, retention schedule, and restore-drill cadence
+- A real second application Garage bucket for live HTTP `403` isolation proof
+- An isolated restore check for the latest Work Items PostgreSQL full backup
+- Released and installed Sheldon Deploy 0.2.0 manifest schema and CLI
 - CI provider and required checks
 - Reviewers, code owners, and merge policy
 - Hosted ChatGPT Work's project-to-binding selection and verification handshake; the web surface cannot depend on a local repository config file

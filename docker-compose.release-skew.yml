@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_DB: appdb
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: release-skew-test-password
+    ports:
+      - "127.0.0.1:55433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser -d appdb"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+
+  app:
+    image: ${WORK_ITEMS_IMAGE}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://appuser:release-skew-test-password@postgres:5432/appdb?schema=public
+      AUTH_SECRET: release-skew-test-auth-secret
+      AUTH_TRUST_HOST: "true"
+      AUTH_URL: http://127.0.0.1:54081
+      STORAGE_PROVIDER: local
+      UPLOADS_DIR: /app/uploads
+      DIGI_PORTAL_PLATFORM_URL: http://127.0.0.1:54081
+      DIGI_PORTAL_ADMIN_BINDINGS_ENABLED: "false"
+      DIGI_PORTAL_AGENT_READS_ENABLED: "false"
+      DIGI_PORTAL_AGENT_MUTATIONS_ENABLED: "false"
+    ports:
+      - "127.0.0.1:54081:3000"
+    init: true
+    restart: "no"
+    mem_limit: 2g
+    cpus: 1.5
+    pids_limit: 256
+    stop_grace_period: 30s
+
+volumes:
+  postgres-data:

@@ -101,3 +101,28 @@ The personal Codex plugin `sheldon-deploy` provides the `$deploy-to-sheldon` ski
 - Cloudflare Published application routes map each public hostname to `http://localhost:80`.
 
 On 2026-07-16, a disposable application passed initial deployment, repeat deployment, localhost-only port verification, Caddy routing, health checks, rollback, and cleanup.
+
+## Work Items schema-2 migration baseline
+
+Read-only inventory on 2026-07-24 found:
+
+- Work Items release `20260724T140218Z` at
+  `portal.digicolony.net`, loopback origin `127.0.0.1:39732`, and rootless
+  subnet `172.30.0.0/16`.
+- The application runs as non-root user `nextjs` with 2 GiB memory and 1.5 CPU
+  limits. No PID limit is configured.
+- Fourteen application release directories are retained. Sheldon Deploy 0.2.0
+  will declare bounded retention; deleting existing releases remains a
+  separately approved cleanup.
+- PostgreSQL is version 17.10, database `appdb`, runtime role `appuser`, with
+  unbounded database/role connection limits and no `_prisma_migrations`
+  ledger. The deployment migration does not rename or recredential it.
+- Garage 2.2.0 is healthy, has no published ports, stores 2 objects totaling
+  112 bytes for Work Items, and preserves the existing bucket/key and
+  `sheldon-garage-meta`/`sheldon-garage-data` volumes.
+- The mode-`0600` application environment file remains the only application
+  secret source. Inventory did not print its values.
+
+See
+[Sheldon 0.2 Migration Baseline](docs/deployments/sheldon-0-2-migration-baseline-2026-07-24.md)
+for evidence and approval-readiness gaps.
