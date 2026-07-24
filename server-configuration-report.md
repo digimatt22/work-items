@@ -126,3 +126,12 @@ Read-only inventory on 2026-07-24 found:
 See
 [Sheldon 0.2 Migration Baseline](docs/deployments/sheldon-0-2-migration-baseline-2026-07-24.md)
 for evidence and approval-readiness gaps.
+
+The application repository now contains a parser-valid Sheldon Deploy 0.2.0
+schema-2 declaration and non-root database/Garage hooks. This declaration is a
+desired-state contract only. As of 2026-07-24, live PostgreSQL still has no
+distinct `appuser_migrator` role and `appuser` remains at its existing
+unbounded connection limit; the canonical secret file does not yet have the
+two new database URL aliases; Garage is not yet attached to the stable Sheldon
+dependency network; and `work-items-foreign-sentinel` does not yet exist.
+Changing any of those facts requires its separate approval.

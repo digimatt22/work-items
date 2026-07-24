@@ -2,7 +2,7 @@
 
 ## Status
 
-- Status: blocked
+- Status: in progress
 - Owner: Matthew / Codex
 - Branch: `codex/sheldon-deploy-0-2-migration`
 - Base: `32cc294` from `codex/client-user-permissions`; this preserves the code in live release `20260724T140218Z` and intentionally stacks on open PR #1 because `main` does not yet contain that deployed behavior
@@ -41,20 +41,25 @@
 
 ## Work State
 
-- Planned: live read-only inventory, live backup/restore evidence refresh, live smoke checks, and each separately approved mutation.
-- In progress: schema-2 manifest, operational contracts, dependency-aware readiness, regression coverage, packaging and dry-run validation.
-- Blocked: final 0.2.0 CLI validation until the enhanced plugin is installed or an approved source checkout is available. The canonical plugin checkout currently contains uncommitted Phase 0 packaging work and must not be treated as a released 0.2.0 contract.
+- Planned: exact-commit 0.2.0 packaging/plan/inventory/preflight evidence,
+  approved live dependency preparation, live backup/restore evidence refresh,
+  deployment, and post-deployment preservation checks.
+- In progress: schema-2 release commit, exact-source validation, and
+  non-mutating remote gates.
+- Blocked: live readiness requires separate approvals for the stable dependency
+  network, Garage network/sentinel policy, database role/connection-limit
+  metadata, database secret-name additions, and fresh backup/restore evidence.
 - Needs human validation: final live approval and any live-only checks explicitly
   listed in the evidence bundle. Administrator/client permission boundaries,
   authenticated file flow, public Auth.js callbacks, and stale-tab recovery
   now have automated candidate-release evidence.
 - Ready for review: only after local and non-mutating remote validation passes and the evidence bundle is complete.
-- Completed: repository instructions, platform plan, current manifest/runbook/server report, Dockerfile, Auth.js configuration, Prisma schema/migration history, Garage scripts, storage contracts, relevant tests, and current deployment evidence reviewed; current-state gate passed; migration branch created.
+- Completed: repository instructions, platform plan, current manifest/runbook/server report, Dockerfile, Auth.js configuration, Prisma schema/migration history, Garage scripts, storage contracts, relevant tests, and current deployment evidence reviewed; current-state gate passed; migration branch created; released 0.2.0 schema/security/platform policy read; schema-2 manifest and dependency hooks implemented; full disposable schema-2 container validation passed.
 
 ## Decisions
 
 - Preserve the current live identity and data contracts exactly; schema 2 describes them but does not rename or recreate them.
-- Declare PostgreSQL as an external, stateful `ordinary_internal_application` dependency with metadata only. Secret values remain in the Sheldon environment file.
+- Declare PostgreSQL as an external, stateful `ordinary-internal` dependency with metadata only. Secret values remain in the Sheldon environment file.
 - Record PostgreSQL engine/version, database and role, migration state, maximum connections, connection/statement/lock timeouts, backup hook, restore-check hook, readiness, and failure reporting.
 - Declare Garage as a Sheldon platform dependency attached through an approved private network contract, not as an application-owned sidecar.
 - Preserve Garage container, image, volumes, bucket, key identity, object identifiers, and credentials during the deployment migration.
@@ -87,24 +92,24 @@
 live-approval portion remains outstanding. Nothing in this table authorizes a
 live mutation.
 
-|   # | Requirement                                                                                                                  | Status                        | Authoritative evidence or remaining proof                                                                                                                                                                              |
-| --: | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|   1 | New `codex/` branch and active plan                                                                                          | Complete                      | Branch `codex/sheldon-deploy-0-2-migration`; this active plan; local commits `445bff2`, `4091ba9`, `89a53dc`, and `2c57972`                                                                                            |
-|   2 | Schema 2 and exact-commit packaging                                                                                          | Partial                       | Canonical 0.1.1 package audit deterministically proves exact commit `2c57972` and source digest `11fb9fc…`; authoritative platform source still validates only schema 1, so the schema-2 manifest remains missing      |
-|   3 | Preserve hostname, Auth.js URLs, accounts, credentials, permissions, projects, work items, deliverables, and objects         | Partial                       | Read-only baseline records hostname/Auth.js URLs, protected counts, Garage IDs/counts, and secret-file preservation; post-migration comparison awaits an approved deployment                                           |
-|   4 | Retain current PostgreSQL, then treat it as Work Items after Relay Hub moves                                                 | Partial                       | Database runbook and interim inventory declare `rootful-shared-postgres`; Relay Hub migration is an external platform prerequisite                                                                                     |
-|   5 | Keep `appdb`, `appuser`, and credentials unchanged                                                                           | Complete for repository scope | Manifest/runbooks preserve names, inventory reads are non-mutating, and no credential value or database operation changed                                                                                              |
-|   6 | Declare external stateful database metadata, migration state, limits/timeouts, backup/restore hooks, readiness, and failures | Partial                       | Schema-1 inventory covers identity/isolation/backup policy; database runbook, baseline, inventory script, and `/api/ready` cover the rest; schema-2 hook fields await the released contract                            |
-|   7 | Provenance, lock, bounded resources, non-root, retention, and drift                                                          | Partial                       | Deterministic exact-source audit, local 2-GiB/1.5-CPU/256-PID non-root proof, five-release interim declaration, and live drift exist; deployment lock and persisted schema-2 release provenance await platform Phase 2 |
-|   8 | Garage becomes a Sheldon platform dependency                                                                                 | Partial                       | Interim inventory and Garage runbook declare it; live network/topology adoption is separately approval-gated and awaits schema 2                                                                                       |
-|   9 | Preserve Garage volumes, bucket, objects, and credentials                                                                    | Partial                       | Read-only baseline records both volume names, bucket/key identity, two objects/112 bytes, and restore evidence; post-migration comparison awaits approved adoption                                                     |
-|  10 | Unique Garage bucket/key and foreign-bucket denial                                                                           | Partial                       | Live metadata proves the key is scoped only to its existing Work Items bucket; disposable Garage integration proves explicit foreign-bucket HTTP `403`; a live foreign application bucket is not currently available   |
-|  11 | Database/storage readiness without secret exposure                                                                           | Complete for candidate        | `/api/ready`, bounded checks, sanitized failure reporting, unit tests, and outage/recovery container tests                                                                                                             |
-|  12 | Required auth, permissions, file, outage, stale-tab, and app-only rollback tests                                             | Complete for candidate        | 70 unit tests, 19 candidate Playwright checks, Garage/PostgreSQL outage drills, explicit foreign-bucket denial, A→B stale-tab recovery, and `database_downgrade=not_run`                                               |
-|  13 | Separate approval gates                                                                                                      | Complete                      | Approval matrix plus database, Garage, and release/rollback runbooks                                                                                                                                                   |
-|  14 | Commit and push each phase                                                                                                   | Complete to date              | Matthew approved publication on 2026-07-24; all current phase commits through `ef572af` are published on `origin/codex/sheldon-deploy-0-2-migration`                                                                   |
-|  15 | Continue through code, docs, tests, containers, plan, preflight, inventory, and dry run                                      | Partial                       | All safe application work plus 0.1.1 exact package audit/plan/preflight/inventory and released status are complete; authoritative schema-2 validation and a dry-run command do not yet exist                           |
-|  16 | Stop before any live mutation                                                                                                | Complete to date              | Only read-only live inventory/status/preflight/probes ran; no database, Garage, secret, Caddy, container, release, deployment, or rollback state changed                                                               |
+|   # | Requirement                                                                                                                  | Status                        | Authoritative evidence or remaining proof                                                                                                                                                                                    |
+| --: | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|   1 | New `codex/` branch and active plan                                                                                          | Complete                      | Branch `codex/sheldon-deploy-0-2-migration`; this active plan; local commits `445bff2`, `4091ba9`, `89a53dc`, and `2c57972`                                                                                                  |
+|   2 | Schema 2 and exact-commit packaging                                                                                          | Partial                       | Released 0.2.0 schema-2 manifest is implemented and parser-valid; a new exact-commit audit follows the next implementation commit                                                                                            |
+|   3 | Preserve hostname, Auth.js URLs, accounts, credentials, permissions, projects, work items, deliverables, and objects         | Partial                       | Read-only baseline records hostname/Auth.js URLs, protected counts, Garage IDs/counts, and secret-file preservation; post-migration comparison awaits an approved deployment                                                 |
+|   4 | Retain current PostgreSQL, then treat it as Work Items after Relay Hub moves                                                 | Partial                       | Database runbook and interim inventory declare `rootful-shared-postgres`; Relay Hub migration is an external platform prerequisite                                                                                           |
+|   5 | Keep `appdb`, `appuser`, and credentials unchanged                                                                           | Complete for repository scope | Manifest/runbooks preserve names, inventory reads are non-mutating, and no credential value or database operation changed                                                                                                    |
+|   6 | Declare external stateful database metadata, migration state, limits/timeouts, backup/restore hooks, readiness, and failures | Complete for repository scope | Schema 2 declares PostgreSQL 17.10, `appdb`, `appuser`, distinct migration role, connection limit, isolation tier, revision, and readiness/backup/restore hooks; disposable hook evidence passes                             |
+|   7 | Provenance, lock, bounded resources, non-root, retention, and drift                                                          | Complete for repository scope | Schema 2 declares clean exact Git source, 30-second lock, 2-GiB/1.5-CPU/256-PID limits, UID/GID 1001, five releases, and inventory; local runtime proof passes                                                               |
+|   8 | Garage becomes a Sheldon platform dependency                                                                                 | Partial                       | Schema-2 Garage profile and hooks are implemented; stable-network attachment and live sentinel policy remain separately approval-gated                                                                                       |
+|   9 | Preserve Garage volumes, bucket, objects, and credentials                                                                    | Partial                       | Read-only baseline records both volume names, bucket/key identity, two objects/112 bytes, and restore evidence; post-migration comparison awaits approved adoption                                                           |
+|  10 | Unique Garage bucket/key and foreign-bucket denial                                                                           | Partial                       | Schema 2 preserves the unique Work Items bucket/key scope; disposable 0.2 hook proves own-bucket success and foreign-bucket HTTP `403`; live sentinel creation and proof remain Garage-approval-gated                        |
+|  11 | Database/storage readiness without secret exposure                                                                           | Complete for candidate        | `/api/ready`, bounded checks, sanitized failure reporting, unit tests, and outage/recovery container tests                                                                                                                   |
+|  12 | Required auth, permissions, file, outage, stale-tab, and app-only rollback tests                                             | Complete for candidate        | 70 unit tests, 19 candidate Playwright checks, Garage/PostgreSQL outage drills, explicit foreign-bucket denial, A→B stale-tab recovery, and `database_downgrade=not_run`                                                     |
+|  13 | Separate approval gates                                                                                                      | Complete                      | Approval matrix plus database, Garage, and release/rollback runbooks                                                                                                                                                         |
+|  14 | Commit and push each phase                                                                                                   | Complete to date              | Matthew approved publication on 2026-07-24; all current phase commits through `ef572af` are published on `origin/codex/sheldon-deploy-0-2-migration`                                                                         |
+|  15 | Continue through code, docs, tests, containers, plan, preflight, inventory, and dry run                                      | Partial                       | Schema-2 code/docs and disposable containers pass; exact-commit 0.2 audit/plan/inventory/preflight follow this commit. Released 0.2.0 exposes no `dry-run` command; plan plus preflight are its supported non-mutating gates |
+|  16 | Stop before any live mutation                                                                                                | Complete to date              | Only read-only live inventory/status/preflight/probes ran; no database, Garage, secret, Caddy, container, release, deployment, or rollback state changed                                                                     |
 
 ## Implementation Phases
 
@@ -177,8 +182,11 @@ python3 <sheldon-deploy-0.2.0>/scripts/deploy.py plan --project-dir .
 python3 <sheldon-deploy-0.2.0>/scripts/deploy.py inventory --project-dir .
 python3 <sheldon-deploy-0.2.0>/scripts/deploy.py status --project-dir .
 python3 <sheldon-deploy-0.2.0>/scripts/deploy.py preflight --project-dir .
-python3 <sheldon-deploy-0.2.0>/scripts/deploy.py dry-run --project-dir .
 ```
+
+Sheldon Deploy 0.2.0 has no `dry-run` subcommand or deploy `--dry-run` flag.
+`plan` and `preflight` are the released non-mutating deployment gates; this plan
+records that contract gap rather than claiming an unavailable validation.
 
 Validation results are appended here by phase with date, commit, command, result, and gaps.
 
@@ -268,6 +276,34 @@ Validation results are appended here by phase with date, commit, command, result
   Garage declarations, no dry-run command exists, and isolated PostgreSQL
   restore evidence remains separately approval-gated.
 
+### 2026-07-24 released 0.2.0 adoption
+
+- Canonical Sheldon Deploy source is clean at release commit
+  `3213a091718177bcbf2fed69fd91bb72dacca322`; its plugin manifest reports
+  version `0.2.0`.
+- `sheldon.json` now passes the released schema-2 parser and declares exact Git
+  source, public ingress, UID/GID 1001, bounded resources, rollout locking and
+  retention, external PostgreSQL metadata/hooks, and the Garage platform
+  dependency without secret values.
+- The production image includes Node.js plus PostgreSQL 17 client/server tools
+  so the same immutable non-root image can execute readiness, streaming backup,
+  and isolated restore-check hooks.
+- The full disposable container harness passed all 70 unit tests and 19
+  Playwright tests, PostgreSQL and Garage readiness hooks, own-bucket access,
+  real foreign-bucket HTTP `403`, a complete `sheldon-envelope-v1` backup,
+  network-disabled/read-only-root restore verification with protected counts,
+  PostgreSQL/Garage outage and recovery, Auth.js, administrator/client
+  boundaries, file flows, and non-root resource limits.
+- Local plan parsing reached release-source validation and correctly rejected
+  ignored local `.env` and `.pnpm-store/v11/index.db` artifacts. Exact release
+  audit and plan therefore run from a clean clone after this phase is committed.
+- Remaining live prerequisites are unchanged and separately approved: create
+  or verify the distinct migration identity and runtime connection limit, add
+  the two scoped database URL secret names without rotating current
+  credentials, provision the stable dependency network, attach the preserved
+  Garage service and create the foreign sentinel policy, run a fresh protected
+  backup/restore check, then separately approve container/deployment changes.
+
 ## Human Validation
 
 - Owner: Matthew or delegated reviewer.
@@ -284,6 +320,8 @@ Validation results are appended here by phase with date, commit, command, result
 
 ## Closeout
 
-- Final status: blocked.
+- Final status: in progress; local schema-2 implementation passes and exact
+  release validation is next. Live dependency preparation remains separately
+  approval-gated.
 - Merge or abandonment notes: TBD.
 - Follow-up work items: formal Prisma migration baseline; off-server Garage backup target/retention; Relay Hub move from the shared PostgreSQL process; separately reviewed database role hardening if desired later.

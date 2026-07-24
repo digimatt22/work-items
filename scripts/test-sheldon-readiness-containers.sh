@@ -9,6 +9,8 @@ foreign_bucket="other-application-readiness-test"
 access_key="GK000000000000000000000000"
 secret_key="0000000000000000000000000000000000000000000000000000000000000000"
 base_url="http://127.0.0.1:54080"
+backup_envelope="$(mktemp)"
+backup_artifact="$(mktemp)"
 
 compose() {
   WORK_ITEMS_IMAGE="$app_image" docker compose \
@@ -19,6 +21,7 @@ compose() {
 
 cleanup() {
   compose down --volumes --remove-orphans >/dev/null 2>&1 || true
+  rm -f "$backup_envelope" "$backup_artifact"
 }
 trap cleanup EXIT
 
@@ -36,6 +39,15 @@ for attempt in $(seq 1 60); do
   fi
   sleep 1
 done
+
+compose exec --no-TTY postgres psql \
+  --username appuser \
+  --dbname appdb \
+  --set ON_ERROR_STOP=1 \
+  --command "ALTER ROLE appuser CONNECTION LIMIT 10" \
+  --command "CREATE ROLE appuser_migrator LOGIN PASSWORD 'migration-readiness-test-password' NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION" \
+  --command "CREATE ROLE appuser_backup LOGIN PASSWORD 'backup-readiness-test-password' NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION" \
+  --command "GRANT CONNECT ON DATABASE appdb TO appuser_backup" >/dev/null
 
 node_id="$(compose exec --no-TTY garage /garage node id -q)"
 node_id="${node_id%%@*}"
@@ -66,6 +78,14 @@ DATABASE_URL="postgresql://appuser:readiness-test-password@127.0.0.1:55432/appdb
   SEED_DEFAULT_PASSWORD="ChangeMe123!" \
   pnpm --filter @digicolony/db prisma:seed >/dev/null
 
+compose exec --no-TTY postgres psql \
+  --username appuser \
+  --dbname appdb \
+  --set ON_ERROR_STOP=1 \
+  --command "GRANT USAGE ON SCHEMA public TO appuser_backup" \
+  --command "GRANT SELECT ON ALL TABLES IN SCHEMA public TO appuser_backup" \
+  --command "GRANT SELECT ON ALL SEQUENCES IN SCHEMA public TO appuser_backup" >/dev/null
+
 compose up --detach app
 
 readiness=""
@@ -86,6 +106,75 @@ curl --fail --silent --max-time 5 "$base_url/api/health" \
   | grep -Fq '"status":"ok"'
 curl --fail --silent --max-time 5 "$base_url/api/ready" \
   | grep -Fq '"database":"ok","storage":"ok"'
+
+postgres_version="$(
+  compose exec --no-TTY postgres psql \
+    --username appuser \
+    --dbname appdb \
+    --no-align \
+    --tuples-only \
+    --command "SHOW server_version"
+)"
+postgres_version="${postgres_version//$'\r'/}"
+
+compose exec --no-TTY app node /app/hooks/database-readiness.mjs \
+  "$postgres_version" \
+  appdb \
+  appuser \
+  appuser_migrator \
+  10 \
+  rootful-shared-postgres \
+  | grep -Fq '"health":"healthy"'
+
+compose exec --no-TTY app node /app/hooks/garage-check.mjs \
+  health \
+  http://garage:3900 \
+  garage \
+  "$own_bucket" \
+  "$foreign_bucket" \
+  work-items-private \
+  digicolony-client-ops \
+  | grep -Fq '"health":"healthy"'
+
+compose exec --no-TTY app node /app/hooks/garage-check.mjs \
+  isolation \
+  http://garage:3900 \
+  garage \
+  "$own_bucket" \
+  "$foreign_bucket" \
+  work-items-private \
+  digicolony-client-ops \
+  | grep -Fq '"foreign_bucket_access":false'
+
+compose exec --no-TTY \
+  --env SHELDON_BACKUP_OUTPUT=- \
+  --env SHELDON_BACKUP_PROTOCOL=sheldon-envelope-v1 \
+  app \
+  node /app/hooks/database-backup.mjs work-items-no-ledger-0007 \
+  >"$backup_envelope"
+
+head -n 1 "$backup_envelope" \
+  | grep -Eq '^SHELDON-BACKUP-METADATA [A-Za-z0-9_-]+$'
+tail -n +2 "$backup_envelope" >"$backup_artifact"
+test -s "$backup_artifact"
+
+restore_result="$(
+  docker run \
+    --rm \
+    --interactive \
+    --network none \
+    --read-only \
+    --tmpfs /tmp:rw,nosuid,nodev,size=512m \
+    --user 1001:1001 \
+    --env SHELDON_BACKUP_INPUT=- \
+    --env SHELDON_RESTORE_RESULT=- \
+    "$app_image" \
+    node /app/hooks/database-restore-check.mjs work-items-no-ledger-0007 \
+    <"$backup_artifact"
+)"
+grep -Fq '"schema_revision":"work-items-no-ledger-0007"' \
+  <<<"$restore_result"
+grep -Fq '"users":' <<<"$restore_result"
 
 S3_ENDPOINT="http://127.0.0.1:53900" \
   S3_REGION="garage" \
@@ -146,6 +235,9 @@ test "$(docker inspect "$container_id" --format '{{.HostConfig.PidsLimit}}')" = 
 
 printf 'liveness=passed\n'
 printf 'dependency_readiness=passed\n'
+printf 'schema2_database_hooks=passed\n'
+printf 'schema2_garage_hooks=passed\n'
+printf 'isolated_backup_restore_contract=passed\n'
 printf 'garage_unavailable_and_recovery=passed\n'
 printf 'postgresql_unavailable_and_recovery=passed\n'
 printf 'foreign_bucket_denial=passed\n'

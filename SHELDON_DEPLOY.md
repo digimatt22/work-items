@@ -9,7 +9,7 @@ Use the Codex skill `$deploy-to-sheldon` for deployment, status, and rollback op
   checks and returns only sanitized component statuses.
 - Run `pnpm lint`, `pnpm test`, `pnpm build`, and a local container build before deployment.
 - Never commit or upload `.env` files. Secrets live on Sheldon in `~/.config/sheldon/secrets/<app>.env`.
-- `~/.config/sheldon/secrets/digicolony-client-ops.env` must be mode `0600` and define the names listed in `sheldon.json`, including the database/authentication values, the `STORAGE_PROVIDER`/`S3_*` Garage connection values, and the four independent `DIGI_PORTAL_*` rollout settings.
+- `~/.config/sheldon/secrets/digicolony-client-ops.env` must be mode `0600` and define the names listed in `sheldon.json`, including the separately scoped `DATABASE_URL`, `DATABASE_MIGRATION_URL`, and `DATABASE_BACKUP_URL` names, the authentication values, the `STORAGE_PROVIDER`/`S3_*` Garage connection values, and the four independent `DIGI_PORTAL_*` rollout settings. Adding the two database URL names is a separately approved secret-file change; it does not rotate the existing `appuser` credential.
 - Set `AUTH_URL=https://portal.digicolony.net` so Auth.js emits public sign-in and callback URLs instead of container-internal URLs.
 - The production `DATABASE_URL` must be reachable from inside the rootless application container. Do not reuse the local development URL whose host is `localhost`.
 - Applications must listen on `0.0.0.0` inside the container.
@@ -33,15 +33,21 @@ Use the Codex skill `$deploy-to-sheldon` for deployment, status, and rollback op
   [Work Items Garage Operations](docs/runbooks/work-items-garage-operations.md).
 - Release and rollback follow
   [Work Items Release And Rollback](docs/runbooks/work-items-release-and-rollback.md).
-- `sheldon.json` must remain schema 1 until the released Sheldon Deploy 0.2.0
-  field definitions and validator are installed. Do not guess schema-2 field
-  names from the platform plan.
-- During that bounded migration window, its supported schema-1 inventory
-  section declares the intended resource budget, five-release retention,
-  preserved Garage volumes, external PostgreSQL identity/isolation tier,
-  backup ownership/freshness policy, and Garage dependency without secrets.
-- Schema 2 will describe PostgreSQL as an external stateful dependency and
-  Garage as an existing Sheldon platform dependency. Adoption does not
+- `sheldon.json` uses the released Sheldon Deploy 0.2.0 schema-2 contract from
+  canonical source commit `3213a091718177bcbf2fed69fd91bb72dacca322`.
+- The schema declares exact Git source, non-root runtime identity, bounded
+  resources, deployment locking, five-release retention, external PostgreSQL
+  metadata and hooks, and the existing Garage service as a platform
+  dependency. It contains secret names only, never secret values.
+- The database hooks are copied into the immutable runtime image. Backup emits
+  `sheldon-envelope-v1`; restore verification runs with no network, a read-only
+  root filesystem, and a temporary filesystem, and must reproduce the recorded
+  schema revision and protected row counts.
+- The Garage isolation hook requires success on `digicolony-client-ops` and an
+  HTTP `403` for the existing foreign sentinel
+  `work-items-foreign-sentinel`. Creating that sentinel and attaching Garage to
+  the stable platform network remain separately approved Garage operations.
+- Schema-2 adoption does not
   authorize database, secret, Garage, network, volume, Caddy, container,
   deployment, or rollback mutation.
 
@@ -61,7 +67,11 @@ Use the Codex skill `$deploy-to-sheldon` for deployment, status, and rollback op
   creation authority, preserved volumes, and no published ports. Garage has no
   second application bucket yet, so a real foreign-bucket HTTP `403` remains
   an approval-readiness gap.
-- Sheldon plugin version `0.1.0+codex.20260717125641` excludes mutable/test output, assigns every Next.js release a deployment ID, and mounts the stable Server Action encryption key as a build-only secret. This lets stale tabs recover from version skew without placing the key in a release archive, Compose build argument, or image layer.
+- The migration is validated against Sheldon Deploy 0.2.0 at canonical source
+  commit `3213a091718177bcbf2fed69fd91bb72dacca322`. The managed personal cache may
+  still display the older 0.1 plugin until installation is refreshed; release
+  operations must use the recorded canonical 0.2.0 source until then.
+- Sheldon excludes mutable/test output, assigns every Next.js release a deployment ID, and mounts the stable Server Action encryption key as a build-only secret. This lets stale tabs recover from version skew without placing the key in a release archive, Compose build argument, or image layer.
 - Local candidate validation uses
   `scripts/test-sheldon-readiness-containers.sh` for browser, dependency,
   bucket-isolation, non-root, and resource-limit checks, and

@@ -48,7 +48,9 @@ RUN --mount=type=secret,id=sheldon_app_env,required=false \
   && mkdir -p /app/prisma-engines \
   && cp /app/node_modules/.pnpm/@prisma+client@*/node_modules/.prisma/client/libquery_engine-*.so.node /app/prisma-engines/
 
-FROM base AS runner
+FROM postgres:17-bookworm AS runner
+
+COPY --from=base /usr/local /usr/local
 
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
@@ -62,9 +64,11 @@ RUN groupadd --system --gid 1001 nodejs \
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/prisma-engines /tmp/prisma-engines
+COPY --from=builder --chown=nextjs:nodejs /app/scripts/sheldon-hooks /app/hooks
 
 USER nextjs
 
 EXPOSE 3000
 
+ENTRYPOINT []
 CMD ["node", "apps/web/server.js"]

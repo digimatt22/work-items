@@ -34,6 +34,8 @@ services:
         condition: service_started
     environment:
       DATABASE_URL: postgresql://appuser:readiness-test-password@postgres:5432/appdb?schema=public
+      DATABASE_MIGRATION_URL: postgresql://appuser_migrator:migration-readiness-test-password@postgres:5432/appdb?schema=public
+      DATABASE_BACKUP_URL: postgresql://appuser_backup:backup-readiness-test-password@postgres:5432/appdb?schema=public
       AUTH_SECRET: readiness-test-auth-secret
       AUTH_TRUST_HOST: "true"
       AUTH_URL: http://127.0.0.1:54080
