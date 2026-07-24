@@ -34,9 +34,11 @@ This repo contains the DigiColony AI-First Client Operations Platform, a Next.js
 - `/api/health` remains process-only liveness. The candidate adds `/api/ready`,
   which checks PostgreSQL and the configured Garage bucket in parallel with a
   bounded deadline and returns only sanitized `ok`/`unavailable` states.
-- Manifest schema 2 is blocked on the released Sheldon Deploy 0.2.0 validator;
-  the canonical plugin checkout currently contains unreleased, uncommitted
-  packaging work and is not treated as the contract.
+- Manifest schema 2 is blocked on the released Sheldon Deploy 0.2.0 validator.
+  The canonical plugin branch is clean and pushed through Phase 1 at `3fbcc38`
+  with exact-source release and inventory support in version 0.1.1, but its
+  authoritative manifest validator still accepts only schema 1 and platform
+  Phase 2 has not been implemented.
 
 ## lifeOS Registration
 

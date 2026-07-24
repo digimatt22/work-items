@@ -141,15 +141,10 @@ will be available only after an approved deployment.
   subnet `172.30.0.0/16` and confirming all required environment names.
 - Released status reported the expected current release, origin HTTP `200`,
   non-root `nextjs` user, and current container.
-- The unreleased Phase 0 package audit rejected excluded `.env`,
-  `.env.example`, `.pnpm-store`, and Next.js `next-env.d.ts` paths. This is a
-  scanner false-positive blocker and not evidence that those files enter the
-  release archive.
-- The unreleased provisional inventory reported the missing PID limit, but
-  schema-2 declarations and backup discovery were absent. It also incorrectly
-  treated the valid private `172.30.0.0/16` subnet as outside policy. Do not use
-  this checkout for approval until those platform defects are fixed and the
-  0.2.0 contract is released.
+- An initial canonical 0.1.1 audit from the ordinary developer working tree
+  rejected its ignored `.env` and exposed committed package-policy conflicts.
+  The application-side changes below removed the tracked conflicts; clean-clone
+  audit evidence now passes.
 
 Application-side package compatibility was subsequently tightened:
 
@@ -161,3 +156,30 @@ Application-side package compatibility was subsequently tightened:
 - schema 1's supported migration-window inventory declaration now records the
   intended resource, retention, backup, database, Garage volume, and Garage
   dependency state without secrets.
+
+Clean-clone canonical 0.1.1 results:
+
+- source commit:
+  `2c57972ea70d1657a4b8fd8fb40e6c6f20eefb3a`;
+- source digest:
+  `11fb9fc0efb621303e712adb1d7a9a05aa1516f2e68db792bd1ec8843c769027`;
+- manifest digest:
+  `62d68a1ef1a24ecddd18e5afeb590aa9ab7a53060bd420a00e4f67f49368c33a`;
+- 463 committed files and zero generated inputs;
+- two package-audit runs produced byte-identical evidence;
+- the generated Next.js declaration and Server Action key fixture were absent;
+- preflight passed with persisted port `39732`, subnet `172.30.0.0/16`, and all
+  required environment names present.
+
+Declared/live inventory correctly reports missing PID/resource limits, excess
+release retention, and missing host-readable backup/database/storage metadata.
+It also has two known collector defects:
+
+- the `/20`–`/28` network policy rejects the preserved private
+  `172.30.0.0/16` even though preflight deliberately reuses it;
+- packaged baseline application name `work-items` does not match manifest name
+  `digicolony-client-ops`, causing a false self-comparison for
+  `appdb`/`appuser` and a duplicate shared-cluster warning.
+
+These defects must be corrected in the platform contract; they do not justify
+renaming the database/role or replacing the live network.
