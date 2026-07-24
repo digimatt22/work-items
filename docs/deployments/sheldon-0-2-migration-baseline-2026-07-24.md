@@ -183,3 +183,18 @@ It also has two known collector defects:
 
 These defects must be corrected in the platform contract; they do not justify
 renaming the database/role or replacing the live network.
+
+## Platform Phase 2 Draft Limitation
+
+An uncommitted platform Phase 2/schema-2 draft appeared after this application
+evidence was prepared. Its 39 deployment tests and source package validation
+pass, but the draft deliberately requires:
+
+- `database: null`;
+- `storage: []`;
+- no deployment `dry-run` command.
+
+Database and storage profiles are explicitly deferred to platform Phase 4.
+Adopting this partial schema 2 would erase required declarations rather than
+complete the Work Items contract, so it is not an approval-ready migration
+target.

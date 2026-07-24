@@ -2,7 +2,7 @@
 
 ## Status
 
-- Status: in progress
+- Status: blocked
 - Owner: Matthew / Codex
 - Branch: `codex/sheldon-deploy-0-2-migration`
 - Base: `32cc294` from `codex/client-user-permissions`; this preserves the code in live release `20260724T140218Z` and intentionally stacks on open PR #1 because `main` does not yet contain that deployed behavior
@@ -248,6 +248,23 @@ Validation results are appended here by phase with date, commit, command, result
   isolated PostgreSQL restore evidence for the latest full live dump, live
   foreign-bucket `403` evidence, exact-commit 0.2.0 package
   audit/plan/inventory/preflight/dry-run, and final live approval.
+
+### 2026-07-24 platform Phase 2 draft check
+
+- The canonical platform branch developed an uncommitted schema-2 Phase 2
+  draft after the application audit. Its 39 deployment tests and source package
+  validation pass.
+- The draft explicitly rejects any non-null `database` declaration and any
+  non-empty `storage` declaration, deferring both dependency profiles to
+  platform Phase 4. It also has no `dry-run` command.
+- Work Items cannot adopt that narrower draft without violating the requested
+  external PostgreSQL and declared Garage dependency contract. The application
+  manifest therefore remains on the supported schema-1 migration-window
+  declaration until a committed, reviewed, released contract covers those
+  requirements.
+- The remaining application branch commits cannot be pushed until Matthew
+  explicitly approves publishing the redacted internal operational metadata.
+  No live mutation approval is requested at this stage.
 
 ## Human Validation
 
