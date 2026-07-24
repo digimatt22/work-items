@@ -1,15 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import type { WorkItemProjectRef } from "@digicolony/shared";
 import { buttonClass, compactFieldClass, fieldClass } from "../components/ui";
+import { ProjectPicker } from "./ProjectPicker";
 
 type WorkItemType = "BUG" | "FEATURE";
-
-type ProjectOption = {
-  id: string;
-  name: string;
-  clientName?: string;
-};
 
 type WorkItemCreateFormProps = {
   action: (formData: FormData) => void | Promise<void>;
@@ -18,7 +14,7 @@ type WorkItemCreateFormProps = {
   lockedPipelineStatusId?: string;
   lockedType?: WorkItemType;
   onCancel?: () => void;
-  projects: readonly ProjectOption[];
+  projects: readonly WorkItemProjectRef[];
   testId?: string;
   title?: string;
 };
@@ -32,7 +28,7 @@ export function WorkItemCreateForm({
   onCancel,
   projects,
   testId = "create-work-item-form",
-  title = "Create work item"
+  title = "Create work item",
 }: WorkItemCreateFormProps) {
   const [type, setType] = useState<WorkItemType>(lockedType ?? defaultType);
   const activeType = lockedType ?? type;
@@ -45,40 +41,50 @@ export function WorkItemCreateForm({
     >
       <h2 className="text-lg font-bold tracking-tight text-ink">{title}</h2>
       <p className="mt-1 text-sm leading-6 text-muted">
-        Choose the project, add the summary, and include the details someone needs to triage it.
+        {lockedProjectId
+          ? "Add the summary and include the details someone needs to triage it."
+          : "Choose the client and project, add the summary, and include the details someone needs to triage it."}
       </p>
       {lockedProjectId ? (
         <input name="projectId" type="hidden" value={lockedProjectId} />
       ) : (
-        <select className={`mt-4 ${compactFieldClass}`} name="projectId" required>
-          <option value="">Select project</option>
-          {projects.map((project) => (
-            <option key={project.id} value={project.id}>
-              {project.clientName ? `${project.clientName} / ${project.name}` : project.name}
-            </option>
-          ))}
-        </select>
+        <div className="mt-4">
+          <ProjectPicker
+            idPrefix={`${testId}-project-picker`}
+            projects={projects}
+            showClientSelector
+          />
+        </div>
       )}
       {lockedPipelineStatusId ? (
-        <input name="pipelineStatusId" type="hidden" value={lockedPipelineStatusId} />
+        <input
+          name="pipelineStatusId"
+          type="hidden"
+          value={lockedPipelineStatusId}
+        />
       ) : null}
       {lockedType ? (
         <input name="type" type="hidden" value={lockedType} />
       ) : (
-      <div className={lockedProjectId ? "mt-4" : ""}>
-        <select
-          className={`mt-3 ${compactFieldClass}`}
-          name="type"
-          onChange={(event) => setType(event.target.value as WorkItemType)}
-          required
-          value={type}
-        >
-          <option value="BUG">Bug</option>
-          <option value="FEATURE">Feature</option>
-        </select>
-      </div>
+        <div className={lockedProjectId ? "mt-4" : ""}>
+          <select
+            className={`mt-3 ${compactFieldClass}`}
+            name="type"
+            onChange={(event) => setType(event.target.value as WorkItemType)}
+            required
+            value={type}
+          >
+            <option value="BUG">Bug</option>
+            <option value="FEATURE">Feature</option>
+          </select>
+        </div>
       )}
-      <input className={`mt-3 ${compactFieldClass}`} name="title" placeholder="Title" required />
+      <input
+        className={`mt-3 ${compactFieldClass}`}
+        name="title"
+        placeholder="Title"
+        required
+      />
       <textarea
         className={`mt-3 ${fieldClass}`}
         name="description"
@@ -89,25 +95,62 @@ export function WorkItemCreateForm({
       {activeType === "BUG" ? (
         <div className="mt-5 border-t border-line pt-5">
           <p className="text-sm font-bold text-ink">Bug details</p>
-          <textarea className={`mt-2 ${compactFieldClass}`} name="stepsToReproduce" placeholder="Steps to reproduce" rows={2} />
-          <textarea className={`mt-2 ${compactFieldClass}`} name="expectedBehavior" placeholder="Expected behavior" rows={2} />
-          <textarea className={`mt-2 ${compactFieldClass}`} name="actualBehavior" placeholder="Actual behavior" rows={2} />
+          <textarea
+            className={`mt-2 ${compactFieldClass}`}
+            name="stepsToReproduce"
+            placeholder="Steps to reproduce"
+            rows={2}
+          />
+          <textarea
+            className={`mt-2 ${compactFieldClass}`}
+            name="expectedBehavior"
+            placeholder="Expected behavior"
+            rows={2}
+          />
+          <textarea
+            className={`mt-2 ${compactFieldClass}`}
+            name="actualBehavior"
+            placeholder="Actual behavior"
+            rows={2}
+          />
         </div>
       ) : (
         <div className="mt-5 border-t border-line pt-5">
           <p className="text-sm font-bold text-ink">Feature details</p>
-          <textarea className={`mt-2 ${compactFieldClass}`} name="userStory" placeholder="User story" rows={2} />
-          <textarea className={`mt-2 ${compactFieldClass}`} name="acceptanceCriteria" placeholder="Acceptance criteria" rows={2} />
-          <textarea className={`mt-2 ${compactFieldClass}`} name="businessValue" placeholder="Business value" rows={2} />
+          <textarea
+            className={`mt-2 ${compactFieldClass}`}
+            name="userStory"
+            placeholder="User story"
+            rows={2}
+          />
+          <textarea
+            className={`mt-2 ${compactFieldClass}`}
+            name="acceptanceCriteria"
+            placeholder="Acceptance criteria"
+            rows={2}
+          />
+          <textarea
+            className={`mt-2 ${compactFieldClass}`}
+            name="businessValue"
+            placeholder="Business value"
+            rows={2}
+          />
         </div>
       )}
       <div className="mt-5 flex gap-2">
         {onCancel ? (
-          <button className={`flex-1 ${buttonClass("secondary")}`} onClick={onCancel} type="button">
+          <button
+            className={`flex-1 ${buttonClass("secondary")}`}
+            onClick={onCancel}
+            type="button"
+          >
             Cancel
           </button>
         ) : null}
-        <button className={`${onCancel ? "flex-1" : "w-full"} ${buttonClass("primary")}`} type="submit">
+        <button
+          className={`${onCancel ? "flex-1" : "w-full"} ${buttonClass("primary")}`}
+          type="submit"
+        >
           Create
         </button>
       </div>

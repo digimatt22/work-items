@@ -8,7 +8,7 @@ This repo contains the DigiColony AI-First Client Operations Platform, a Next.js
 
 - The product is a pnpm monorepo with a Next.js App Router web application, Prisma/PostgreSQL persistence, Auth.js credentials authentication, shared contracts, and Playwright/Vitest coverage.
 - The project is initialized for deployment to the Sheldon development server through `sheldon.json`, `Dockerfile`, `SHELDON_DEPLOY.md`, and `server-configuration-report.md`.
-- Sheldon release `20260721T205301Z` is live at `https://portal.digicolony.net`; origin and public health, canonical Auth.js URLs, non-root execution, the persisted application network, Digi-Portal administrator setup, the additive deliverable-sharing schema, and database preservation were verified on 2026-07-21.
+- Sheldon release `20260724T134359Z`, packaged from committed source `d3bd09b` only, is live at `https://portal.digicolony.net`; origin and public health, canonical Auth.js URLs, non-root execution, the persisted application network, database-backed administrator authentication, per-client-user permission assignment UI, and database preservation were verified on 2026-07-24.
 - The live database contains two users, two password credentials, two clients, five projects, and one work item as of 2026-07-21. Existing user-created data must be preserved during deployment and diagnostics.
 - Client-user identity and credential creation are atomic, and expected failures remain in the form. The deployed release passed 26 unit tests locally, 26 tests in the Sheldon image build, a targeted success/duplicate-email browser test, and production builds locally and on Sheldon.
 - The deployed client-user flow generates unique temporary passwords, shows copy-ready username/password credentials once to the creating admin, and forces replacement before any other authenticated route. Validation passed 28 unit tests, TypeScript checks, all 17 browser scenarios, and clean local and Sheldon production container builds.
@@ -21,7 +21,11 @@ This repo contains the DigiColony AI-First Client Operations Platform, a Next.js
 - Project workspaces support admin-only Garage-backed deliverable upload and one-file public shares with generated one-time passwords, required expiry, revocation, five-attempt lockout, and download evidence. Live validation covered wrong-password rejection, exact-byte anonymous download, and revocation.
 - Shared Sheldon storage is `sheldon-garage` v2.2.0 with private bucket `digicolony-client-ops` and persistent `sheldon-garage-meta`/`sheldon-garage-data` volumes. Two S3-backed validation assets survived application redeployment and a Garage restart; both validation shares are revoked.
 - Backup `garage-20260721T201449Z.tgz` restored successfully into isolated temporary volumes and passed Garage bucket, key, and statistics checks. Off-server backup and retention cadence remain operational follow-up decisions.
-- Client users support enum-backed per-user permission grants. The initial `MOVE_WORK_ITEMS` grant lets an administrator authorize a client user to move only work items already visible to that user within their client; additive migration `0007_client_user_permissions` requires normal environment deployment.
+- Client users support enum-backed per-user permission grants. The initial `MOVE_WORK_ITEMS` grant lets an administrator authorize a client user to move only work items already visible to that user within their client; additive migration `0007_client_user_permissions` and release `20260724T134359Z` are live on Sheldon.
+- Work-item intake uses client-first project selection for administrators to
+  keep long project lists navigable. Single-client users never select a client;
+  their report form lists only projects authorized by their authenticated
+  client scope.
 
 ## lifeOS Registration
 

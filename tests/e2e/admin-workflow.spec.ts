@@ -159,9 +159,28 @@ test.describe("admin workflow", () => {
     const projectWorkItemForm = page.getByTestId(
       "global-create-work-item-form",
     );
-    await projectWorkItemForm
-      .locator("select[name=projectId]")
-      .selectOption(projectId);
+    const workItemClientSelect = projectWorkItemForm.locator(
+      "select[name=clientId]",
+    );
+    const workItemProjectSelect = projectWorkItemForm.locator(
+      "select[name=projectId]",
+    );
+    await expect(workItemProjectSelect).toBeDisabled();
+    await workItemClientSelect.selectOption({ label: clientName });
+    await expect(workItemProjectSelect).toBeEnabled();
+    await expect(
+      workItemProjectSelect.locator(`option[value="${projectId}"]`),
+    ).toHaveText(projectName);
+    await workItemProjectSelect.selectOption(projectId);
+    await workItemClientSelect.selectOption({
+      label: "DigiColony Demo Client",
+    });
+    await expect(workItemProjectSelect).toHaveValue("");
+    await expect(
+      workItemProjectSelect.locator(`option[value="${projectId}"]`),
+    ).toHaveCount(0);
+    await workItemClientSelect.selectOption({ label: clientName });
+    await workItemProjectSelect.selectOption(projectId);
     await projectWorkItemForm.getByPlaceholder("Title").fill(workItemTitle);
     await projectWorkItemForm
       .getByPlaceholder("Description")
