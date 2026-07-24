@@ -1,15 +1,15 @@
-# Migrate Work Items To Sheldon Deploy 0.2.0
+# Migrate Work Items To Sheldon Deploy 0.2.1
 
 ## Status
 
-- Status: needs human validation
+- Status: completed
 - Owner: Matthew / Codex
 - Branch: `codex/sheldon-deploy-0-2-migration`
 - Base: `32cc294` from `codex/client-user-permissions`; this preserves the code in live release `20260724T140218Z` and intentionally stacks on open PR #1 because `main` does not yet contain that deployed behavior
 - PR: TBD
 - Last updated: 2026-07-24
 - Platform plan: `social-content/docs/exec-plans/active/sheldon-platform-hardening-and-deployment-migration.md`
-- Target platform contract: Sheldon Deploy 0.2.0, manifest schema 2
+- Target platform contract: Sheldon Deploy 0.2.1, manifest schema 2
 
 ## Summary
 
@@ -17,44 +17,51 @@
 - Adopt exact-commit release provenance, deployment locking, bounded resources, non-root verification, retained releases, drift reporting, and explicit external PostgreSQL and Garage dependencies.
 - Add database-aware and storage-aware readiness, preservation inventories, backup/restore hooks, and rollback evidence without exposing secrets.
 - Preserve `portal.digicolony.net`, Auth.js public URLs, `appdb`, `appuser`, all current credentials, users, permissions, clients, projects, work items, deliverables, Garage volumes, Garage bucket identifiers, keys, and objects.
-- Continue through repository changes, tests, local containers, package audit, plan, inventory, preflight, and dry-run validation. Stop immediately before any live database mutation, Garage network/volume mutation, secret change, Caddy change, container recreation, deployment, or rollback.
+- Continue through repository changes, tests, local containers, package audit,
+  plan, inventory, preflight, authorized dependency preparation, backup/restore
+  verification, deployment, and live browser validation.
 
 ## Scope Boundaries
 
 - The current PostgreSQL server remains in place. After Relay Hub leaves it, the process is treated operationally as the Work Items database instance.
-- This migration does not rename `appdb` or `appuser`, rotate or alter database credentials, change the live Garage topology, recreate containers, change Caddy or Cloudflare, deploy, or roll back.
-- Application rollback must never imply a database downgrade.
-- Database migration, Garage topology, secrets, container recreation, deployment, and rollback are separate approval gates.
+- This migration did not rename `appdb` or `appuser`, rotate the existing
+  runtime credential, change Garage volumes or object data, change Caddy or
+  Cloudflare, or roll back.
+- Application rollback never implies a database downgrade.
+- Matthew authorized the dependency, secret-name, backup/restore, container,
+  deployment, and live-verification gates on 2026-07-24.
 - A live-approval request is not ready until protected database counts, Garage object inventory, backup and restore-check evidence, health checks, and exact rollback steps are recorded.
 
 ## Current Baseline
 
-- Live app release: `20260724T140218Z`, committed source `7d92fbc`, origin `127.0.0.1:39732`, application subnet `172.30.0.0/16`.
+- Live app release: `20260724T221955Z-2fe481bb6c`, committed source
+  `70e24ca05931555f6367df9dc441a75025dd0da5`, origin
+  `127.0.0.1:39732`, application subnet `10.244.52.0/24`.
 - Public hostname and Auth.js canonical URL: `https://portal.digicolony.net`.
 - PostgreSQL: version 17 process at `172.18.0.2:5432`; database `appdb`; runtime role `appuser`; credentials unchanged and server-side only.
 - Database history: the live schema was initially synchronized without a `_prisma_migrations` ledger. Migrations `0003` through `0007` were applied as separately reviewed SQL operations. Formal Prisma baselining remains required before `prisma migrate deploy`.
 - Last recorded protected counts: 3 users, 3 password credentials, 3 clients, 6 projects, and 1 work item.
 - Garage: `dxflrs/garage:v2.2.0`, container `sheldon-garage`, bucket `digicolony-client-ops`, key identity `digicolony-client-ops-app`, volumes `sheldon-garage-meta` and `sheldon-garage-data`.
 - Last restore evidence: `garage-20260721T201449Z.tgz`, SHA-256 `3370a4a5db9a5f65eed646b68b0c9c11671d7ea93828b86c570e6c6e6ac1b03b`, isolated restore passed.
-- Existing application health checks only process availability and does not prove PostgreSQL or Garage usability.
+- `/api/health` checks process availability; `/api/ready` proves bounded
+  PostgreSQL and Garage usability.
 - lifeOS MCP is unavailable in this task; no private lifeOS context informed the migration.
 
 ## Work State
 
-- Planned: exact-commit 0.2.0 packaging/plan/inventory/preflight evidence,
-  approved live dependency preparation, live backup/restore evidence refresh,
-  deployment, and post-deployment preservation checks.
-- In progress: schema-2 release commit, exact-source validation, and
-  non-mutating remote gates.
-- Blocked: live readiness requires separate approvals for the stable dependency
-  network, Garage network/sentinel policy, database role/connection-limit
-  metadata, database secret-name additions, and fresh backup/restore evidence.
-- Needs human validation: final live approval and any live-only checks explicitly
-  listed in the evidence bundle. Administrator/client permission boundaries,
-  authenticated file flow, public Auth.js callbacks, and stale-tab recovery
-  now have automated candidate-release evidence.
-- Ready for review: only after local and non-mutating remote validation passes and the evidence bundle is complete.
-- Completed: repository instructions, platform plan, current manifest/runbook/server report, Dockerfile, Auth.js configuration, Prisma schema/migration history, Garage scripts, storage contracts, relevant tests, and current deployment evidence reviewed; current-state gate passed; migration branch created; released 0.2.0 schema/security/platform policy read; schema-2 manifest and dependency hooks implemented; full disposable schema-2 container validation passed.
+- Planned: none for this migration.
+- In progress: documentation review and pull-request closeout only.
+- Blocked: none.
+- Needs human validation: none for deployment completion. Authenticated
+  administrator/client workflows retain their existing automated candidate
+  evidence; the live unauthenticated rendering and access-control smoke checks
+  passed.
+- Ready for review: yes.
+- Completed: schema-2 implementation and validation; stable dependency network;
+  scoped database identities and secret names; Garage sentinel isolation;
+  protected backup and restore check; exact-source deployment; preservation
+  inventory; public health/readiness/Auth.js checks; desktop/mobile rendering;
+  sign-in error handling; and protected-route enforcement.
 
 ## Decisions
 
@@ -336,24 +343,107 @@ Validation results are appended here by phase with date, commit, command, result
   produces the known false self-sharing `work-items` database/role finding.
   Diagnostic output does not replace a released inventory gate.
 
+### 2026-07-24 released 0.2.1 deployment attempt
+
+- The installed Sheldon Deploy plugin reports version `0.2.1`; the bundled
+  schema-2 plan and package audit pass from a clean temporary clone of exact
+  commit `74cda4e0724fad96a332fc18f8a4e1a6695f101b`.
+- The audit records 467 committed files, zero generated inputs, source digest
+  `a72c6e3c7c45baee1b05132bb8bc99550d0265e0533b2873480741c48c781bd5`,
+  and unchanged manifest digest
+  `a12cfe4c7aecd2d770c38d6411c37223f2dcf1ec99e8221018b3a78efdc26368`.
+  The ordinary checkout remains intentionally unpackagable because its ignored
+  `.env` and `.pnpm-store/v11/index.db` are prohibited release inputs; neither
+  file was removed or uploaded.
+- Local lint, typecheck, all 70 unit tests, and the production build pass. An
+  exact-commit Docker `runner` image built successfully, runs as non-root user
+  `nextjs` (UID/GID 1001 in the image), listens on `0.0.0.0:3000`, and returns
+  `{"status":"ok"}` from `/api/health`.
+- Released 0.2.1 inventory now completes, resolving the 0.2.0 collector defect.
+  It observes live release `20260724T140218Z`, origin HTTP 200, loopback port
+  39732, non-root `nextjs`, 2-GiB memory and 1.5-CPU limits, no PID limit, the
+  preserved `172.30.0.0/16` network, and 14 retained releases.
+- Inventory reports five critical, six error, and four warning findings. The
+  schema-1-to-schema-2 transition explains the missing `web` service, resource
+  drift, absent schema-2 dependency metadata, and absent plugin-managed
+  backup/restore evidence. The reported `shared-database` and
+  `shared-runtime-role` collision with platform application `work-items` is a
+  false self-collision: the packaged baseline's `work-items` record is the
+  preserved database/storage contract for this `digicolony-client-ops`
+  application.
+- Released status reaches the healthy origin but cannot find service `web`
+  because the current schema-1 Compose service is `app`. Dependency check and
+  preflight both stop because stable network
+  `sheldon-digicolony-client-ops-platform` is absent.
+- No deploy, network provisioning, database operation, Garage mutation, secret
+  change, backup, restore check, release cleanup, Caddy change, or Cloudflare
+  change was run. The next live step requires separate approval to provision
+  the declared stable dependency network, followed by refreshed preflight and
+  the other existing database/storage/backup authority gates.
+
+### 2026-07-24 authorized 0.2.1 live migration
+
+- Matthew authorized all required deployment and live-verification steps.
+- Provisioned owned stable dependency network
+  `sheldon-digicolony-client-ops-platform` at `10.152.101.0/24`, attached the
+  portal and preserved Garage container, and verified database/storage
+  readiness throughout the zero-downtime detach from legacy network
+  `172.30.0.0/16`.
+- Removed the empty legacy network and persisted allocated application subnet
+  `10.244.52.0/24`.
+- Added the scoped migration and backup URL names to the canonical mode-`0600`
+  environment file without rotating the runtime credential. Created
+  non-superuser migration and backup roles and limited runtime role `appuser`
+  to 10 connections.
+- Created an empty foreign Garage sentinel with no application key. Live
+  dependency checks passed database readiness, Work Items bucket readiness,
+  and foreign-bucket denial.
+- Protected backup and isolated restore check passed with SHA-256
+  `4ccf2efff322f252dd2f4f62c2d980655fa7e5e86f2c5db7de7fc1c75cb4e7a6`.
+- Final exact-source package audit and plan passed for
+  `70e24ca05931555f6367df9dc441a75025dd0da5`: 467 committed files, source
+  digest
+  `c02971d967b72dbc6fafb7c5bc84bda46fdccd28a32f2b3627812d3297e03272`,
+  and manifest digest
+  `a12cfe4c7aecd2d770c38d6411c37223f2dcf1ec99e8221018b3a78efdc26368`.
+- Preflight passed with origin port 39732, allocated application subnet,
+  owned platform network, and every required environment name present.
+- Sheldon promoted release `20260724T221955Z-2fe481bb6c`. Status confirmed
+  origin HTTP 200, runtime user `1001:1001`, 2-GiB memory, 1.5 CPU, 256 PIDs,
+  no mounts, and no image-declared volumes.
+- Public `/api/health` and `/api/ready` returned HTTP 200. Auth.js advertised
+  canonical HTTPS URLs. Browser checks passed desktop and 390x844 rendering
+  without horizontal overflow, invalid-credential feedback, and
+  unauthenticated redirect from `/work-items` to `/sign-in`; browser logs had
+  no warnings or errors.
+- Protected counts remained 3 users, 3 password credentials, 3 clients, 6
+  projects, 1 work item, 2 assets, 2 asset links, 2 deliverable shares, 0
+  project bindings, and 0 OAuth access grants.
+- Final inventory removed the invalid-subnet and unmanaged-volume findings.
+  Remaining non-blocking findings are the packaged `work-items` self-alias,
+  shared cluster failure domain, and release retention of 20 versus 5.
+- Full evidence:
+  [Sheldon 0.2.1 Live Migration](../../deployments/sheldon-0-2-1-live-migration-2026-07-24.md).
+
 ## Human Validation
 
 - Owner: Matthew or delegated reviewer.
-- Exact steps: review the final evidence bundle; verify the live administrator and client permission paths; verify Auth.js public sign-in/callback URLs; verify one authorized file flow and one denied flow; review stale-tab recovery; approve each live operation separately.
-- Expected evidence: screenshots or redacted command output, protected-count comparison, Garage inventory and cross-bucket denial, backup/restore result, readiness results, exact release provenance, and rollback commands.
-- Evidence location: this plan and linked review artifacts.
-- Blocks merge: live approval does not block review of local implementation, but it blocks every live mutation and final migration completion.
+- Status: deployment validation complete.
+- Evidence: exact release provenance, protected-count comparison, Garage
+  isolation, backup/restore result, readiness, browser rendering and
+  interaction checks, and rollback procedure are recorded in this plan and the
+  linked live migration evidence.
+- Blocks merge: no.
 
 ## Documentation
 
 - Update `SHELDON_DEPLOY.md`, `server-configuration-report.md`, `docs/PROJECT_CONTEXT.md`, `docs/ARCHITECTURE.md`, `docs/AUTOMATIONS.md`, `docs/VALIDATION.md`, and `docs/REPO_MAP.md`.
 - Add focused database, Garage, readiness, inventory, and rollback runbooks under `docs/runbooks/`.
-- Move this plan to `docs/exec-plans/completed/` only after the reviewed live migration is complete or the work is intentionally superseded.
+- This plan is archived under `docs/exec-plans/completed/`.
 
 ## Closeout
 
-- Final status: needs human validation; local schema-2 implementation and exact
-  release validation pass. Live dependency preparation remains separately
-  approval-gated, and the released inventory defect must be corrected.
-- Merge or abandonment notes: TBD.
+- Final status: completed and ready for review. Schema-2 release
+  `20260724T221955Z-2fe481bb6c` is live and verified.
+- Merge or abandonment notes: merge through the branch pull-request workflow.
 - Follow-up work items: formal Prisma migration baseline; off-server Garage backup target/retention; Relay Hub move from the shared PostgreSQL process; separately reviewed database role hardening if desired later.

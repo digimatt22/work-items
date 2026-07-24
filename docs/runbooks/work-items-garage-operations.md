@@ -11,8 +11,8 @@ isolation, backup, restore, and approval boundaries without storing secrets.
 - Platform service: `sheldon-garage`
 - Image: `dxflrs/garage:v2.2.0`
 - Public ports: none
-- Current private address: `172.30.0.3` on
-  `sheldon-digicolony-client-ops_default`
+- Network: `sheldon-digicolony-client-ops-platform`,
+  `10.152.101.0/24`. Treat the current container address as ephemeral.
 - Bucket alias: `digicolony-client-ops`
 - Bucket identifier:
   `4dd949d32492b9f3347762300eb2b26045cf6ae77c58d433b78c480b0c3f4e6a`

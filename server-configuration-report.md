@@ -104,18 +104,20 @@ On 2026-07-16, a disposable application passed initial deployment, repeat deploy
 
 ## Work Items schema-2 migration baseline
 
-Read-only inventory on 2026-07-24 found:
+Post-deployment inventory on 2026-07-24 found:
 
-- Work Items release `20260724T140218Z` at
+- Work Items release `20260724T221955Z-2fe481bb6c` at
   `portal.digicolony.net`, loopback origin `127.0.0.1:39732`, and rootless
-  subnet `172.30.0.0/16`.
-- The application runs as non-root user `nextjs` with 2 GiB memory and 1.5 CPU
-  limits. No PID limit is configured.
-- Fourteen application release directories are retained. Sheldon Deploy 0.2.0
-  will declare bounded retention; deleting existing releases remains a
+  subnet `10.244.52.0/24`.
+- The application runs as non-root user `1001:1001` with 2 GiB memory, 1.5 CPU,
+  and 256 PID limits.
+- The stable dependency network is
+  `sheldon-digicolony-client-ops-platform` at `10.152.101.0/24`.
+- Twenty application release directories are retained. The declared retention
+  is five; deleting existing releases remains a
   separately approved cleanup.
 - PostgreSQL is version 17.10, database `appdb`, runtime role `appuser`, with
-  unbounded database/role connection limits and no `_prisma_migrations`
+  runtime-role connection limit 10 and no `_prisma_migrations`
   ledger. The deployment migration does not rename or recredential it.
 - Garage 2.2.0 is healthy, has no published ports, stores 2 objects totaling
   112 bytes for Work Items, and preserves the existing bucket/key and
@@ -127,11 +129,11 @@ See
 [Sheldon 0.2 Migration Baseline](docs/deployments/sheldon-0-2-migration-baseline-2026-07-24.md)
 for evidence and approval-readiness gaps.
 
-The application repository now contains a parser-valid Sheldon Deploy 0.2.0
-schema-2 declaration and non-root database/Garage hooks. This declaration is a
-desired-state contract only. As of 2026-07-24, live PostgreSQL still has no
-distinct `appuser_migrator` role and `appuser` remains at its existing
-unbounded connection limit; the canonical secret file does not yet have the
-two new database URL aliases; Garage is not yet attached to the stable Sheldon
-dependency network; and `work-items-foreign-sentinel` does not yet exist.
-Changing any of those facts requires its separate approval.
+The application repository contains the live Sheldon Deploy 0.2.1 schema-2
+declaration and non-root database/Garage hooks. Distinct migration and backup
+roles, the scoped database URL names, the stable Garage network, the foreign
+sentinel, and protected backup/restore evidence are in place. Release
+`20260724T221955Z-2fe481bb6c` passed origin/public health and readiness,
+dependency isolation, protected-count preservation, and desktop/mobile browser
+verification. See
+[Sheldon 0.2.1 Live Migration](docs/deployments/sheldon-0-2-1-live-migration-2026-07-24.md).
